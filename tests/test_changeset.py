@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import collections.abc as cabc
 import datetime
-import pathlib
 import typing as t
 
 import capellambse
@@ -19,12 +18,11 @@ import pytest
 import yaml
 from capellambse.extensions import reqif
 
-from rm_bridge import load, types
-from rm_bridge.model_modifier.changeset import actiontypes as act
+from rm_bridge import types
 from rm_bridge.model_modifier.changeset import calculate_change_set, change
 
-TEST_DATA_PATH = pathlib.Path(__file__).parent / "data"
-TEST_CONFIG = load.load_yaml(TEST_DATA_PATH / "config.yaml")
+from .conftest import TEST_CONFIG, TEST_DATA_PATH
+
 TEST_MODEL_PATH = TEST_DATA_PATH / TEST_CONFIG["model"]["path"]
 TEST_SNAPSHOT: list[types.TrackerSnapshot] = yaml.safe_load(
     (TEST_DATA_PATH / "snapshot.yaml").read_text(encoding="utf-8")
@@ -35,6 +33,23 @@ TEST_SNAPSHOT_1 = yaml.safe_load(
 TEST_SNAPSHOT_2 = yaml.safe_load(
     (TEST_DATA_PATH / "snapshot2.yaml").read_text(encoding="utf-8")
 )
+TEST_MODULE_CHANGE = yaml.load(
+    (TEST_DATA_PATH / "changesets" / "create.yaml").read_text(
+        encoding="utf-8"
+    ),
+    Loader=yaml.Loader,
+)
+TEST_MODULE_CHANGE_1 = yaml.load(
+    (TEST_DATA_PATH / "changesets" / "mod.yaml").read_text(encoding="utf-8"),
+    Loader=yaml.Loader,
+)
+TEST_MODULE_CHANGE_2 = yaml.load(
+    (TEST_DATA_PATH / "changesets" / "delete.yaml").read_text(
+        encoding="utf-8"
+    ),
+    Loader=yaml.Loader,
+)
+TEST_TRACKER_ID = "25093"
 TEST_REQ_MODULE_UUID = "3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4"
 TEST_DATE = datetime.datetime(
     2022, 6, 30, 15, 7, 18, 664000, tzinfo=datetime.timezone.utc
@@ -144,124 +159,7 @@ class TestCreateActions(ActionsTest):
     tracker = TEST_SNAPSHOT[0]
     titem = tracker["items"][0]
 
-    ATTR_DEF_CHANGE = {
-        "_type": act.ActionType.CREATE,
-        "parent": TEST_REQ_MODULE_UUID,
-        "identifier": -2,
-        "long_name": "Types",
-        "cls": reqif.RequirementsTypesFolder,
-        "data_type_definitions": [
-            {
-                "_type": act.ActionType.CREATE,
-                "long_name": "Type",
-                "cls": reqif.EnumDataTypeDefinition,
-                "values": ["Unset", "Folder", "Functional"],
-            }
-        ],
-        "requirement_types": [
-            {
-                "_type": act.ActionType.CREATE,
-                "identifier": -3,
-                "long_name": "Requirement",
-                "cls": reqif.RequirementType,
-                "attribute_definitions": [
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "long_name": "Capella ID",
-                        "cls": reqif.AttributeDefinition,
-                    },
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "long_name": "Type",
-                        "cls": reqif.AttributeDefinitionEnumeration,
-                        "multi_valued": False,
-                        "data_type": "Type",
-                    },
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "long_name": "Submitted at",
-                        "cls": reqif.AttributeDefinition,
-                    },
-                ],
-            }
-        ],
-    }
-    REQ_CHANGE = {
-        "_type": act.ActionType.CREATE,
-        "identifier": "5440",
-        "long_name": "Functional Requirements",
-        "cls": reqif.RequirementsFolder,
-        "type": "Requirement",
-        "text": "<p>Test Description</p>",
-        "attributes": [],
-        "requirements": [
-            {
-                "_type": act.ActionType.CREATE,
-                "identifier": "5441",
-                "long_name": "Function Requirement",
-                "cls": reqif.Requirement,
-                "text": "...",
-                "type": "Requirement",
-                "attributes": [
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "cls": reqif.StringValueAttribute,
-                        "value": "R-FNC-00001",
-                        "definition": "Capella ID",
-                    },
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "cls": reqif.EnumerationValueAttribute,
-                        "values": ["Functional"],
-                        "definition": "Type",
-                    },
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "cls": reqif.DateValueAttribute,
-                        "value": TEST_DATE,
-                        "definition": "Submitted at",
-                    },
-                ],
-            }
-        ],
-        "folders": [
-            {
-                "_type": act.ActionType.CREATE,
-                "identifier": "5442",
-                "long_name": "Kinds",
-                "cls": reqif.RequirementsFolder,
-                "text": "",
-                "type": "Requirement",
-                "attributes": [],
-                "folders": [],
-                "requirements": [
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "identifier": "5443",
-                        "long_name": "Kind Requirement",
-                        "cls": reqif.Requirement,
-                        "text": "",
-                        "type": "Requirement",
-                        "attributes": [
-                            {
-                                "_type": act.ActionType.CREATE,
-                                "cls": reqif.StringValueAttribute,
-                                "value": "R-FNC-00002",
-                                "definition": "Capella ID",
-                            },
-                            {
-                                "_type": act.ActionType.CREATE,
-                                "cls": reqif.EnumerationValueAttribute,
-                                "values": ["Unset"],
-                                "definition": "Type",
-                            },
-                        ],
-                    }
-                ],
-            }
-        ],
-    }
-    MODULE_CHANGE = {"25093": [ATTR_DEF_CHANGE, REQ_CHANGE]}
+    ATTR_DEF_CHANGE, REQ_CHANGE = TEST_MODULE_CHANGE[TEST_TRACKER_ID]
 
     def test_create_attribute_definition_actions(
         self, clean_model: capellambse.MelodyModel
@@ -290,7 +188,7 @@ class TestCreateActions(ActionsTest):
             clean_model, TEST_CONFIG, TEST_SNAPSHOT
         )
 
-        assert change_set == self.MODULE_CHANGE
+        assert change_set == TEST_MODULE_CHANGE
 
 
 class TestModActions(ActionsTest):
@@ -299,118 +197,9 @@ class TestModActions(ActionsTest):
     tracker = TEST_SNAPSHOT_1[0]
     titem = tracker["items"][0]
 
-    ATTR_DEF_CHANGE = {
-        "_type": act.ActionType.MOD,
-        "uuid": "487eca4d-8e98-4598-8ec0-4cdbdcbebd03",
-        "data_type_definitions": [
-            {
-                "_type": act.ActionType.MOD,
-                "uuid": "f4b62994-37ac-45d6-add7-d320890e2969",
-                "values": ["Unset", "Folder", "Non-Functional"],
-            },
-            {
-                "_type": act.ActionType.CREATE,
-                "long_name": "Release",
-                "cls": reqif.EnumDataTypeDefinition,
-                "values": ["Rel. 1", "Rel. 2"],
-            },
-        ],
-        "requirement_types": [
-            {
-                "_type": act.ActionType.MOD,
-                "uuid": "e941a947-54ac-48e4-a383-af0b6994076d",
-                "attribute_definitions": [
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "long_name": "Release",
-                        "cls": reqif.AttributeDefinitionEnumeration,
-                        "multi_valued": True,
-                        "data_type": "Release",
-                    },
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "long_name": "Test after migration",
-                        "cls": reqif.AttributeDefinition,
-                    },
-                ],
-            }
-        ],
-    }
-    REQ_CHANGE = {
-        "_type": act.ActionType.MOD,
-        "uuid": "8a814f64-70d1-4fe1-a648-54c83c03d05b",
-        "long_name": "Non-Functional Requirements",
-        "text": "<p>Changed Test Description</p>",
-        "attributes": [
-            {
-                "_type": act.ActionType.CREATE,
-                "cls": reqif.StringValueAttribute,
-                "value": "RF-NFNC-00001",
-                "definition": "Capella ID",
-            },
-            {
-                "_type": act.ActionType.CREATE,
-                "cls": reqif.EnumerationValueAttribute,
-                "values": ["Rel. 1", "Rel. 2"],
-                "definition": "Release",
-            },
-        ],
-        "requirements": [
-            {
-                "_type": act.ActionType.MOD,
-                "uuid": "1cab372a-62cf-443b-b36d-77e66e5de97d",
-                "long_name": "Non-Function Requirement",
-                "attributes": [
-                    {
-                        "_type": act.ActionType.MOD,
-                        "uuid": "8848878e-faf3-4b9a-b5fb-b99df5faf588",
-                        "value": "R-NFNC-00001",
-                    },
-                    {
-                        "_type": act.ActionType.MOD,
-                        "uuid": "1ebdb9ae-db83-4672-acc9-cd52ec671fab",
-                        "values": ["Non-Functional"],
-                    },
-                    {
-                        "_type": act.ActionType.CREATE,
-                        "cls": reqif.StringValueAttribute,
-                        "definition": "Test after migration",
-                        "value": "New",
-                    },
-                ],
-            }
-        ],
-        "folders": [
-            {
-                "_type": act.ActionType.DELETE,
-                "uuid": "04574907-fa9f-423a-b9fd-fc22dc975dc8",
-            }
-        ],
-    }
-    FOLDER_CHANGE = {
-        "_type": act.ActionType.MOD,
-        "parent": TEST_REQ_MODULE_UUID,
-        "uuid": "04574907-fa9f-423a-b9fd-fc22dc975dc8",
-        "long_name": "Functional Requirements",
-        "text": "<p>Brand new</p>",
-        "attributes": [],
-        "folders": [],
-        "requirements": [
-            {
-                "_type": act.ActionType.MOD,
-                "uuid": "94e00375-d52c-4ca6-8c06-225ab13e9afb",
-                "long_name": "Function Requirement",
-                "attributes": [
-                    {
-                        "_type": act.ActionType.MOD,
-                        "uuid": "f26dc00f-5a5d-4431-8e0a-96eb319af096",
-                        "value": "R-FNC-00001",
-                    },
-                ],
-            }
-        ],
-    }
-    MODULE_CHANGE = {"25093": [ATTR_DEF_CHANGE, REQ_CHANGE, FOLDER_CHANGE]}
+    ATTR_DEF_CHANGE, REQ_CHANGE, FOLDER_CHANGE = TEST_MODULE_CHANGE_1[
+        TEST_TRACKER_ID
+    ]
 
     def test_mod_attribute_definition_actions(
         self, migration_model: capellambse.MelodyModel
@@ -445,7 +234,7 @@ class TestModActions(ActionsTest):
             migration_model, TEST_CONFIG, TEST_SNAPSHOT_1
         )
 
-        assert change_set == self.MODULE_CHANGE
+        assert change_set == TEST_MODULE_CHANGE_1
 
 
 class TestDeleteActions(ActionsTest):
@@ -454,58 +243,9 @@ class TestDeleteActions(ActionsTest):
     tracker = TEST_SNAPSHOT_2[0]
     titem = tracker["items"][0]
 
-    ATTR_DEF_CHANGE = {
-        "_type": act.ActionType.MOD,
-        "uuid": "487eca4d-8e98-4598-8ec0-4cdbdcbebd03",
-        "data_type_definitions": [
-            {
-                "_type": act.ActionType.DELETE,
-                "uuid": f"{TEST_UUID_PREFIX}1",
-            },
-        ],
-        "requirement_types": [
-            {
-                "_type": act.ActionType.MOD,
-                "uuid": "e941a947-54ac-48e4-a383-af0b6994076d",
-                "attribute_definitions": [
-                    {
-                        "_type": act.ActionType.DELETE,
-                        "uuid": f"{TEST_UUID_PREFIX}2",
-                    },
-                    {
-                        "_type": act.ActionType.DELETE,
-                        "uuid": f"{TEST_UUID_PREFIX}3",
-                    },
-                ],
-            }
-        ],
-    }
-    REQ_CHANGE = {
-        "_type": act.ActionType.MOD,
-        "uuid": "8a814f64-70d1-4fe1-a648-54c83c03d05b",
-        "attributes": [
-            {"_type": act.ActionType.DELETE, "uuid": f"{TEST_UUID_PREFIX}4"},
-        ],
-        "requirements": [
-            {
-                "_type": act.ActionType.MOD,
-                "uuid": "1cab372a-62cf-443b-b36d-77e66e5de97d",
-                "long_name": "Non-Function Requirement",
-                "attributes": [
-                    {
-                        "_type": act.ActionType.DELETE,
-                        "uuid": f"{TEST_UUID_PREFIX}5",
-                    },
-                ],
-            }
-        ],
-        "folders": [],
-    }
-    FOLDER_DEL = {
-        "_type": act.ActionType.DELETE,
-        "uuid": f"{TEST_UUID_PREFIX}6",
-    }
-    MODULE_CHANGE = {"25093": [ATTR_DEF_CHANGE, REQ_CHANGE, FOLDER_DEL]}
+    ATTR_DEF_CHANGE, REQ_CHANGE, FOLDER_DEL = TEST_MODULE_CHANGE_2[
+        TEST_TRACKER_ID
+    ]
 
     def test_mod_attribute_definition_actions(
         self, deletion_model: capellambse.MelodyModel
@@ -540,4 +280,4 @@ class TestDeleteActions(ActionsTest):
             deletion_model, TEST_CONFIG, TEST_SNAPSHOT_2
         )
 
-        assert change_set == self.MODULE_CHANGE
+        assert change_set == TEST_MODULE_CHANGE_2

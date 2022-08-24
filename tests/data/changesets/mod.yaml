@@ -1,0 +1,80 @@
+'25093':
+- _type: &id001 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
+  - 2
+  data_type_definitions:
+  - _type: *id001
+    uuid: f4b62994-37ac-45d6-add7-d320890e2969
+    values:
+    - Unset
+    - Folder
+    - Non-Functional
+  - _type: &id002 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
+    - 1
+    cls: !!python/name:capellambse.extensions.reqif.elements.EnumerationDataTypeDefinition ''
+    long_name: Release
+    values:
+    - Rel. 1
+    - Rel. 2
+  requirement_types:
+  - _type: *id001
+    attribute_definitions:
+    - _type: *id002
+      cls: !!python/name:capellambse.extensions.reqif.elements.AttributeDefinitionEnumeration ''
+      data_type: Release
+      long_name: Release
+      multi_valued: true
+    - _type: *id002
+      cls: !!python/name:capellambse.extensions.reqif.elements.AttributeDefinition ''
+      long_name: Test after migration
+    uuid: e941a947-54ac-48e4-a383-af0b6994076d
+  uuid: 487eca4d-8e98-4598-8ec0-4cdbdcbebd03
+- _type: *id001
+  attributes:
+  - _type: *id002
+    cls: &id003 !!python/name:capellambse.extensions.reqif.elements.StringValueAttribute ''
+    definition: Capella ID
+    value: RF-NFNC-00001
+  - _type: *id002
+    cls: !!python/name:capellambse.extensions.reqif.elements.EnumerationValueAttribute ''
+    definition: Release
+    values:
+    - Rel. 1
+    - Rel. 2
+  folders:
+  - _type: !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
+    - 3
+    uuid: 04574907-fa9f-423a-b9fd-fc22dc975dc8
+  long_name: Non-Functional Requirements
+  requirements:
+  - _type: *id001
+    attributes:
+    - _type: *id001
+      uuid: 8848878e-faf3-4b9a-b5fb-b99df5faf588
+      value: R-NFNC-00001
+    - _type: *id001
+      uuid: 1ebdb9ae-db83-4672-acc9-cd52ec671fab
+      values:
+      - Non-Functional
+    - _type: *id002
+      cls: *id003
+      definition: Test after migration
+      value: New
+    long_name: Non-Function Requirement
+    uuid: 1cab372a-62cf-443b-b36d-77e66e5de97d
+  text: <p>Changed Test Description</p>
+  uuid: 8a814f64-70d1-4fe1-a648-54c83c03d05b
+- _type: *id001
+  attributes: []
+  folders: []
+  long_name: Functional Requirements
+  parent: 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
+  requirements:
+  - _type: *id001
+    attributes:
+    - _type: *id001
+      uuid: f26dc00f-5a5d-4431-8e0a-96eb319af096
+      value: R-FNC-00001
+    long_name: Function Requirement
+    uuid: 94e00375-d52c-4ca6-8c06-225ab13e9afb
+  text: <p>Brand new</p>
+  uuid: 04574907-fa9f-423a-b9fd-fc22dc975dc8

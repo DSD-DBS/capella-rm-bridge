@@ -3,4 +3,7 @@
 
 import pathlib
 
-TEST_CONFIG = pathlib.Path(__file__).parent / "data" / "config.yaml"
+from rm_bridge import load
+
+TEST_DATA_PATH = pathlib.Path(__file__).parent / "data"
+TEST_CONFIG = load.load_yaml(TEST_DATA_PATH / "config.yaml")
