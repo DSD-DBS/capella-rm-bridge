@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-License-Identifier: Apache-2.0
+
+# yaml-language-server: $schema=../../rm_bridge/model_modifier/changeset/snapshot_input.schema.json
+- id: "25093"
+  attributes:
+    Capella ID:
+      type: String
+    Type:
+      type: Enum
+      values:
+        - Unset
+        - Folder
+        - Non-Functional
+    Submitted at:
+      type: Date
+  items:
+    - id: "5440"
+      long_name: Non-Functional Requirements
+      text: <p>Changed Test Description</p>
+      attributes:
+        Capella ID: RF-NFNC-00001
+        Type: Folder
+      children:
+        - id: "5441"
+          long_name: Non-Function Requirement
+          text: '...'
+          attributes:
+            Capella ID: R-NFNC-00001
+            Type: Non-Functional
+            Submitted at: 2022-06-30T17:07:18.664+02:00

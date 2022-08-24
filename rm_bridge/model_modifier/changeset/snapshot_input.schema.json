@@ -1,0 +1,120 @@
+{
+  "$id": "https://dsd-dbs.github.io/rm-bridge/importer/snapshot.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "RM-Bridge Importer Snapshot",
+  "description": "A downloaded snapshot of Requirements Modules from an external Requirements Management tool.",
+  "type": "array",
+  "items": {
+    "$ref": "#/$defs/requirements-module"
+  },
+  "minItems": 1,
+  "uniqueItems": true,
+  "$defs": {
+    "requirements-module": {
+      "description": "Representation of a RequirementsModule in Capella, taken from the external RM tool. Some tools might use different terminology for the same concept (like \"Tracker\", etc.)",
+      "type": "object",
+      "required": [
+        "id"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "description": "The unique identifier of this module in the external RM tool.",
+          "type": "string"
+        },
+        "attributes": {
+          "description": "AttributeDefinitions for all possible attributes that Requirements or RequirementsFolders in a module could have. Not all of these definitions need to be actually used by any of the requirements' AttributeValues.",
+          "type": "object",
+          "patternProperties": {
+            ".": {
+              "type": "object",
+              "oneOf": [
+                {
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "enum": [
+                        "Boolean",
+                        "Date",
+                        "Float",
+                        "Integer",
+                        "String"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "Enum"
+                    },
+                    "values": {
+                      "description": "The values that this Enum Attribute can have.",
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "multi_values": {
+                      "description": "Whether the Enum Attribute can have multiple values (true) or must always have exactly one value (false).",
+                      "type": "boolean"
+                    }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        },
+        "items": {
+          "description": "The Requirements or RequirementsFolders in this module, ordered in a hierarchical manner. Some tools might use different terminology for the same concept, like \"work item\".",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/requirement"
+          }
+        }
+      }
+    },
+    "requirement": {
+      "description": "A Requirement or RequirementsFolder in the external Requirements Management tool. Some tools might use different terminology for the same concept, like \"work item\".",
+      "type": "object",
+      "required": [
+        "id",
+        "long_name"
+      ],
+      "properties": {
+        "id": {
+          "description": "Unique identifier of this Requirement in the external RM tool",
+          "type": "string"
+        },
+        "long_name": {
+          "description": "Value of the \"Long Name\" field in Capella. Usually a short summary of the Requirement's \"text\".",
+          "type": "string"
+        },
+        "text": {
+          "description": "Complete description text of the requirement as HTML.",
+          "type": "string"
+        },
+        "attributes": {
+          "description": "Values for the attributes defined at module level. Not all attributes defined in the Module's `attributes` need to be present on any Requirement. However, it is not allowed for a Requirement to have attributes which do not also appear in the Module's `attributes`.\n\nFurthermore, the value of each Requirement attribute must match what is defined on the Module level:\n\n- For Boolean, Float, Integer and String, use the respective YAML types\n- For Date, use the date/time YAML type, including the timezone if possible\n- For Enum, use either a string that is equal to one of the Enum's members, or a list of such strings for multi-valued enums",
+          "type": "object",
+          "patternProperties": {
+            ".": {
+              "description": "The value for this Requirement attribute (see the description of the `attributes` object for which types are valid)."
+            }
+          }
+        },
+        "children": {
+          "description": "Requirements or RequirementsFolders underneath a RequirementsFolder (see description of the `items` object). If the `children` property exists, the object is recognized as a folder, as in Capella, Requirements can only be created under RequirementsModules or RequirementsFolders.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/requirement"
+          }
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}
