@@ -10,8 +10,8 @@
     - Unset
     - Folder
     - Functional
-  identifier: -2
-  long_name: Codebeamer Types
+  identifier: "-2"
+  long_name: Types
   parent: 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
   requirement_types:
   - _type: *id001
@@ -28,7 +28,7 @@
       cls: *id002
       long_name: Submitted at
     cls: !!python/name:capellambse.extensions.reqif.elements.RequirementType ''
-    identifier: -3
+    identifier: "-3"
     long_name: Requirement
 - _type: *id001
   attributes: []

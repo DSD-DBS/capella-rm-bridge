@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 trackers:
-  - external-id : 25093
+  - external-id : "25093"
     capella-uuid: 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
     fields:
       - Capella ID

@@ -39,7 +39,7 @@ class ReqFinder:
 
     def find_reqtypesfolder_by_identifier(
         self,
-        uid: int,
+        uid: int | str,
         below: crosslayer.BaseArchitectureLayer
         | reqif.RequirementsModule
         | None = None,
@@ -47,7 +47,7 @@ class ReqFinder:
         """Try to return the RequirementTypesFolder."""
         try:
             reqtf = self.model.search(
-                reqif.XT_REQ_TYPES_F, below=below
+                reqif.XT_CAPELLATYPESFOLDER, below=below
             ).by_identifier(str(uid), single=True)
             assert isinstance(reqtf, reqif.RequirementsTypesFolder)
             return reqtf
@@ -57,7 +57,7 @@ class ReqFinder:
 
     def find_requirement_by_identifier(
         self,
-        cbid: int,
+        cbid: int | str,
         below: reqif.RequirementsModule
         | reqif.RequirementsFolder
         | None = None,

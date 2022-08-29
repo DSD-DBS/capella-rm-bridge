@@ -46,7 +46,7 @@ class CreateAction(Action, total=False):
 
     long_name: te.Required[str]
     cls: te.Required[type[reqif.ReqIFElement]]
-    identifier: int  # Only for Tracker/ReqModule & Work items/Reqs
+    identifier: str  # Only for Tracker/ReqModule & Work items/Reqs
     type: str  # Only for Tracker/ReqModule right now
     text: str
 
@@ -67,7 +67,7 @@ class RequirementCreateAction(CreateAction):
     ]
 
 
-class RequirementFolderCreateAction(CreateAction):
+class RequirementFolderCreateAction(CreateAction, total=False):
     attributes: list[
         AttributeValueCreateAction | EnumAttributeValueCreateAction
     ]
@@ -86,11 +86,11 @@ class EnumAttributeDefinitionCreateAction(CreateAction):
 
 class RequirementTypesFolderCreateAction(CreateAction, total=False):
     parent: te.Required[str]
-    data_type_definitions: list[EnumDataTypeDefinitionCreateAction]
+    data_type_definitions: list[EnumerationDataTypeDefinitionCreateAction]
     requirement_types: list[RequirementTypeCreateAction]
 
 
-class EnumDataTypeDefinitionCreateAction(CreateAction):
+class EnumerationDataTypeDefinitionCreateAction(CreateAction):
     values: list[str]
 
 
@@ -136,14 +136,15 @@ class RequirementModAction(ModAction, total=False):
 
 class RequirementTypesFolderModAction(ModAction, total=False):
     data_type_definitions: list[
-        EnumDataTypeDefinitionCreateAction | EnumDataTypeDefinitionModAction
+        EnumerationDataTypeDefinitionCreateAction
+        | EnumerationDataTypeDefinitionModAction
     ]
     requirement_types: list[
         RequirementTypeCreateAction | RequirementTypeModAction
     ]
 
 
-class EnumDataTypeDefinitionModAction(ModAction, total=False):
+class EnumerationDataTypeDefinitionModAction(ModAction, total=False):
     values: list[str]
 
 

@@ -18,9 +18,9 @@ from .actiontypes import ActionType, DeleteAction
 
 LOGGER = logging.getLogger(__name__)
 REQ_TYPES_FOLDER_NAME = "Types"
-CACHEKEY_MODULE_UUID = -1
-CACHEKEY_TYPES_FOLDER_UUID = -2
-CACHEKEY_REQTYPE_UUID = -3
+CACHEKEY_MODULE_UUID = "-1"
+CACHEKEY_TYPES_FOLDER_UUID = "-2"
+CACHEKEY_REQTYPE_UUID = "-3"
 
 REQ_TYPE_NAME = "Requirement"
 ATTRIBUTE_VALUE_CLASS_MAP = {
@@ -147,7 +147,7 @@ class TrackerChange:
 
         base: dict[str, t.Any] = {
             "_type": act.ActionType.CREATE,
-            "identifier": item["id"],
+            "identifier": str(item["id"]),
             "long_name": item["long_name"],
             "cls": reqif.Requirement,
             "type": REQ_TYPE_NAME,
@@ -184,7 +184,7 @@ class TrackerChange:
     def create_attribute_definition_actions(
         self,
     ) -> act.RequirementTypesFolderCreateAction:
-        """Add missing AttributeDefinitions and EnumDataTypeDefinitions."""
+        """Add missing AttributeDefinitions and EnumerationDataTypeDefinitions."""
         return {
             "_type": act.ActionType.CREATE,
             "parent": self.req_module.uuid,
@@ -214,8 +214,8 @@ class TrackerChange:
         """
         assert self.reqt_folder
         data_type_definitions: list[
-            act.EnumDataTypeDefinitionCreateAction
-            | act.EnumDataTypeDefinitionModAction
+            act.EnumerationDataTypeDefinitionCreateAction
+            | act.EnumerationDataTypeDefinitionModAction
             | act.DeleteAction
         ] = [
             {
@@ -245,7 +245,7 @@ class TrackerChange:
 
     def make_datatype_definition_mod_action(
         self, name: str, values: cabc.Sequence[str]
-    ) -> act.EnumDataTypeDefinitionCreateAction | act.EnumDataTypeDefinitionModAction | None:
+    ) -> act.EnumerationDataTypeDefinitionCreateAction | act.EnumerationDataTypeDefinitionModAction | None:
         """Return an Action for the DataTypeDefinition.
 
         If a :class:`reqif.DataTypeDefinition` can be found via
@@ -458,12 +458,12 @@ class TrackerChange:
 
 def make_data_type_definition(
     name: str, values: cabc.Sequence[str]
-) -> act.EnumDataTypeDefinitionCreateAction:
-    """Return a `CreateAction` for an `reqif.EnumDataTypeDefinition`."""
+) -> act.EnumerationDataTypeDefinitionCreateAction:
+    """Return a `CreateAction` for an EnumerationDataTypeDefinition."""
     return {
         "_type": act.ActionType.CREATE,
         "long_name": name,
-        "cls": reqif.EnumDataTypeDefinition,
+        "cls": reqif.EnumerationDataTypeDefinition,
         "values": list(values),
     }
 
