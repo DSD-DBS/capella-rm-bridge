@@ -15,7 +15,7 @@ from rm_bridge.model_modifier.changeset import find
 from . import conftest as ct
 
 TEST_CHANGESETS_PATH = ct.TEST_DATA_PATH / "changesets"
-TEST_MODULE_CHANGE = yaml.load(
+TEST_MODULE_CREATE_CHANGE = yaml.load(
     (TEST_CHANGESETS_PATH / "create.yaml").read_text(encoding="utf-8"),
     Loader=yaml.Loader,
 )
@@ -28,7 +28,8 @@ def clean_tmp_model(tmp_path: pathlib.Path) -> capellambse.MelodyModel:
     reqmodule = model.by_uuid(ct.TEST_REQ_MODULE_UUID)
     del reqmodule.requirement_types_folders[0]
     del reqmodule.folders[0]
-    return model
+    yield model
+    model.save()
 
 
 class ModelChangeTest:
@@ -49,6 +50,5 @@ class TestCreateModelChange(ModelChangeTest):
         modelchange.apply_changes(
             tracker["external-id"],
             tracker["capella-uuid"],
-            TEST_MODULE_CHANGE[tracker["external-id"]],
+            TEST_MODULE_CREATE_CHANGE[tracker["external-id"]],
         )
-        clean_tmp_model.save()
