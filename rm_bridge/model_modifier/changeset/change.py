@@ -105,7 +105,7 @@ class TrackerChange:
         if action is not None:
             self.actions.append(action)
 
-        visited: set[int] = set()
+        visited: set[str] = set()
         for item in self.tracker["items"]:
             if req := self.reqfinder.find_requirement_by_identifier(
                 item["id"]

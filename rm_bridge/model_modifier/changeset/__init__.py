@@ -21,7 +21,7 @@ def calculate_change_set(
     model: capellambse.MelodyModel,
     config: cabc.MutableMapping[str, t.Any],
     snapshot: list[types.TrackerSnapshot],
-) -> dict[int, list[CreateAction | ModAction | DeleteAction]]:
+) -> dict[str, list[CreateAction | ModAction | DeleteAction]]:
     r"""Return a list of actions for a given ``model`` and ``snapshot``.
 
     The ``ChangeSet`` stores the needed actions to synchronize the
@@ -29,7 +29,7 @@ def calculate_change_set(
     which correspond to ``reqif.RequirementsModule``\ s.
     """
     trackers = config["trackers"]
-    actions: dict[int, list[CreateAction | ModAction | DeleteAction]] = {}
+    actions: dict[str, list[CreateAction | ModAction | DeleteAction]] = {}
     for tracker in snapshot:
         tconfig = next(
             ctracker

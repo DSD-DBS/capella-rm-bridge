@@ -22,7 +22,9 @@ class ReqFinder:
 
         self._cache: cabc.Mapping[str, reqif.ReqIFElement] = {}
 
-    def find_module(self, uuid: str, cbid: int) -> reqif.RequirementsModule:
+    def find_module(
+        self, uuid: str, cbid: int | str
+    ) -> reqif.RequirementsModule:
         """Try to return the tracker/RequirementsModule."""
         req_module = None
         try:
