@@ -116,11 +116,6 @@ class ModelChange:
             obj = (target or parent.requirement_types_folders).create(**action)
         elif action["cls"] == reqif.RequirementsFolder:
             action: actiontypes.RequirementFolderCreateAction
-            req_types_folder = (
-                self.reqfinder.find_reqtypesfolder_by_identifier(
-                    change.CACHEKEY_TYPES_FOLDER_UUID, below=req_module
-                )
-            )
             patch_type(action, req_types_folder)
             obj = (target or req_module.folders).create(**action)
         elif action["cls"] == reqif.Requirement:
