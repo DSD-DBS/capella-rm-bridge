@@ -414,8 +414,8 @@ class TrackerChange:
         if not (
             any(mods)
             or any(base["attributes"])
-            or any(base["requirements"])
-            or any(base["folders"])
+            or any(base.get("requirements", []))
+            or any(base.get("folders", []))
         ):
             return None
         return base  # type:ignore[return-value]
