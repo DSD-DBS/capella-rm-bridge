@@ -10,6 +10,7 @@ triggering of the t4c model update via git2t4c merge execution call.
 from __future__ import annotations
 
 import collections.abc as cabc
+import copy
 import datetime
 import typing as t
 
@@ -61,9 +62,13 @@ class ActionsTest:
     tconfig = TEST_CONFIG["trackers"][0]
 
     def tracker_change(
-        self, model: capellambse.MelodyModel
+        self,
+        model: capellambse.MelodyModel,
+        tracker: cabc.Mapping[str, t.Any] | None = None,
     ) -> change.TrackerChange:
-        return change.TrackerChange(self.tracker, model, self.tconfig)
+        return change.TrackerChange(
+            tracker or self.tracker, model, self.tconfig
+        )
 
 
 class TestCreateActions(ActionsTest):
@@ -91,6 +96,26 @@ class TestCreateActions(ActionsTest):
         actions = tchange.create_requirements_actions(self.titem)
 
         assert actions == self.REQ_CHANGE
+
+    def test_create_requirements_attributes_with_none_values(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        """Test that default values are chosen instead of faulty values."""
+        tracker = copy.deepcopy(self.tracker)
+        titem = tracker["items"][0]
+        titem["attributes"]["Type"] = []
+        first_child = titem["children"][0]
+        first_child["attributes"]["Capella ID"] = None
+        first_child["attributes"]["Type"] = None
+        first_child["attributes"]["Submitted at"] = None
+        tchange = self.tracker_change(clean_model, tracker)
+
+        actions = tchange.create_requirements_actions(titem)
+        req_actions = actions["requirements"][0]["attributes"]  # type: ignore[typeddict-item]
+
+        assert req_actions[0]["value"] == ""
+        assert req_actions[1]["values"] == ["Unset"]
+        assert req_actions[2]["value"] is None
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -137,6 +162,32 @@ class TestModActions(ActionsTest):
         )
 
         assert actions == self.REQ_CHANGE
+
+    def test_mod_requirements_attributes_with_none_values(
+        self, migration_model: capellambse.MelodyModel
+    ) -> None:
+        """Test that faulty values don't produce a ModAction if default."""
+        tracker = copy.deepcopy(self.tracker)
+        titem = tracker["items"][0]
+        titem["attributes"]["Type"] = []
+        first_child = titem["children"][0]
+        first_child["attributes"]["Capella ID"] = None
+        first_child["attributes"]["Type"] = None
+        first_child["attributes"]["Submitted at"] = None
+        tchange = self.tracker_change(migration_model, tracker)
+        reqfolder = tchange.reqfinder.find_requirement_by_identifier(
+            self.titem["id"]
+        )
+        assert isinstance(reqfolder, reqif.RequirementsFolder)
+
+        actions = tchange.mod_requirements_actions(
+            reqfolder, titem, tchange.req_module
+        )
+        req_actions = actions["requirements"][0]["attributes"]  # type: ignore[typeddict-item]
+
+        assert req_actions[0]["value"] == ""
+        assert req_actions[1]["values"] == ["Unset"]
+        assert req_actions[2]["value"] is None
 
     @pytest.mark.integtest
     def test_calculate_change_sets(

@@ -23,15 +23,23 @@ CACHEKEY_TYPES_FOLDER_UUID = "-2"
 CACHEKEY_REQTYPE_UUID = "-3"
 
 REQ_TYPE_NAME = "Requirement"
-ATTRIBUTE_VALUE_CLASS_MAP = {
-    "String": reqif.StringValueAttribute,
-    "Enum": reqif.EnumerationValueAttribute,
-    "Date": reqif.DateValueAttribute,
-    "Integer": reqif.IntegerValueAttribute,
-    "Float": reqif.RealValueAttribute,
-    "Boolean": reqif.BooleanValueAttribute,
+ATTRIBUTE_VALUE_CLASS_MAP: cabc.Mapping[
+    str, tuple[type, type, act.Primitive | None]
+] = {
+    "String": (reqif.StringValueAttribute, str, ""),
+    "Enum": (reqif.EnumerationValueAttribute, list, []),
+    "Date": (reqif.DateValueAttribute, datetime.datetime, None),
+    "Integer": (reqif.IntegerValueAttribute, int, 0),
+    "Float": (reqif.RealValueAttribute, float, 0.0),
+    "Boolean": (reqif.BooleanValueAttribute, bool, False),
 }
 ATTR_BLACKLIST = frozenset({("Type", "Folder")})
+
+
+class AttributeValueBuilder(t.NamedTuple):
+    clstype: type
+    key: str
+    value: act.Primitive | None
 
 
 class TrackerChange:
@@ -56,7 +64,7 @@ class TrackerChange:
         str, act.AttributeDefinition | act.EnumAttributeDefinition
     ]
     """A lookup for AttributeDefinitions from the tracker snapshot."""
-    data_type_definitions: cabc.Mapping[str, cabc.Sequence[str]]
+    data_type_definitions: cabc.Mapping[str, list[str]]
     """A lookup for DataTypeDefinitions from the tracker snapshot."""
 
     def __init__(
@@ -166,20 +174,33 @@ class TrackerChange:
         return base  # type:ignore[return-value]
 
     def make_attribute_create_action(
-        self, name: str, value: str | cabc.MutableSequence[str]
+        self, name: str, value: str | list[str]
     ) -> act.AttributeValueCreateAction | act.EnumAttributeValueCreateAction:
         """Return an action for creating an AttributeValue."""
-        type = self.definitions[name]["type"]
-        base = {
+        builder = self.patch_faulty_attribute_value(name, value)
+        return {
             "_type": act.ActionType.CREATE,
-            "cls": ATTRIBUTE_VALUE_CLASS_MAP[type],
+            "cls": builder.clstype,
             "definition": name,
-        }
-        if type == "Enum":
-            base["values"] = [value] if not isinstance(value, list) else value
+            builder.key: builder.value,  # type:ignore[misc]
+        }  # type:ignore[return-value]
+
+    def patch_faulty_attribute_value(
+        self, name: str, value: str | list[str]
+    ) -> AttributeValueBuilder:
+        """Swap faulty value with definition's default value."""
+        deftype = self.definitions[name]["type"]
+        clstype, type, default_value = ATTRIBUTE_VALUE_CLASS_MAP[deftype]
+        pvalue: act.Primitive | None
+        if deftype == "Enum":
+            default = self.data_type_definitions[name]
+            is_faulty = not value or not isinstance(value, type)
+            pvalue = default[:1] if is_faulty else value
+            key = "values"
         else:
-            base["value"] = value
-        return base  # type:ignore[return-value]
+            pvalue = value if isinstance(value, type) else default_value
+            key = "value"
+        return AttributeValueBuilder(clstype, key, pvalue)
 
     def create_attribute_definition_actions(
         self,
@@ -442,18 +463,21 @@ class TrackerChange:
         """
         try:
             attr = req.attributes.by_definition.long_name(name, single=True)
-            base = {"_type": act.ActionType.MOD, "uuid": attr.uuid}
+            builder = self.patch_faulty_attribute_value(name, value)
             if isinstance(attr, reqif.EnumerationValueAttribute):
-                value = value if isinstance(value, list) else [value]
-                if set(attr.values.by_long_name) != set(value):
-                    base["values"] = value
-            elif attr.value != value:
-                base["value"] = value
-            if nothing_changed(base):
-                return None
-            return base  # type:ignore[return-value]
+                assert isinstance(builder.value, list)
+                differ = set(attr.values.by_long_name) != set(builder.value)
+            else:
+                differ = attr.value != builder.value
+            if differ:
+                return {
+                    "_type": act.ActionType.MOD,
+                    "uuid": attr.uuid,
+                    builder.key: builder.value,  # type:ignore[misc]
+                }  # type:ignore[return-value]
         except KeyError:
             return self.make_attribute_create_action(name, value)
+        return None
 
 
 def make_data_type_definition(

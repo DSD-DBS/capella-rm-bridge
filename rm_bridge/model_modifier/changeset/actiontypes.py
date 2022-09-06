@@ -4,11 +4,14 @@
 from __future__ import annotations
 
 import collections.abc as cabc
+import datetime
 import enum
 import typing as t
 
 import typing_extensions as te
 from capellambse.extensions import reqif
+
+Primitive = t.Union[int, float, str, list[str], bool, datetime.datetime]
 
 
 class ActionType(enum.Enum):
@@ -31,7 +34,7 @@ class AttributeDefinition(te.TypedDict):
 
 
 class EnumAttributeDefinition(AttributeDefinition, total=False):
-    values: cabc.Sequence[str]
+    values: list[str]
     multi_values: bool
 
 
@@ -53,7 +56,7 @@ class CreateAction(Action, total=False):
 
 class AttributeValueCreateAction(CreateAction):
     definition: str
-    value: str
+    value: Primitive
 
 
 class EnumAttributeValueCreateAction(CreateAction):
@@ -107,7 +110,7 @@ class ModAction(Action, total=False):
 
 
 class AttributeValueModAction(ModAction, total=False):
-    value: str
+    value: Primitive
 
 
 class EnumAttributeValueModAction(ModAction, total=False):

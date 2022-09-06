@@ -153,7 +153,6 @@ def patch_type(
             ].attribute_definitions.by_long_name(
                 attr["definition"], single=True
             )
-            patch_attribute_value(attr, req_types_folder)
     else:
         del req["attributes"]
 
@@ -169,31 +168,6 @@ def patch_type(
         del req["cls"]
     else:
         req["_type"] = req.pop("cls").__name__
-
-
-def patch_attribute_value(
-    attr: actiontypes.AttributeValueCreateAction
-    | actiontypes.EnumAttributeValueCreateAction,
-    req_types_folder: reqif.RequirementsTypesFolder,
-):
-    type, default_value = ATTR_TYPE_MAP[attr["_type"]]
-    if attr["_type"] == "EnumerationValueAttribute":
-        if not isinstance(attr["values"], type) or not attr["values"]:
-            try:
-                edtdef = req_types_folder.data_type_defenitions.by_long_name(
-                    attr["definition"], single=True
-                )
-                default_value = edtdef.values[:1]
-            except KeyError:
-                pass
-
-            attr["values"] = default_value
-        return
-
-    if attr["value"] is None:
-        if type == datetime.datetime:
-            return
-        attr["value"] = default_value
 
 
 def set_enum_values(
