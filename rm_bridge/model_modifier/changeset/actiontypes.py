@@ -104,7 +104,6 @@ class RequirementTypeCreateAction(CreateAction):
 class ModAction(Action, total=False):
     """Action for Modification of ModelElements"""
 
-    parent: str
     uuid: te.Required[str]
     long_name: str
 
@@ -184,3 +183,7 @@ class DeleteAction(Action):
     """Action for Deletion of ModelElements"""
 
     uuid: str
+
+
+class MoveAction(Action):
+    """Action for moving a ModelElement to a different location."""

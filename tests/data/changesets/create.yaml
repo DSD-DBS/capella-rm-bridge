@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-License-Identifier: Apache-2.0
+
 '25093':
 - _type: &id001 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
   - 1

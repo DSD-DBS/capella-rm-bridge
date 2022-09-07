@@ -1,0 +1,53 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-License-Identifier: Apache-2.0
+
+- _type: &id002 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
+  - 2
+  attributes: &id003
+  - _type: &id001 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
+    - 1
+    cls: &id004 !!python/name:capellambse.extensions.reqif.elements.StringValueAttribute ''
+    definition: Capella ID
+    value: RF-NFNC-00001
+  - _type: *id001
+    cls: !!python/name:capellambse.extensions.reqif.elements.EnumerationValueAttribute ''
+    definition: Release
+    values:
+    - Rel. 1
+    - Rel. 2
+  folders:
+  - _type: *id002
+    attributes: *id003
+    folders:
+    - _type: *id002
+      attributes: *id003
+      folders: []
+      long_name: Non-Functional Requirements
+      requirements: []
+      text: <p>Changed Test Description</p>
+      uuid: 00000000-0000-0000-0000-000000000000
+    long_name: Non-Functional Requirements
+    requirements:
+    - &id005
+      _type: *id002
+      attributes:
+      - _type: *id002
+        uuid: 8848878e-faf3-4b9a-b5fb-b99df5faf588
+        value: R-NFNC-00001
+      - _type: *id002
+        uuid: 1ebdb9ae-db83-4672-acc9-cd52ec671fab
+        values:
+        - Non-Functional
+      - _type: *id001
+        cls: *id004
+        definition: Test after migration
+        value: New
+      long_name: Non-Function Requirement
+      uuid: 1cab372a-62cf-443b-b36d-77e66e5de97d
+    text: <p>Changed Test Description</p>
+    uuid: 8a814f64-70d1-4fe1-a648-54c83c03d05b
+  long_name: Non-Functional Requirements
+  requirements:
+  - *id005
+  text: <p>Changed Test Description</p>
+  uuid: 8a814f64-70d1-4fe1-a648-54c83c03d05b

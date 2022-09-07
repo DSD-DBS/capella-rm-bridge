@@ -18,9 +18,9 @@ from .actiontypes import ActionType, DeleteAction
 
 LOGGER = logging.getLogger(__name__)
 REQ_TYPES_FOLDER_NAME = "Types"
-CACHEKEY_MODULE_UUID = "-1"
-CACHEKEY_TYPES_FOLDER_UUID = "-2"
-CACHEKEY_REQTYPE_UUID = "-3"
+CACHEKEY_MODULE_IDENTIFIER = "-1"
+CACHEKEY_TYPES_FOLDER_IDENTIFIER = "-2"
+CACHEKEY_REQTYPE_IDENTIFIER = "-3"
 
 REQ_TYPE_NAME = "Requirement"
 ATTRIBUTE_VALUE_CLASS_MAP: cabc.Mapping[
@@ -66,6 +66,10 @@ class TrackerChange:
     """A lookup for AttributeDefinitions from the tracker snapshot."""
     data_type_definitions: cabc.Mapping[str, list[str]]
     """A lookup for DataTypeDefinitions from the tracker snapshot."""
+    req_deletions: cabc.MutableMapping[str, act.RequirementFolderModAction]
+    """A lookup for deleted `reqif.Requirement`s."""
+    folder_deletions: cabc.MutableMapping[str, act.RequirementFolderModAction]
+    """A lookup for deleted `reqif.RequirementsFolder`s."""
 
     def __init__(
         self,
@@ -80,6 +84,8 @@ class TrackerChange:
             for name, data in self.definitions.items()
             if data["type"] == "Enum"
         }
+        self.req_deletions = {}
+        self.folder_deletions = {}
 
         self.model = model
         self.config = config
@@ -94,7 +100,7 @@ class TrackerChange:
             raise KeyError from error
 
         self.reqt_folder = self.reqfinder.find_reqtypesfolder_by_identifier(
-            CACHEKEY_TYPES_FOLDER_UUID, below=self.req_module
+            CACHEKEY_TYPES_FOLDER_IDENTIFIER, below=self.req_module
         )
         self.actions = []
 
@@ -127,6 +133,8 @@ class TrackerChange:
 
             if action is not None:
                 self.actions.append(action)
+
+        self.patch_actions()
 
         for req in self.req_module.requirements + self.req_module.folders:
             assert req is not None
@@ -209,7 +217,7 @@ class TrackerChange:
         return {
             "_type": act.ActionType.CREATE,
             "parent": self.req_module.uuid,
-            "identifier": CACHEKEY_TYPES_FOLDER_UUID,
+            "identifier": CACHEKEY_TYPES_FOLDER_IDENTIFIER,
             "long_name": REQ_TYPES_FOLDER_NAME,
             "cls": reqif.RequirementsTypesFolder,
             "data_type_definitions": [
@@ -397,26 +405,40 @@ class TrackerChange:
         }
         if req.parent != parent:
             base["parent"] = parent.uuid
-        if children := item.get("children", []):
-            base["requirements"] = []
-            base["folders"] = []
-            if not isinstance(req, reqif.RequirementsFolder):
-                base["_type"] = reqif.RequirementsFolder
+            if req.xtype.endswith("Folder"):
+                parent_folders = self.folder_deletions[req.uuid]
+                del parent_folders[req.uuid]
             else:
-                child_req_ids: set[str] = set()
-                child_folder_ids: set[str] = set()
-                for child in children:
-                    if child.get("children", []):
-                        child_folder_ids.add(str(child["id"]))
-                    else:
-                        child_req_ids.add(str(child["id"]))
+                parent_reqs = self.req_deletions[req.uuid]
+                del parent_reqs[req.uuid]
 
-                req_dels = add_requirement_delete_actions(req, child_req_ids)
-                fold_dels = add_requirement_delete_actions(
-                    req, child_folder_ids, "folders"
-                )
-            base["requirements"].extend(req_dels)
-            base["folders"].extend(fold_dels)
+        children = item.get("children", [])
+        if isinstance(req, reqif.RequirementsFolder):
+            base["requirements"] = {}
+            base["folders"] = {}
+            child_req_ids: set[str] = set()
+            child_folder_ids: set[str] = set()
+            for child in children:
+                if child.get("children", []):
+                    child_folder_ids.add(str(child["id"]))
+                else:
+                    child_req_ids.add(str(child["id"]))
+
+            req_dels = add_requirement_delete_actions(req, child_req_ids)
+            base["requirements"].update(req_dels)
+            reqs = base["requirements"]
+            for duuid in req_dels:
+                self.req_deletions[duuid] = reqs  # type:ignore[assignment]
+
+            fold_dels = add_requirement_delete_actions(
+                req, child_folder_ids, "folders"
+            )
+            base["folders"].update(fold_dels)
+            folders = base["folders"]
+            for fuuid in fold_dels:
+                self.folder_deletions[
+                    fuuid
+                ] = folders  # type:ignore[assignment]
         for child in children:
             k = "folders" if child.get("children", []) else "requirements"
             creq = self.reqfinder.find_requirement_by_identifier(  # type:ignore[assignment]
@@ -431,7 +453,7 @@ class TrackerChange:
                     creq, child, req
                 )  # type:ignore[assignment]
             if action is not None:
-                base[k].append(action)
+                base[k][action.get("uuid", child["id"])] = action
         if not (
             any(mods)
             or any(base["attributes"])
@@ -479,6 +501,31 @@ class TrackerChange:
             return self.make_attribute_create_action(name, value)
         return None
 
+    def patch_actions(self) -> None:
+        for action in self.actions:
+            is_def_mod = action.get("data_type_definitions") or action.get(
+                "requirement_types"
+            )
+            if is_def_mod or action["_type"] != ActionType.MOD:
+                continue
+            if (reqs := action.get("requirements")) is not None:
+                action["requirements"] = [req for req in reqs.values()]
+            if (folders := action.get("folders")) is not None:
+                action["folders"] = list(convert_folders(folders))
+
+
+def convert_folders(
+    item: cabc.MutableMapping[
+        str, act.CreateAction | act.ModAction | act.DeleteAction
+    ]
+) -> cabc.Iterator[act.CreateAction | act.ModAction | act.DeleteAction]:
+    for action in item.values():
+        if (reqs := action.get("requirements")) is not None:
+            action["requirements"] = [req for req in reqs.values()]
+        if (folders := action.get("folders")) is not None:
+            action["folders"] = list(convert_folders(folders))
+        yield action
+
 
 def make_data_type_definition(
     name: str, values: cabc.Sequence[str]
@@ -500,7 +547,7 @@ def make_requirement_type(
     """Return a `CreateAction` for the `reqif.RequirementType`."""
     return {
         "_type": act.ActionType.CREATE,
-        "identifier": CACHEKEY_REQTYPE_UUID,
+        "identifier": CACHEKEY_REQTYPE_IDENTIFIER,
         "long_name": REQ_TYPE_NAME,
         "cls": reqif.RequirementType,
         "attribute_definitions": [
@@ -570,13 +617,13 @@ def add_requirement_delete_actions(
     req: reqif.RequirementsFolder,
     child_ids: cabc.Iterable[str],
     key: str = "requirements",
-) -> list[act.DeleteAction]:
+) -> dict[str, act.DeleteAction]:
     """Return all `DeleteAction`s for elements behind `req.key`."""
-    return [
-        {"_type": act.ActionType.DELETE, "uuid": creq.uuid}
+    return {
+        creq.uuid: {"_type": act.ActionType.DELETE, "uuid": creq.uuid}
         for creq in getattr(req, key)
         if creq.identifier not in child_ids
-    ]
+    }
 
 
 def blacklisted(

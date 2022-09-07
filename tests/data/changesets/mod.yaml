@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-License-Identifier: Apache-2.0
+
 '25093':
 - _type: &id001 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
   - 2
@@ -40,10 +43,7 @@
     values:
     - Rel. 1
     - Rel. 2
-  folders:
-  - _type: !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
-    - 3
-    uuid: 04574907-fa9f-423a-b9fd-fc22dc975dc8
+  folders: []
   long_name: Non-Functional Requirements
   requirements:
   - _type: *id001

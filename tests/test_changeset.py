@@ -20,9 +20,13 @@ import yaml
 from capellambse.extensions import reqif
 
 from rm_bridge import types
-from rm_bridge.model_modifier.changeset import calculate_change_set, change
+from rm_bridge.model_modifier.changeset import (
+    actiontypes,
+    calculate_change_set,
+    change,
+)
 
-from .conftest import TEST_CONFIG, TEST_DATA_PATH
+from .conftest import TEST_CONFIG, TEST_DATA_PATH, TEST_UUID_PREFIX
 
 TEST_SNAPSHOT: list[types.TrackerSnapshot] = yaml.safe_load(
     (TEST_DATA_PATH / "snapshot.yaml").read_text(encoding="utf-8")
@@ -45,6 +49,12 @@ TEST_MODULE_CHANGE_1 = yaml.load(
 )
 TEST_MODULE_CHANGE_2 = yaml.load(
     (TEST_DATA_PATH / "changesets" / "delete.yaml").read_text(
+        encoding="utf-8"
+    ),
+    Loader=yaml.Loader,
+)
+TEST_MOD_PATCH_CHANGE = yaml.load(
+    (TEST_DATA_PATH / "patch_actions_expected.yaml").read_text(
         encoding="utf-8"
     ),
     Loader=yaml.Loader,
@@ -138,6 +148,16 @@ class TestModActions(ActionsTest):
     ATTR_DEF_CHANGE, REQ_CHANGE, FOLDER_CHANGE = TEST_MODULE_CHANGE_1[
         TEST_TRACKER_ID
     ]
+    REQ_CHANGE = copy.deepcopy(REQ_CHANGE)
+    REQ_CHANGE["requirements"] = {
+        "1cab372a-62cf-443b-b36d-77e66e5de97d": REQ_CHANGE["requirements"][0]
+    }
+    REQ_CHANGE["folders"] = {
+        "04574907-fa9f-423a-b9fd-fc22dc975dc8": {
+            "_type": actiontypes.ActionType.DELETE,
+            "uuid": "04574907-fa9f-423a-b9fd-fc22dc975dc8",
+        }
+    }
 
     def test_mod_attribute_definition_actions(
         self, migration_model: capellambse.MelodyModel
@@ -183,11 +203,32 @@ class TestModActions(ActionsTest):
         actions = tchange.mod_requirements_actions(
             reqfolder, titem, tchange.req_module
         )
-        req_actions = actions["requirements"][0]["attributes"]  # type: ignore[typeddict-item]
+        req_actions = actions["requirements"][  # type: ignore[typeddict-item,index]
+            "1cab372a-62cf-443b-b36d-77e66e5de97d"
+        ]
 
-        assert req_actions[0]["value"] == ""
-        assert req_actions[1]["values"] == ["Unset"]
-        assert req_actions[2]["value"] is None
+        assert req_actions["attributes"][0]["value"] == ""
+        assert req_actions["attributes"][1]["values"] == ["Unset"]
+        assert req_actions["attributes"][2]["value"] is None
+
+    def test_patch_actions(
+        self, migration_model: capellambse.MelodyModel
+    ) -> None:
+        """Test that ``ModAction``s are converted from dict to list."""
+        tchange = self.tracker_change(migration_model)
+        test_folders = {
+            (test_uuid := f"{TEST_UUID_PREFIX}0"): dict(
+                self.REQ_CHANGE, uuid=test_uuid, requirements={}, folders={}
+            )
+        }
+        self.REQ_CHANGE["folders"][
+            "04574907-fa9f-423a-b9fd-fc22dc975dc8"
+        ] = dict(self.REQ_CHANGE, folders=test_folders)
+        tchange.actions = [self.REQ_CHANGE]
+
+        tchange.patch_actions()
+
+        assert tchange.actions == TEST_MOD_PATCH_CHANGE
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -210,6 +251,11 @@ class TestDeleteActions(ActionsTest):
     ATTR_DEF_CHANGE, REQ_CHANGE, FOLDER_DEL = TEST_MODULE_CHANGE_2[
         TEST_TRACKER_ID
     ]
+    REQ_CHANGE = copy.deepcopy(REQ_CHANGE)
+    REQ_CHANGE["requirements"] = {
+        "1cab372a-62cf-443b-b36d-77e66e5de97d": REQ_CHANGE["requirements"][0]
+    }
+    REQ_CHANGE["folders"] = {}
 
     def test_mod_attribute_definition_actions(
         self, deletion_model: capellambse.MelodyModel
