@@ -1,80 +1,62 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
-
-'25093':
-- _type: &id001 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
-  - 2
-  data_type_definitions:
-  - _type: *id001
-    uuid: f4b62994-37ac-45d6-add7-d320890e2969
-    values:
-    - Unset
-    - Folder
-    - Non-Functional
-  - _type: &id002 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
-    - 1
-    cls: !!python/name:capellambse.extensions.reqif.elements.EnumerationDataTypeDefinition ''
-    long_name: Release
-    values:
-    - Rel. 1
-    - Rel. 2
-  requirement_types:
-  - _type: *id001
+- parent: !uuid 487eca4d-8e98-4598-8ec0-4cdbdcbebd03
+  create:
+    data_type_definitions:
+      - long_name: Release
+        values:
+          - Rel. 1
+          - Rel. 2
+        promise_id: EnumerationDataTypeDefinition-Release
+        _type: enum
+- parent: !uuid 004bd7d4-9af5-4738-a4c9-10b04dc4608b
+  modify:
+    long_name: Non-Functional
+- parent: !uuid e941a947-54ac-48e4-a383-af0b6994076d
+  create:
     attribute_definitions:
-    - _type: *id002
-      cls: !!python/name:capellambse.extensions.reqif.elements.AttributeDefinitionEnumeration ''
-      data_type: Release
-      long_name: Release
-      multi_valued: true
-    - _type: *id002
-      cls: !!python/name:capellambse.extensions.reqif.elements.AttributeDefinition ''
-      long_name: Test after migration
-    uuid: e941a947-54ac-48e4-a383-af0b6994076d
-  uuid: 487eca4d-8e98-4598-8ec0-4cdbdcbebd03
-- _type: *id001
-  attributes:
-  - _type: *id002
-    cls: &id003 !!python/name:capellambse.extensions.reqif.elements.StringValueAttribute ''
-    definition: Capella ID
-    value: RF-NFNC-00001
-  - _type: *id002
-    cls: !!python/name:capellambse.extensions.reqif.elements.EnumerationValueAttribute ''
-    definition: Release
-    values:
-    - Rel. 1
-    - Rel. 2
-  folders: []
-  long_name: Non-Functional Requirements
-  requirements:
-  - _type: *id001
+      - long_name: Release
+        data_type: !promise EnumerationDataTypeDefinition-Release
+        multi_valued: true
+        promise_id: AttributeDefinitionEnumeration-Release
+        _type: AttributeDefinitionEnumeration
+      - long_name: Test after migration
+        promise_id: AttributeDefinition-Test after migration
+        _type: AttributeDefinition
+- parent: !uuid 8a814f64-70d1-4fe1-a648-54c83c03d05b
+  create:
     attributes:
-    - _type: *id001
-      uuid: 8848878e-faf3-4b9a-b5fb-b99df5faf588
-      value: R-NFNC-00001
-    - _type: *id001
-      uuid: 1ebdb9ae-db83-4672-acc9-cd52ec671fab
-      values:
-      - Non-Functional
-    - _type: *id002
-      cls: *id003
-      definition: Test after migration
-      value: New
+      - definition: !uuid d82b82e8-e1c5-4f07-8769-744a44764759
+        value: RF-NFNC-00001
+        _type: str
+      - definition: !promise AttributeDefinitionEnumeration-Release
+        values:
+          - Rel. 1
+          - Rel. 2
+        _type: enum
+  modify:
+    long_name: Non-Functional Requirements
+    text: <p>Changed Test Description</p>
+- parent: !uuid 1cab372a-62cf-443b-b36d-77e66e5de97d
+  create:
+    attributes:
+      - definition: !promise AttributeDefinition-Test after migration
+        value: New
+        _type: AttributeDefinition
+  modify:
     long_name: Non-Function Requirement
-    uuid: 1cab372a-62cf-443b-b36d-77e66e5de97d
-  text: <p>Changed Test Description</p>
-  uuid: 8a814f64-70d1-4fe1-a648-54c83c03d05b
-- _type: *id001
-  attributes: []
-  folders: []
-  long_name: Functional Requirements
-  parent: 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
-  requirements:
-  - _type: *id001
     attributes:
-    - _type: *id001
-      uuid: f26dc00f-5a5d-4431-8e0a-96eb319af096
-      value: R-FNC-00001
+      Capella ID: R-NFNC-00001
+      Type: [Non-Functional]
+- parent: !uuid 04574907-fa9f-423a-b9fd-fc22dc975dc8
+  modify:
+    long_name: Functional Requirements
+    text: <p>Brand new</p>
+  extend:
+    folders:
+      - !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
+- parent: !uuid 94e00375-d52c-4ca6-8c06-225ab13e9afb
+  modify:
     long_name: Function Requirement
-    uuid: 94e00375-d52c-4ca6-8c06-225ab13e9afb
-  text: <p>Brand new</p>
-  uuid: 04574907-fa9f-423a-b9fd-fc22dc975dc8
+    attributes:
+      Capella ID: R-FNC-00001

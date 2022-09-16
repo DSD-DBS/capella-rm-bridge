@@ -20,8 +20,6 @@ class ReqFinder:
     def __init__(self, model: capellambse.MelodyModel) -> None:
         self.model = model
 
-        self._cache: cabc.Mapping[str, reqif.ReqIFElement] = {}
-
     def find_module(
         self, uuid: str, cbid: int | str
     ) -> reqif.RequirementsModule:
@@ -49,7 +47,7 @@ class ReqFinder:
         """Try to return the RequirementTypesFolder."""
         try:
             reqtf = self.model.search(
-                reqif.XT_CAPELLATYPESFOLDER, below=below
+                reqif.XT_MODULE, below=below
             ).by_identifier(str(uid), single=True)
             assert isinstance(reqtf, reqif.RequirementsTypesFolder)
             return reqtf
@@ -60,9 +58,7 @@ class ReqFinder:
     def find_requirement_by_identifier(
         self,
         cbid: int | str,
-        below: reqif.RequirementsModule
-        | reqif.RequirementsFolder
-        | None = None,
+        below: reqif.ReqIFElement | None = None,
     ) -> reqif.Requirement | reqif.RequirementsFolder | None:
         """Try to return a Requirement with given ``identifier``."""
         try:
@@ -73,4 +69,41 @@ class ReqFinder:
             return req
         except KeyError:
             LOGGER.warning("No Requirement found with identifier: '%s'", cbid)
+            return None
+
+    def find_enum_data_type_definition(
+        self, name: str, below: reqif.ReqIFElement | None
+    ) -> reqif.EnumDataTypeDefinition:
+        """Try to return an EnumDataTypeDefinition with given ``long_name``."""
+        try:
+            edtdef = self.model.search(
+                reqif.XT_REQ_TYPE_ENUM, below=below
+            ).by_long_name(name, single=True)
+            assert isinstance(edtdef, reqif.EnumDataTypeDefinition)
+            return edtdef
+        except KeyError:
+            LOGGER.warning(
+                "No EnumDataTypeDefinition found with long_name: '%s'", name
+            )
+            return None
+
+    def find_attribute_definition(
+        self, xtype: str, name: str, below: reqif.ReqIFElement | None
+    ) -> reqif.AttributeDefinition | reqif.AttributeDefinitionEnumeration:
+        """Try to return an AttributeDefinition with given ``long_name``."""
+        try:
+            if xtype.endswith("Enumeration"):
+                cls = reqif.AttributeDefinitionEnumeration
+            else:
+                cls = reqif.AttributeDefinition
+
+            attrdef = self.model.search(xtype, below=below).by_long_name(
+                name, single=True
+            )
+            assert isinstance(attrdef, cls)
+            return attrdef
+        except KeyError:
+            LOGGER.warning(
+                "No %s found with long_name: '%s'", cls.__name__, name
+            )
             return None

@@ -1,89 +1,68 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
-
-'25093':
-- _type: &id001 !!python/object/apply:rm_bridge.model_modifier.changeset.actiontypes.ActionType
-  - 1
-  cls: !!python/name:capellambse.extensions.reqif.elements.RequirementsTypesFolder ''
-  data_type_definitions:
-  - _type: *id001
-    cls: !!python/name:capellambse.extensions.reqif.elements.EnumerationDataTypeDefinition ''
-    long_name: Type
-    values:
-    - Unset
-    - Folder
-    - Functional
-  identifier: "-2"
-  long_name: Types
-  parent: 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
-  requirement_types:
-  - _type: *id001
-    attribute_definitions:
-    - _type: *id001
-      cls: &id002 !!python/name:capellambse.extensions.reqif.elements.AttributeDefinition ''
-      long_name: Capella ID
-    - _type: *id001
-      cls: !!python/name:capellambse.extensions.reqif.elements.AttributeDefinitionEnumeration ''
-      data_type: Type
-      long_name: Type
-      multi_valued: false
-    - _type: *id001
-      cls: *id002
-      long_name: Submitted at
-    cls: !!python/name:capellambse.extensions.reqif.elements.RequirementType ''
-    identifier: "-3"
-    long_name: Requirement
-- _type: *id001
-  attributes: []
-  cls: &id003 !!python/name:capellambse.extensions.reqif.elements.RequirementsFolder ''
-  folders:
-  - _type: *id001
-    attributes: []
-    cls: *id003
-    folders: []
-    identifier: '5442'
-    long_name: Kinds
-    requirements:
-    - _type: *id001
-      attributes:
-      - _type: *id001
-        cls: &id004 !!python/name:capellambse.extensions.reqif.elements.StringValueAttribute ''
-        definition: Capella ID
-        value: R-FNC-00002
-      - _type: *id001
-        cls: &id005 !!python/name:capellambse.extensions.reqif.elements.EnumerationValueAttribute ''
-        definition: Type
-        values:
-        - Unset
-      cls: &id006 !!python/name:capellambse.extensions.reqif.elements.Requirement ''
-      identifier: '5443'
-      long_name: Kind Requirement
-      text: ''
-      type: Requirement
-    text: ''
-    type: Requirement
-  identifier: '5440'
-  long_name: Functional Requirements
-  requirements:
-  - _type: *id001
-    attributes:
-    - _type: *id001
-      cls: *id004
-      definition: Capella ID
-      value: R-FNC-00001
-    - _type: *id001
-      cls: *id005
-      definition: Type
-      values:
-      - Functional
-    - _type: *id001
-      cls: !!python/name:capellambse.extensions.reqif.elements.DateValueAttribute ''
-      definition: Submitted at
-      value: 2022-06-30 15:07:18.664000+00:00
-    cls: *id006
-    identifier: '5441'
-    long_name: Function Requirement
-    text: '...'
-    type: Requirement
-  text: <p>Test Description</p>
-  type: Requirement
+- parent: !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
+  create:
+    requirement_types_folders:
+      - long_name: Types
+        identifier: "-2"
+        data_type_definitions:
+          - long_name: Type
+            values:
+              - Unset
+              - Folder
+              - Functional
+            promise_id: EnumerationDataTypeDefinition-Type
+            _type: enum
+        requirement_types:
+          - identifier: "-3"
+            long_name: Requirement
+            promise_id: RequirementType-Requirement--3
+            attribute_definitions:
+              - long_name: Capella ID
+                promise_id: AttributeDefinition-Capella ID
+                _type: AttributeDefinition
+              - long_name: Type
+                data_type: !promise EnumerationDataTypeDefinition-Type
+                multi_valued: false
+                promise_id: AttributeDefinitionEnumeration-Type
+                _type: AttributeDefinitionEnumeration
+              - long_name: Submitted at
+                promise_id: AttributeDefinition-Submitted at
+                _type: AttributeDefinition
+    folders:
+      - long_name: Functional Requirements
+        identifier: "5440"
+        text: <p>Test Description</p>
+        type: !promise "RequirementType-Requirement--3"
+        folders:
+          - long_name: Kinds
+            identifier: "5442"
+            text: ""
+            type: !promise RequirementType-Requirement--3
+            requirements:
+              - long_name: Kind Requirement
+                identifier: "5443"
+                text: ""
+                type: !promise RequirementType-Requirement--3
+                attributes:
+                  - definition: !promise AttributeDefinition-Capella ID
+                    value: R-FNC-00002
+                    _type: string
+                  - definition: !promise AttributeDefinitionEnumeration-Type
+                    values: [Unset]
+                    _type: enum
+        requirements:
+          - long_name: Function Requirement
+            identifier: "5441"
+            text: "..."
+            type: !promise RequirementType-Requirement--3
+            attributes:
+              - definition: !promise AttributeDefinition-Capella ID
+                value: R-FNC-00001
+                _type: string
+              - definition: !promise AttributeDefinitionEnumeration-Type
+                values: [Functional]
+                _type: enum
+              - definition: !promise AttributeDefinition-Submitted at
+                value: 2022-06-30 15:07:18.664000+00:00
+                _type: date

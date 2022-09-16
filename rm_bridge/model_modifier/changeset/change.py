@@ -10,11 +10,11 @@ import logging
 import typing as t
 
 import capellambse
+from capellambse import ymol
 from capellambse.extensions import reqif
 
 from . import actiontypes as act
 from . import find
-from .actiontypes import ActionType, DeleteAction
 
 LOGGER = logging.getLogger(__name__)
 REQ_TYPES_FOLDER_NAME = "Types"
@@ -24,20 +24,20 @@ CACHEKEY_REQTYPE_IDENTIFIER = "-3"
 
 REQ_TYPE_NAME = "Requirement"
 ATTRIBUTE_VALUE_CLASS_MAP: cabc.Mapping[
-    str, tuple[type, type, act.Primitive | None]
+    str, tuple[type, act.Primitive | None]
 ] = {
-    "String": (reqif.StringValueAttribute, str, ""),
-    "Enum": (reqif.EnumerationValueAttribute, list, []),
-    "Date": (reqif.DateValueAttribute, datetime.datetime, None),
-    "Integer": (reqif.IntegerValueAttribute, int, 0),
-    "Float": (reqif.RealValueAttribute, float, 0.0),
-    "Boolean": (reqif.BooleanValueAttribute, bool, False),
+    "String": (str, ""),
+    "Enum": (list, []),
+    "Date": (datetime.datetime, None),
+    "Integer": (int, 0),
+    "Float": (float, 0.0),
+    "Boolean": (bool, False),
 }
 ATTR_BLACKLIST = frozenset({("Type", "Folder")})
 
 
 class AttributeValueBuilder(t.NamedTuple):
-    clstype: type
+    deftype: str
     key: str
     value: act.Primitive | None
 
@@ -58,7 +58,7 @@ class TrackerChange:
     """The corresponding `reqif.RequirementsModule` for the tracker."""
     reqt_folder: reqif.RequirementsTypesFolder | None
     """The `reqif.RequirementsTypesFolder` storing fields data."""
-    actions: list[act.CreateAction | act.ModAction | act.DeleteAction]
+    actions: list[cabc.Mapping[str, t.Any]]
     """List of action requests for the tracker sync."""
     definitions: cabc.Mapping[
         str, act.AttributeDefinition | act.EnumAttributeDefinition
@@ -66,10 +66,8 @@ class TrackerChange:
     """A lookup for AttributeDefinitions from the tracker snapshot."""
     data_type_definitions: cabc.Mapping[str, list[str]]
     """A lookup for DataTypeDefinitions from the tracker snapshot."""
-    req_deletions: cabc.MutableMapping[str, act.RequirementFolderModAction]
-    """A lookup for deleted `reqif.Requirement`s."""
-    folder_deletions: cabc.MutableMapping[str, act.RequirementFolderModAction]
-    """A lookup for deleted `reqif.RequirementsFolder`s."""
+    promises: cabc.MutableMapping[str, ymol.Promise]
+    """A mapping for promised RM objects."""
 
     def __init__(
         self,
@@ -84,8 +82,7 @@ class TrackerChange:
             for name, data in self.definitions.items()
             if data["type"] == "Enum"
         }
-        self.req_deletions = {}
-        self.folder_deletions = {}
+        self.promises = {}
 
         self.model = model
         self.config = config
@@ -110,47 +107,141 @@ class TrackerChange:
         Handles synchronization of RequirementTypesFolder first and
         Requirements and Folders second.
         """
-        action: act.CreateAction | act.ModAction | None
-        if self.reqt_folder:
-            action = self.mod_attribute_definition_actions()
+        base = {"parent": ymol.UUIDReference(self.req_module.uuid)}
+        action: cabc.Mapping[str, t.Any] | None
+        if self.reqt_folder is None:
+            key = "create"
+            action = self.create_requirement_types_folder_action()
         else:
-            action = self.create_attribute_definition_actions()
+            key = "modify"
+            action = self.mod_attribute_definition_actions()
 
         if action is not None:
-            self.actions.append(action)
+            base[key] = {"requirement_types_folders": [action]}
 
         visited: set[str] = set()
         for item in self.tracker["items"]:
-            if req := self.reqfinder.find_requirement_by_identifier(
-                item["id"]
-            ):
+            second_key = "folders" if item.get("children") else "requirements"
+            req = self.reqfinder.find_requirement_by_identifier(item["id"])
+            if req is None:
+                key = "create"
+                action = self.create_requirements_actions(item)
+            else:
                 visited.add(req.identifier)
+                key = "modify"
                 action = self.mod_requirements_actions(
                     req, item, self.req_module
                 )
-            else:
-                action = self.create_requirements_actions(item)
 
             if action is not None:
-                self.actions.append(action)
+                try:
+                    base[key][second_key].append(action)
+                except KeyError:
+                    base[key][second_key] = [action]
 
-        self.patch_actions()
-
-        for req in self.req_module.requirements + self.req_module.folders:
+        for req in self.req_module.requirements:
             assert req is not None
             if req.identifier not in visited:
-                self.actions.append(
-                    DeleteAction(
-                        {"_type": ActionType.DELETE, "uuid": req.uuid}
-                    )
+                base["delete"]["requirements"].append(
+                    ymol.UUIDReference(req.uuid)
                 )
+
+        for folder in self.req_module.folders:
+            assert folder is not None
+            if folder.identifier not in visited:
+                base["delete"]["folders"].append(ymol.UUIDReference(req.uuid))
+
+        self.actions.append(base)
+
+    def create_requirement_types_folder_action(self) -> dict[str, t.Any]:
+        """Return a ``CreateAction`` for the ``RequirementsTypesFolder``."""
+        identifier = "-".join(
+            (
+                reqif.RequirementsTypesFolder.__name__,
+                REQ_TYPES_FOLDER_NAME,
+                CACHEKEY_TYPES_FOLDER_IDENTIFIER,
+            )
+        )
+        promise = ymol.Promise(identifier)
+        self.promises[promise.identifier] = promise
+        return {
+            "long_name": REQ_TYPES_FOLDER_NAME,
+            "identifier": CACHEKEY_TYPES_FOLDER_IDENTIFIER,
+            "data_type_definitions": [
+                self.create_data_type_action(name, values)
+                for name, values in self.data_type_definitions.items()
+            ],
+            "requirement_types": [self.create_requirement_type_action()],
+        }
+
+    def create_data_type_action(
+        self, name: str, values: cabc.Sequence[str]
+    ) -> dict[str, t.Any]:
+        """Return a ``CreateAction`` for a ``EnumerationDataTypeDefinition``."""
+        promise = ymol.Promise(f"EnumerationDataTypeDefinition-{name}")
+        self.promises[promise.identifier] = promise
+        return {
+            "long_name": name,
+            "values": list(values),
+            "promise_id": promise.identifier,
+            "_type": "enum",
+        }
+
+    def create_requirement_type_action(self) -> dict[str, t.Any]:
+        """Return a ``CreateAction`` for the ``RequirementType``."""
+        identifier = "-".join(
+            (
+                reqif.RequirementType.__name__,
+                REQ_TYPE_NAME,
+                CACHEKEY_REQTYPE_IDENTIFIER,
+            )
+        )
+        promise = ymol.Promise(identifier)
+        self.promises[promise.identifier] = promise
+        return {
+            "identifier": CACHEKEY_REQTYPE_IDENTIFIER,
+            "long_name": REQ_TYPE_NAME,
+            "promise_id": promise.identifier,
+            "attribute_definitions": [
+                self.create_attribute_definition_action(name, data)
+                for name, data in self.definitions.items()
+            ],
+        }
+
+    def create_attribute_definition_action(
+        self,
+        name: str,
+        data: act.AttributeDefinition | act.EnumAttributeDefinition,
+    ) -> dict[str, t.Any]:
+        """Return a ``CreateAction`` for given definition data."""
+        base: dict[str, t.Any] = {"long_name": name}
+        cls = reqif.AttributeDefinition
+        if data["type"] == "Enum":
+            cls = reqif.AttributeDefinitionEnumeration
+            data_type_ref = self.promises.get(
+                f"EnumerationDataTypeDefinition-{name}"
+            )
+            if data_type_ref is None:
+                etdef = self.reqfinder.find_enum_data_type_definition(
+                    name, below=self.reqt_folder
+                )
+                data_type_ref = ymol.UUIDReference(etdef.uuid)
+
+            base["data_type"] = data_type_ref
+            base["multi_valued"] = data.get("multi_values") is not None
+
+        promise = ymol.Promise(f"{cls.__name__}-{name}")
+        self.promises[promise.identifier] = promise
+        base["_type"] = cls.__name__
+        base["promise_id"] = promise.identifier
+        return base
 
     def create_requirements_actions(
         self, item: dict[str, t.Any] | act.WorkItem
-    ) -> act.RequirementFolderCreateAction | act.RequirementCreateAction:
-        """Return an action for creating Requirements or Folders."""
-        folder_hint = False
+    ) -> dict[str, t.Any]:
+        """Return a ``CreateAction`` for creating Requirements or Folders."""
         attributes = []
+        folder_hint = False
         for name, value in item.get("attributes", {}).items():
             if blacklisted(name, value):
                 if name == "Type" and value == "Folder":
@@ -158,47 +249,64 @@ class TrackerChange:
                 continue
             if name in self.definitions:
                 attributes.append(
-                    self.make_attribute_create_action(name, value)
+                    self.create_attribute_value_action(name, value)
                 )
 
+        req_type_suffix = f"{REQ_TYPE_NAME}-{CACHEKEY_REQTYPE_IDENTIFIER}"
+        req_type_ref = promise = self.promises.get(
+            f"RequirementType-{req_type_suffix}"
+        )
+        if promise is None:
+            assert self.reqt_folder is not None
+            req_type_ref = ymol.UUIDReference(self.reqt_folder.uuid)
+
         base: dict[str, t.Any] = {
-            "_type": act.ActionType.CREATE,
-            "identifier": str(item["id"]),
             "long_name": item["long_name"],
-            "cls": reqif.Requirement,
-            "type": REQ_TYPE_NAME,
+            "identifier": str(item["id"]),
             "text": item.get("text", ""),
-            "attributes": attributes,
+            "type": req_type_ref,
         }
+        if attributes:
+            base["attributes"] = attributes
         if (children := item.get("children")) is not None or folder_hint:
-            base["cls"] = reqif.RequirementsFolder
             base["requirements"] = []
             base["folders"] = []
             for child in children or ():
-                key = "requirements"
-                if child.get("children", []):
-                    key = "folders"
+                key = "folders" if child.get("children") else "requirements"
                 base[key].append(self.create_requirements_actions(child))
-        return base  # type:ignore[return-value]
+            if not base["folders"]:
+                del base["folders"]
+            if not base["requirements"]:
+                del base["requirements"]
+        return base
 
-    def make_attribute_create_action(
+    def create_attribute_value_action(
         self, name: str, value: str | list[str]
-    ) -> act.AttributeValueCreateAction | act.EnumAttributeValueCreateAction:
-        """Return an action for creating an AttributeValue."""
+    ) -> dict[str, t.Any]:
+        """Return a ``CreateAction`` for an AttributeValue."""
         builder = self.patch_faulty_attribute_value(name, value)
+        deftype = "AttributeDefinition"
+        if builder.deftype == "Enum":
+            deftype += "Enumeration"
+
+        definition_ref = promise = self.promises.get(f"{deftype}-{name}")
+        if promise is None:
+            definition = self.reqfinder.find_attribute_definition(
+                deftype, name, below=self.reqt_folder
+            )
+            definition_ref = ymol.UUIDReference(definition.uuid)
         return {
-            "_type": act.ActionType.CREATE,
-            "cls": builder.clstype,
-            "definition": name,
-            builder.key: builder.value,  # type:ignore[misc]
-        }  # type:ignore[return-value]
+            "_type": builder.deftype.lower(),
+            "definition": definition_ref,
+            builder.key: builder.value,
+        }
 
     def patch_faulty_attribute_value(
         self, name: str, value: str | list[str]
     ) -> AttributeValueBuilder:
         """Swap faulty value with definition's default value."""
         deftype = self.definitions[name]["type"]
-        clstype, type, default_value = ATTRIBUTE_VALUE_CLASS_MAP[deftype]
+        type, default_value = ATTRIBUTE_VALUE_CLASS_MAP[deftype]
         pvalue: act.Primitive | None
         if deftype == "Enum":
             default = self.data_type_definitions[name]
@@ -208,28 +316,9 @@ class TrackerChange:
         else:
             pvalue = value if isinstance(value, type) else default_value
             key = "value"
-        return AttributeValueBuilder(clstype, key, pvalue)
+        return AttributeValueBuilder(deftype, key, pvalue)
 
-    def create_attribute_definition_actions(
-        self,
-    ) -> act.RequirementTypesFolderCreateAction:
-        """Add missing AttributeDefinitions and EnumerationDataTypeDefinitions."""
-        return {
-            "_type": act.ActionType.CREATE,
-            "parent": self.req_module.uuid,
-            "identifier": CACHEKEY_TYPES_FOLDER_IDENTIFIER,
-            "long_name": REQ_TYPES_FOLDER_NAME,
-            "cls": reqif.RequirementsTypesFolder,
-            "data_type_definitions": [
-                make_data_type_definition(name, values)
-                for name, values in self.data_type_definitions.items()
-            ],
-            "requirement_types": [make_requirement_type(self.definitions)],
-        }
-
-    def mod_attribute_definition_actions(
-        self,
-    ) -> act.AttributeDefinitionModAction | act.EnumAttributeDefinitionModAction | None:
+    def mod_attribute_definition_actions(self) -> dict[str, t.Any] | None:
         """Return a ModAction when the RequirementTypesFolder changed.
 
         The data type definitions and requirement type are checked via
@@ -242,13 +331,9 @@ class TrackerChange:
             Either a ModAction or None when nothing changed.
         """
         assert self.reqt_folder
-        data_type_definitions: list[
-            act.EnumerationDataTypeDefinitionCreateAction
-            | act.EnumerationDataTypeDefinitionModAction
-            | act.DeleteAction
-        ] = [
+        data_type_definitions: list[dict[str, t.Any]] = [
             {
-                "_type": act.ActionType.DELETE,
+                "_type": "DELETE",
                 "uuid": dtdef.uuid,
             }
             for dtdef in self.reqt_folder.data_type_definitions
@@ -261,7 +346,7 @@ class TrackerChange:
                 data_type_definitions.append(action)
 
         base = {
-            "_type": act.ActionType.MOD,
+            "_type": "MOD",
             "uuid": self.reqt_folder.uuid,
             "data_type_definitions": data_type_definitions,
             "requirement_types": [self.make_reqtype_mod_action()],
@@ -274,7 +359,7 @@ class TrackerChange:
 
     def make_datatype_definition_mod_action(
         self, name: str, values: cabc.Sequence[str]
-    ) -> act.EnumerationDataTypeDefinitionCreateAction | act.EnumerationDataTypeDefinitionModAction | None:
+    ) -> dict[str, t.Any] | None:
         """Return an Action for the DataTypeDefinition.
 
         If a :class:`reqif.DataTypeDefinition` can be found via
@@ -292,7 +377,7 @@ class TrackerChange:
             dtdef = self.reqt_folder.data_type_definitions.by_long_name(
                 name, single=True
             )
-            base = {"_type": act.ActionType.MOD, "uuid": dtdef.uuid}
+            base = {"_type": "MOD", "uuid": dtdef.uuid}
             if dtdef.long_name != name:
                 base["long_name"] = name
             if set(dtdef.values.by_long_name) != set(values):
@@ -301,11 +386,9 @@ class TrackerChange:
                 return None
             return base  # type:ignore[return-value]
         except KeyError:
-            return make_data_type_definition(name, values)
+            return self.create_data_type_action(name, values)
 
-    def make_reqtype_mod_action(
-        self,
-    ) -> act.RequirementTypeCreateAction | act.RequirementTypeModAction | None:
+    def make_reqtype_mod_action(self) -> dict[str, t.Any] | None:
         """Return an Action for the RequirementType.
 
         If a :class:`reqif.RequirementType` can be found via
@@ -325,18 +408,16 @@ class TrackerChange:
                 REQ_TYPE_NAME, single=True
             )
             assert isinstance(reqtype, reqif.RequirementType)
-            attribute_definitions: list[
-                act.AttributeDefinitionNonDeleteAction | act.DeleteAction
-            ] = [
+            attribute_definitions: list[dict[str, t.Any]] = [
                 {
-                    "_type": act.ActionType.DELETE,
+                    "_type": "DELETE",
                     "uuid": adef.uuid,
                 }
                 for adef in reqtype.attribute_definitions
                 if adef.long_name not in self.definitions
             ]
             for name, data in self.definitions.items():
-                action = make_attribute_definition_mod_action(
+                action = self.mod_attribute_definition_action(
                     reqtype, name, data
                 )
                 if action is not None:
@@ -344,12 +425,12 @@ class TrackerChange:
             if not attribute_definitions:
                 return None
             return {
-                "_type": act.ActionType.MOD,
+                "_type": "MOD",
                 "uuid": reqtype.uuid,
                 "attribute_definitions": attribute_definitions,
             }
         except KeyError:
-            return make_requirement_type(self.definitions)
+            return self.create_requirement_type_action()
 
     def mod_requirements_actions(
         self,
@@ -360,7 +441,7 @@ class TrackerChange:
         parent: reqif.RequirementsModule
         | reqif.RequirementsFolder
         | reqif.Requirement,
-    ) -> act.RequirementFolderModAction | act.RequirementModAction | None:
+    ) -> dict[str, t.Any] | None:
         """Return Actions for Requirements, Modules and Folders.
 
         Renders :class:`act.DeleteAction`s for attributes, child
@@ -379,13 +460,9 @@ class TrackerChange:
             req, item, filter=("id", "attributes", "children")
         )
         item_attributes = item.get("attributes", {})
-        attributes: list[
-            act.AttributeDefinitionModAction
-            | act.EnumAttributeDefinitionModAction
-            | act.DeleteAction
-        ] = [
+        attributes: list[dict[str, t.Any]] = [
             {
-                "_type": act.ActionType.DELETE,
+                "_type": "DELETE",
                 "uuid": attr.uuid,
             }
             for attr in req.attributes
@@ -394,24 +471,15 @@ class TrackerChange:
         for name, value in item_attributes.items():
             if value is not None and blacklisted(name, value):
                 continue
-            if action := self.make_attribute_mod_action(req, name, value):
+            if action := self.mod_attribute_value_action(req, name, value):
                 attributes.append(action)  # type:ignore[arg-type]
 
         base = {
-            "_type": act.ActionType.MOD,
+            "_type": "MOD",
             "uuid": req.uuid,
             **mods,
             "attributes": attributes,
         }
-        if req.parent != parent:
-            base["parent"] = parent.uuid
-            if req.xtype.endswith("Folder"):
-                parent_folders = self.folder_deletions[req.uuid]
-                del parent_folders[req.uuid]
-            else:
-                parent_reqs = self.req_deletions[req.uuid]
-                del parent_reqs[req.uuid]
-
         children = item.get("children", [])
         if isinstance(req, reqif.RequirementsFolder):
             base["requirements"] = {}
@@ -426,19 +494,12 @@ class TrackerChange:
 
             req_dels = add_requirement_delete_actions(req, child_req_ids)
             base["requirements"].update(req_dels)
-            reqs = base["requirements"]
-            for duuid in req_dels:
-                self.req_deletions[duuid] = reqs  # type:ignore[assignment]
 
             fold_dels = add_requirement_delete_actions(
                 req, child_folder_ids, "folders"
             )
             base["folders"].update(fold_dels)
-            folders = base["folders"]
-            for fuuid in fold_dels:
-                self.folder_deletions[
-                    fuuid
-                ] = folders  # type:ignore[assignment]
+
         for child in children:
             k = "folders" if child.get("children", []) else "requirements"
             creq = self.reqfinder.find_requirement_by_identifier(  # type:ignore[assignment]
@@ -463,14 +524,14 @@ class TrackerChange:
             return None
         return base  # type:ignore[return-value]
 
-    def make_attribute_mod_action(
+    def mod_attribute_value_action(
         self,
         req: reqif.RequirementsModule
         | reqif.RequirementsFolder
         | reqif.Requirement,
         name: str,
         value: str | list[str],
-    ) -> act.AttributeValueNonDeleteActions | None:
+    ) -> dict[str, t.Any] | None:
         """Return an Action for a ValueAttribute.
 
         If a `ValueAttribute` can be found via `definition.long_name` it
@@ -493,134 +554,68 @@ class TrackerChange:
                 differ = attr.value != builder.value
             if differ:
                 return {
-                    "_type": act.ActionType.MOD,
+                    "_type": "MOD",
                     "uuid": attr.uuid,
                     builder.key: builder.value,  # type:ignore[misc]
                 }  # type:ignore[return-value]
         except KeyError:
-            return self.make_attribute_create_action(name, value)
+            return self.create_attribute_value_action(name, value)
         return None
 
-    def patch_actions(self) -> None:
-        for action in self.actions:
-            is_def_mod = action.get("data_type_definitions") or action.get(
-                "requirement_types"
+    def mod_attribute_definition_action(
+        self,
+        reqtype: reqif.RequirementType,
+        name: str,
+        data: act.AttributeDefinition | act.EnumAttributeDefinition,
+    ) -> dict[str, t.Any] | None:
+        """Return an Action for an AttributeDefinition.
+
+        If a :class:`reqif.AttributeDefinition` or
+        :class:`reqif.AttributeDefinitionEnumeration` can be found via
+        `long_name` it is compared against the snapshot. If any changes to
+        its `long_name`, `data_type` or `multi_valued` attributes are
+        identified a ModAction is returned else None.
+        If the definition can't be found a CreateAction is returned.
+
+        Returns
+        -------
+        action
+            Either a CreateAction, ModAction or None if nothing changed.
+        """
+        try:
+            attrdef = reqtype.attribute_definitions.by_long_name(
+                name, single=True
             )
-            if is_def_mod or action["_type"] != ActionType.MOD:
-                continue
-            if (reqs := action.get("requirements")) is not None:
-                action["requirements"] = [req for req in reqs.values()]
-            if (folders := action.get("folders")) is not None:
-                action["folders"] = list(convert_folders(folders))
-
-
-def convert_folders(
-    item: cabc.MutableMapping[
-        str, act.CreateAction | act.ModAction | act.DeleteAction
-    ]
-) -> cabc.Iterator[act.CreateAction | act.ModAction | act.DeleteAction]:
-    for action in item.values():
-        if (reqs := action.get("requirements")) is not None:
-            action["requirements"] = [req for req in reqs.values()]
-        if (folders := action.get("folders")) is not None:
-            action["folders"] = list(convert_folders(folders))
-        yield action
-
-
-def make_data_type_definition(
-    name: str, values: cabc.Sequence[str]
-) -> act.EnumerationDataTypeDefinitionCreateAction:
-    """Return a `CreateAction` for an EnumerationDataTypeDefinition."""
-    return {
-        "_type": act.ActionType.CREATE,
-        "long_name": name,
-        "cls": reqif.EnumerationDataTypeDefinition,
-        "values": list(values),
-    }
-
-
-def make_requirement_type(
-    definitions: cabc.Mapping[
-        str, act.AttributeDefinition | act.EnumAttributeDefinition
-    ]
-) -> act.RequirementTypeCreateAction:
-    """Return a `CreateAction` for the `reqif.RequirementType`."""
-    return {
-        "_type": act.ActionType.CREATE,
-        "identifier": CACHEKEY_REQTYPE_IDENTIFIER,
-        "long_name": REQ_TYPE_NAME,
-        "cls": reqif.RequirementType,
-        "attribute_definitions": [
-            make_attribute_definition(name, data)
-            for name, data in definitions.items()
-        ],
-    }
-
-
-def make_attribute_definition(
-    name: str,
-    data: act.AttributeDefinition | act.EnumAttributeDefinition,
-) -> act.EnumAttributeDefinitionCreateAction | act.AttributeDefinitionCreateAction:
-    """Return a `CreateAction` for given definition data."""
-    base = {
-        "_type": act.ActionType.CREATE,
-        "long_name": name,
-        "cls": reqif.AttributeDefinition,
-    }
-    if data["type"] == "Enum":
-        base["data_type"] = name
-        base["multi_valued"] = data.get("multi_values") is not None
-        base["cls"] = reqif.AttributeDefinitionEnumeration
-    return base  # type:ignore[return-value]
-
-
-def make_attribute_definition_mod_action(
-    reqtype: reqif.RequirementType,
-    name: str,
-    data: act.AttributeDefinition | act.EnumAttributeDefinition,
-) -> act.AttributeDefinitionNonDeleteAction | None:
-    """Return an Action for an AttributeDefinition.
-
-    If a :class:`reqif.AttributeDefinition` or
-    :class:`reqif.AttributeDefinitionEnumeration` can be found via
-    `long_name` it is compared against the snapshot. If any changes to
-    its `long_name`, `data_type` or `multi_valued` attributes are
-    identified a ModAction is returned else None.
-    If the definition can't be found a CreateAction is returned.
-
-    Returns
-    -------
-    action
-        Either a CreateAction, ModAction or None if nothing changed.
-    """
-    try:
-        attrdef = reqtype.attribute_definitions.by_long_name(name, single=True)
-        base = {"_type": act.ActionType.MOD, "uuid": attrdef.uuid}
-        if attrdef.long_name != name:
-            base["long_name"] = name
-        if data["type"] == "Enum":
-            dtype = attrdef.data_type
-            if dtype is None or dtype.long_name != name:
-                base["data_type"] = name
-            if attrdef.multi_valued != data.get("multi_values") is not None:
-                base["multi_valued"] = data[
-                    "multi_values"  # type:ignore[typeddict-item]
-                ]
-        if nothing_changed(base):
-            return None
-        return base  # type: ignore[return-value]
-    except KeyError:
-        return make_attribute_definition(name, data)
+            base = {"_type": "MOD", "uuid": attrdef.uuid}
+            if attrdef.long_name != name:
+                base["long_name"] = name
+            if data["type"] == "Enum":
+                dtype = attrdef.data_type
+                if dtype is None or dtype.long_name != name:
+                    base["data_type"] = name
+                if (
+                    attrdef.multi_valued
+                    != data.get("multi_values")
+                    is not None
+                ):
+                    base["multi_valued"] = data[
+                        "multi_values"  # type:ignore[typeddict-item]
+                    ]
+            if nothing_changed(base):
+                return None
+            return base  # type: ignore[return-value]
+        except KeyError:
+            return self.create_attribute_definition_action(name, data)
 
 
 def add_requirement_delete_actions(
     req: reqif.RequirementsFolder,
     child_ids: cabc.Iterable[str],
     key: str = "requirements",
-) -> dict[str, act.DeleteAction]:
+) -> dict[str, dict[str, t.Any]]:
     """Return all `DeleteAction`s for elements behind `req.key`."""
     return {
-        creq.uuid: {"_type": act.ActionType.DELETE, "uuid": creq.uuid}
+        creq.uuid: {"_type": "DELETE", "uuid": creq.uuid}
         for creq in getattr(req, key)
         if creq.identifier not in child_ids
     }
