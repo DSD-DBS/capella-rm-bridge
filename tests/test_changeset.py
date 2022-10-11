@@ -75,8 +75,9 @@ class TestCreateActions(ActionsTest):
         """Test producing ``CreateAction`` for a RequirementsTypeFolder."""
         tchange = self.tracker_change(clean_model)
         actions = tchange.create_requirement_types_folder_action()
+        attr_def_action = actions["create"]["requirement_types_folders"][0]
 
-        assert actions == self.ATTR_DEF_CHANGE
+        assert attr_def_action == self.ATTR_DEF_CHANGE
 
     def test_create_requirements_actions(
         self, clean_model: capellambse.MelodyModel
@@ -154,7 +155,7 @@ class TestModActions(ActionsTest):
     ) -> None:
         """Test that RequirementsTypeFolderModActions are produced."""
         tchange = self.tracker_change(migration_model)
-        actions = tchange.mod_attribute_definition_actions()
+        actions = tchange.yield_mod_attribute_definition_actions()
 
         assert actions == self.ATTR_DEF_CHANGE
 
@@ -167,7 +168,7 @@ class TestModActions(ActionsTest):
             self.titem["id"]
         )
         assert isinstance(reqfolder, reqif.RequirementsFolder)
-        actions = tchange.mod_requirements_actions(
+        actions = tchange.yield_mod_requirements_actions(
             reqfolder, self.titem, tchange.req_module
         )
 
@@ -190,7 +191,7 @@ class TestModActions(ActionsTest):
         )
         assert isinstance(reqfolder, reqif.RequirementsFolder)
 
-        actions = tchange.mod_requirements_actions(
+        actions = tchange.yield_mod_requirements_actions(
             reqfolder, titem, tchange.req_module
         )
         req_actions = actions["requirements"][  # type: ignore[typeddict-item,index]
@@ -213,7 +214,6 @@ class TestModActions(ActionsTest):
         assert change_set == TEST_MODULE_CHANGE_1
 
 
-@pytest.mark.skip("Not ready yet")
 class TestDeleteActions(ActionsTest):
     """Test all methods that request deletions."""
 
@@ -229,7 +229,11 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test that RequirementsTypeFolderModActions are produced."""
         tchange = self.tracker_change(deletion_model)
-        actions = tchange.mod_attribute_definition_actions()
+        attr_def_actions = next(
+            tchange.yield_mod_attribute_definition_actions()
+        )
+        reqtype_actions = next(tchange.yield_reqtype_mod_actions())
+        actions = [attr_def_actions, reqtype_actions]
 
         assert actions == self.REQ_TYPE_FOLDER_CHANGES
 
@@ -242,11 +246,9 @@ class TestDeleteActions(ActionsTest):
             self.titem["id"]
         )
         assert isinstance(reqfolder, reqif.RequirementsFolder)
-        actions = tchange.mod_requirements_actions(
-            reqfolder, self.titem, tchange.req_module
-        )
+        actions = tchange.yield_mod_requirements_actions(reqfolder, self.titem)
 
-        assert actions == self.REQ_CHANGES
+        assert list(actions) == self.REQ_CHANGES
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
