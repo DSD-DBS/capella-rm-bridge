@@ -47,7 +47,7 @@ class ReqFinder:
         """Try to return the RequirementTypesFolder."""
         try:
             reqtf = self.model.search(
-                reqif.XT_MODULE, below=below
+                reqif.XT_REQ_TYPES_F, below=below
             ).by_identifier(str(uid), single=True)
             assert isinstance(reqtf, reqif.RequirementsTypesFolder)
             return reqtf
