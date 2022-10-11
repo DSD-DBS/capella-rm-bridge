@@ -10,7 +10,7 @@ import logging
 import typing as t
 
 import capellambse
-from capellambse import ymol
+from capellambse import decl
 from capellambse.extensions import reqif
 
 from . import actiontypes as act
@@ -66,7 +66,7 @@ class TrackerChange:
     """A lookup for AttributeDefinitions from the tracker snapshot."""
     data_type_definitions: cabc.Mapping[str, list[str]]
     """A lookup for DataTypeDefinitions from the tracker snapshot."""
-    promises: cabc.MutableMapping[str, ymol.Promise]
+    promises: cabc.MutableMapping[str, decl.Promise]
     """A mapping for promised RM objects."""
 
     def __init__(
@@ -107,7 +107,7 @@ class TrackerChange:
         Handles synchronization of RequirementTypesFolder first and
         Requirements and Folders second.
         """
-        base = {"parent": ymol.UUIDReference(self.req_module.uuid)}
+        base = {"parent": decl.UUIDReference(self.req_module.uuid)}
         action: cabc.Mapping[str, t.Any] | None
         if self.reqt_folder is None:
             key = "create"
@@ -143,13 +143,13 @@ class TrackerChange:
             assert req is not None
             if req.identifier not in visited:
                 base["delete"]["requirements"].append(
-                    ymol.UUIDReference(req.uuid)
+                    decl.UUIDReference(req.uuid)
                 )
 
         for folder in self.req_module.folders:
             assert folder is not None
             if folder.identifier not in visited:
-                base["delete"]["folders"].append(ymol.UUIDReference(req.uuid))
+                base["delete"]["folders"].append(decl.UUIDReference(req.uuid))
 
         self.actions.append(base)
 
@@ -162,7 +162,7 @@ class TrackerChange:
                 CACHEKEY_TYPES_FOLDER_IDENTIFIER,
             )
         )
-        promise = ymol.Promise(identifier)
+        promise = decl.Promise(identifier)
         self.promises[promise.identifier] = promise
         return {
             "long_name": REQ_TYPES_FOLDER_NAME,
@@ -178,7 +178,7 @@ class TrackerChange:
         self, name: str, values: cabc.Sequence[str]
     ) -> dict[str, t.Any]:
         """Return a ``CreateAction`` for a ``EnumerationDataTypeDefinition``."""
-        promise = ymol.Promise(f"EnumerationDataTypeDefinition-{name}")
+        promise = decl.Promise(f"EnumerationDataTypeDefinition-{name}")
         self.promises[promise.identifier] = promise
         return {
             "long_name": name,
@@ -196,7 +196,7 @@ class TrackerChange:
                 CACHEKEY_REQTYPE_IDENTIFIER,
             )
         )
-        promise = ymol.Promise(identifier)
+        promise = decl.Promise(identifier)
         self.promises[promise.identifier] = promise
         return {
             "identifier": CACHEKEY_REQTYPE_IDENTIFIER,
@@ -225,12 +225,12 @@ class TrackerChange:
                 etdef = self.reqfinder.find_enum_data_type_definition(
                     name, below=self.reqt_folder
                 )
-                data_type_ref = ymol.UUIDReference(etdef.uuid)
+                data_type_ref = decl.UUIDReference(etdef.uuid)
 
             base["data_type"] = data_type_ref
             base["multi_valued"] = data.get("multi_values") is not None
 
-        promise = ymol.Promise(f"{cls.__name__}-{name}")
+        promise = decl.Promise(f"{cls.__name__}-{name}")
         self.promises[promise.identifier] = promise
         base["_type"] = cls.__name__
         base["promise_id"] = promise.identifier
@@ -258,7 +258,7 @@ class TrackerChange:
         )
         if promise is None:
             assert self.reqt_folder is not None
-            req_type_ref = ymol.UUIDReference(self.reqt_folder.uuid)
+            req_type_ref = decl.UUIDReference(self.reqt_folder.uuid)
 
         base: dict[str, t.Any] = {
             "long_name": item["long_name"],
@@ -294,7 +294,7 @@ class TrackerChange:
             definition = self.reqfinder.find_attribute_definition(
                 deftype, name, below=self.reqt_folder
             )
-            definition_ref = ymol.UUIDReference(definition.uuid)
+            definition_ref = decl.UUIDReference(definition.uuid)
         return {
             "_type": builder.deftype.lower(),
             "definition": definition_ref,

@@ -17,7 +17,7 @@ import typing as t
 import capellambse
 import pytest
 import yaml
-from capellambse import ymol
+from capellambse import decl
 from capellambse.extensions import reqif
 
 from rm_bridge import types
@@ -34,9 +34,9 @@ TEST_SNAPSHOT_1 = yaml.safe_load(
 TEST_SNAPSHOT_2 = yaml.safe_load(
     (TEST_DATA_PATH / "snapshot2.yaml").read_text(encoding="utf-8")
 )
-TEST_MODULE_CHANGE = ymol.load(TEST_DATA_PATH / "changesets" / "create.yaml")
-TEST_MODULE_CHANGE_1 = ymol.load(TEST_DATA_PATH / "changesets" / "mod.yaml")
-TEST_MODULE_CHANGE_2 = ymol.load(TEST_DATA_PATH / "changesets" / "delete.yaml")
+TEST_MODULE_CHANGE = decl.load(TEST_DATA_PATH / "changesets" / "create.yaml")
+TEST_MODULE_CHANGE_1 = decl.load(TEST_DATA_PATH / "changesets" / "mod.yaml")
+TEST_MODULE_CHANGE_2 = decl.load(TEST_DATA_PATH / "changesets" / "delete.yaml")
 TEST_TRACKER_ID = "25093"
 TEST_DATE = datetime.datetime(
     2022, 6, 30, 15, 7, 18, 664000, tzinfo=datetime.timezone.utc
@@ -90,7 +90,7 @@ class TestCreateActions(ActionsTest):
             "AttributeDefinition-Submitted at",
         )
         for id in identifiers:
-            promise = ymol.Promise(id)
+            promise = decl.Promise(id)
             tchange.promises[promise.identifier] = promise
 
         actions = tchange.create_requirements_actions(self.titem)
@@ -116,7 +116,7 @@ class TestCreateActions(ActionsTest):
             "AttributeDefinition-Submitted at",
         )
         for id in identifiers:
-            promise = ymol.Promise(id)
+            promise = decl.Promise(id)
             tchange.promises[promise.identifier] = promise
 
         actions = tchange.create_requirements_actions(titem)
