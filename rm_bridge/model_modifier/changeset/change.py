@@ -196,7 +196,7 @@ class TrackerChange:
         --------
         capellambse.extensions.reqif.EnumerationDataTypeDefinition :
             Definition for the ``data_type`` attribute of
-            :class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`s
+            :class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`\ s
         """
         promise = decl.Promise(f"EnumerationDataTypeDefinition-{name}")
         self.promises[promise.identifier] = promise
@@ -243,7 +243,7 @@ class TrackerChange:
         name: str,
         item: act.AttributeDefinition | act.EnumAttributeDefinition,
     ) -> dict[str, t.Any]:
-        """Return a action for creating ``AttributeDefinition``s.
+        """Return a action for creating ``AttributeDefinition``\ s.
 
         In case of an ``AttributeDefinitionEnumeration`` requires
         ``name`` of possibly promised ``EnumerationDataTypeDefinition``.
@@ -279,7 +279,7 @@ class TrackerChange:
     def create_requirements_actions(
         self, item: dict[str, t.Any] | act.WorkItem
     ) -> dict[str, t.Any]:
-        """Return an action for creating ``Requirement``s or ``Folder``s.
+        """Return an action for creating Requirements or Folders.
 
         See Also
         --------
@@ -393,7 +393,7 @@ class TrackerChange:
         ------
         action
             An action that describes the changes on
-            ``EnumerationDataTypeDefinition``s and the
+            ``EnumerationDataTypeDefinition``\ s and the
             ``RequirementType``.
         """
         assert self.reqt_folder
