@@ -9,9 +9,12 @@
           - Rel. 2
         promise_id: EnumerationDataTypeDefinition-Release
         _type: enum
-- parent: !uuid 004bd7d4-9af5-4738-a4c9-10b04dc4608b
+- parent: !uuid f4b62994-37ac-45d6-add7-d320890e2969
   modify:
-    long_name: Non-Functional
+    values:
+      - Unset
+      - Folder
+      - Non-Functional
 - parent: !uuid e941a947-54ac-48e4-a383-af0b6994076d
   create:
     attribute_definitions:
@@ -28,7 +31,7 @@
     attributes:
       - definition: !uuid d82b82e8-e1c5-4f07-8769-744a44764759
         value: RF-NFNC-00001
-        _type: str
+        _type: string
       - definition: !promise AttributeDefinitionEnumeration-Release
         values:
           - Rel. 1
@@ -42,7 +45,7 @@
     attributes:
       - definition: !promise AttributeDefinition-Test after migration
         value: New
-        _type: AttributeDefinition
+        _type: string
   modify:
     long_name: Non-Function Requirement
     attributes:
@@ -52,11 +55,12 @@
   modify:
     long_name: Functional Requirements
     text: <p>Brand new</p>
-  extend:
-    folders:
-      - !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
 - parent: !uuid 94e00375-d52c-4ca6-8c06-225ab13e9afb
   modify:
     long_name: Function Requirement
     attributes:
       Capella ID: R-FNC-00001
+- parent: !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
+  extend:
+    folders:
+      - !uuid 04574907-fa9f-423a-b9fd-fc22dc975dc8

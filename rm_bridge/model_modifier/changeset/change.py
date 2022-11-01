@@ -10,7 +10,7 @@ import logging
 import typing as t
 
 import capellambse
-from capellambse import decl
+from capellambse import decl, helpers
 from capellambse.extensions import reqif
 
 from . import actiontypes as act
@@ -35,6 +35,9 @@ ATTRIBUTE_VALUE_CLASS_MAP: cabc.Mapping[
 }
 ATTR_BLACKLIST = frozenset({("Type", "Folder")})
 
+WorkItem = t.Union[reqif.Requirement, reqif.RequirementsFolder]
+RMIdentifier = t.NewType("RMIdentifier", str)
+
 
 class AttributeValueBuilder(t.NamedTuple):
     deftype: str
@@ -44,6 +47,11 @@ class AttributeValueBuilder(t.NamedTuple):
 
 class TrackerChange:
     """Unites the calculators for finding actions to sync requirements."""
+
+    _location_changed: set[RMIdentifier]
+    _req_deletions: cabc.MutableMapping[
+        helpers.UUIDString, cabc.MutableMapping[str, t.Any]
+    ]
 
     tracker: cabc.Mapping[str, t.Any]
     """Snapshot of tracker, i.e. a `reqif.RequirementsModule`."""
@@ -88,6 +96,9 @@ class TrackerChange:
         self.config = config
         self.reqfinder = find.ReqFinder(model)
 
+        self._location_changed = set[RMIdentifier]()
+        self._req_deletions = {}
+
         try:
             self.req_module = self.reqfinder.find_module(
                 config["capella-uuid"], config["external-id"]
@@ -115,24 +126,52 @@ class TrackerChange:
             self.actions.extend(self.yield_mod_attribute_definition_actions())
             self.actions.extend(self.yield_reqtype_mod_actions())
 
-        visited: set[str] = set()
+        visited = set[str]()
         for item in self.tracker["items"]:
             second_key = "folders" if item.get("children") else "requirements"
             req = self.reqfinder.find_requirement_by_identifier(item["id"])
             if req is None:
                 action = self.create_requirements_actions(item)
-                try:
-                    base["create"][second_key].append(action)
-                except KeyError:
-                    base["create"][second_key] = [action]
+                _add_action_savely(base, "create", second_key, action)
             else:
                 visited.add(req.identifier)
                 req_actions = self.yield_mod_requirements_actions(req, item)
                 self.actions.extend(req_actions)
 
+                if req not in getattr(self.req_module, second_key):
+                    loc_to_root = decl.UUIDReference(req.uuid)
+                    _add_action_savely(base, "extend", second_key, loc_to_root)
+                    self._location_changed.add(req.identifier)
+                    self._invalidate_deletion(req)
+
         _deep_update(base, self.delete_req_actions(visited))
         _deep_update(base, self.delete_req_actions(visited, "folders"))
-        self.actions.append(base)
+        if set(base) != {"parent"}:
+            self.actions.append(base)
+
+    def _invalidate_deletion(self, requirement: WorkItem) -> None:
+        """Try to remove ``requirement`` from deletions.
+
+        Remove empty dictionaries or even whole action if its only
+        delete action was removed.
+        """
+        key = "requirements"
+        if isinstance(requirement, reqif.RequirementsFolder):
+            key = "folders"
+
+        try:
+            ref = decl.UUIDReference(requirement.uuid)
+            deletions = self._req_deletions[requirement.uuid]["delete"]
+            deletions[key].remove(ref)
+
+            if not deletions[key]:
+                del deletions[key]
+            if not deletions:
+                del self._req_deletions[requirement.uuid]["delete"]
+            if set(self._req_deletions[requirement.uuid]) == {"parent"}:
+                self.actions.remove(self._req_deletions[requirement.uuid])
+        except KeyError:
+            pass
 
     def delete_req_actions(
         self,
@@ -383,7 +422,7 @@ class TrackerChange:
     def yield_mod_attribute_definition_actions(
         self,
     ) -> cabc.Iterator[dict[str, t.Any]]:
-        """Yield a ModAction when the RequirementTypesFolder changed.
+        r"""Yields a ModAction when the RequirementTypesFolder changed.
 
         The data type definitions and requirement type are checked via
         :meth:`~TrackerChange.make_datatype_definition_mod_action` and
@@ -516,11 +555,7 @@ class TrackerChange:
             yield self.create_requirement_type_action()
 
     def yield_mod_requirements_actions(
-        self,
-        req: reqif.RequirementsModule
-        | reqif.RequirementsFolder
-        | reqif.Requirement,
-        item: dict[str, t.Any],
+        self, req: reqif.RequirementsModule | WorkItem, item: dict[str, t.Any]
     ) -> cabc.Iterator[dict[str, t.Any]]:
         """Yield an action for modifying given ``req``.
 
@@ -533,7 +568,7 @@ class TrackerChange:
         """
         item_attributes = item.get("attributes", {})
         attributes_creations = list[dict[str, t.Any]]()
-        attributes_modifications = list[dict[str, t.Any]]()
+        attributes_modifications = dict[str, t.Any]()
         for name, value in item_attributes.items():
             if value is not None and _blacklisted(name, value):
                 continue
@@ -542,10 +577,10 @@ class TrackerChange:
             if action is None:
                 continue
 
-            if "parent" in action:
-                attributes_modifications.append(action)
-            else:
+            if isinstance(action, dict):
                 attributes_creations.append(action)
+            else:
+                attributes_modifications[name] = action[1]
         attributes_deletions: list[dict[str, t.Any]] = [
             decl.UUIDReference(attr.uuid)
             for attr in req.attributes
@@ -553,27 +588,24 @@ class TrackerChange:
         ]
 
         base = {"parent": decl.UUIDReference(req.uuid)}
-        if attributes_creations:
-            base["create"] = {"attributes": attributes_creations}
-        if attributes_deletions:
-            base["delete"] = {"attributes": attributes_deletions}
-
         mods = _compare_simple_attributes(
             req, item, filter=("id", "attributes", "children")
         )
         if mods:
             base["modify"] = mods
+        if attributes_modifications:
+            base["modify"].update({"attributes": attributes_modifications})
+        if attributes_creations:
+            base["create"] = {"attributes": attributes_creations}
+        if attributes_deletions:
+            base["delete"] = {"attributes": attributes_deletions}
 
         children = item.get("children", [])
         containers = cr_creations, cf_creations = [
             list[dict[str, t.Any]](),
             list[dict[str, t.Any]](),
         ]
-        to_be_modded: list[
-            tuple[
-                reqif.Requirement | reqif.RequirementsFolder, dict[str, t.Any]
-            ]
-        ] = []
+        to_be_modded: list[tuple[WorkItem, dict[str, t.Any]]] = []
         if isinstance(req, reqif.RequirementsFolder):
             child_req_ids = set[str]()
             child_folder_ids = set[str]()
@@ -604,9 +636,11 @@ class TrackerChange:
                 _deep_update(base, {"create": creations})
 
             fold_dels = make_requirement_delete_actions(
-                req, child_folder_ids, "folders"
+                req, child_folder_ids | self._location_changed, "folders"
             )
-            req_dels = make_requirement_delete_actions(req, child_req_ids)
+            req_dels = make_requirement_delete_actions(
+                req, child_req_ids | self._location_changed
+            )
             children_deletions = dict[str, t.Any]()
             if fold_dels:
                 children_deletions["folders"] = fold_dels
@@ -614,6 +648,8 @@ class TrackerChange:
                 children_deletions["requirements"] = req_dels
             if children_deletions:
                 _deep_update(base, {"delete": children_deletions})
+            for del_ref in req_dels + fold_dels:
+                self._req_deletions[del_ref.uuid] = base
 
         if (
             base.get("create", {})
@@ -626,40 +662,36 @@ class TrackerChange:
 
     def mod_attribute_value_action(
         self,
-        req: reqif.RequirementsModule
-        | reqif.RequirementsFolder
-        | reqif.Requirement,
+        req: reqif.RequirementsModule | WorkItem,
         name: str,
         value: str | list[str],
-    ) -> dict[str, t.Any] | None:
+    ) -> dict[str, t.Any] | tuple[str, act.Primitive | None] | None:
         """Return an action for modifying an ``AttributeValue``.
 
         If a ``AttributeValue`` can be found via
         ``definition.long_name`` it is compared against the snapshot. If
-        any changes to its ``value/s`` are identified an action for
-        modification is returned else None. If the attribute can't be
+        any changes to its ``value/s`` are identified a tuple of the
+        name and value is returned else None. If the attribute can't be
         found an action for creation is returned.
 
         Returns
         -------
         action
-            Either a create-, mod-action or ``None`` if nothing
-            changed.
+            Either a create-action, the value to modify or ``None`` if
+            nothing changed.
         """
         try:
             attr = req.attributes.by_definition.long_name(name, single=True)
             builder = self.patch_faulty_attribute_value(name, value)
-            mods = dict[str, t.Any]()
             if isinstance(attr, reqif.EnumerationValueAttribute):
                 assert isinstance(builder.value, list)
                 differ = set(attr.values.by_long_name) != set(builder.value)
             else:
                 differ = bool(attr.value != builder.value)
+
             if differ:
-                mods[builder.key] = builder.value
-            if not mods:
-                return None
-            return {"parent": decl.UUIDReference(attr.uuid), "modify": mods}
+                return (name, builder.value)
+            return None
         except KeyError:
             return self.create_attribute_value_action(name, value)
 
@@ -713,7 +745,7 @@ def make_requirement_delete_actions(
     req: reqif.RequirementsFolder,
     child_ids: cabc.Iterable[str],
     key: str = "requirements",
-) -> list[dict[str, t.Any]]:
+) -> list[decl.UUIDReference]:
     """Return actions for deleting elements behind ``req.key``.
 
     The returned list is filtered against the ``identifier`` from given
@@ -739,9 +771,7 @@ def _blacklisted(
 
 
 def _compare_simple_attributes(
-    req: reqif.RequirementsModule
-    | reqif.RequirementsFolder
-    | reqif.Requirement,
+    req: reqif.RequirementsModule | WorkItem,
     item: dict[str, t.Any],
     filter: cabc.Iterable[str],
 ) -> dict[str, t.Any]:
@@ -770,6 +800,18 @@ def _compare_simple_attributes(
         if getattr(req, name, None) != value:
             mods[name] = value
     return mods
+
+
+def _add_action_savely(
+    base: dict[str, t.Any],
+    first_key: str,
+    second_key: str,
+    action: dict[str, t.Any],
+) -> None:
+    try:
+        base[first_key][second_key].append(action)
+    except KeyError:
+        _deep_update(base, {first_key: {second_key: [action]}})
 
 
 def _deep_update(

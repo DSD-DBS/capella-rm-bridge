@@ -139,7 +139,6 @@ class TestCreateActions(ActionsTest):
         assert change_set == TEST_MODULE_CHANGE
 
 
-@pytest.mark.skip("Not ready yet")
 class TestModActions(ActionsTest):
     """Tests all methods that request modifications."""
 
@@ -147,17 +146,22 @@ class TestModActions(ActionsTest):
     titem = tracker["items"][0]
 
     ENUM_DATA_TYPE_CHANGE = TEST_MODULE_CHANGE_1[0]
-    NAME_CHANGE = TEST_MODULE_CHANGE_1[1]
+    ENUM_VALUE_CHANGE = TEST_MODULE_CHANGE_1[1]
     ATTR_DEF_CHANGE = TEST_MODULE_CHANGE_1[2]
+    REQ_CHANGE, REQ_CHANGE1 = TEST_MODULE_CHANGE_1[3:5]
 
     def test_mod_attribute_definition_actions(
         self, migration_model: capellambse.MelodyModel
     ) -> None:
         """Test that RequirementsTypeFolderModActions are produced."""
         tchange = self.tracker_change(migration_model)
-        actions = tchange.yield_mod_attribute_definition_actions()
+        attr_def_actions = next(
+            tchange.yield_mod_attribute_definition_actions()
+        )
+        reqtype_actions = next(tchange.yield_reqtype_mod_actions())
+        actions = [attr_def_actions, reqtype_actions]
 
-        assert actions == self.ATTR_DEF_CHANGE
+        assert actions == [self.ENUM_DATA_TYPE_CHANGE, self.ATTR_DEF_CHANGE]
 
     def test_mod_requirements_actions(
         self, migration_model: capellambse.MelodyModel
@@ -167,17 +171,27 @@ class TestModActions(ActionsTest):
         reqfolder = tchange.reqfinder.find_requirement_by_identifier(
             self.titem["id"]
         )
-        assert isinstance(reqfolder, reqif.RequirementsFolder)
-        actions = tchange.yield_mod_requirements_actions(
-            reqfolder, self.titem, tchange.req_module
-        )
+        req_change = {
+            **self.REQ_CHANGE,
+            "delete": {
+                "folders": [
+                    decl.UUIDReference("04574907-fa9f-423a-b9fd-fc22dc975dc8")
+                ]
+            },
+        }
+        # Run these to populate promises lookup for new Release attribute
+        next(tchange.yield_mod_attribute_definition_actions())
+        next(tchange.yield_reqtype_mod_actions())
 
-        assert actions == self.REQ_CHANGE
+        assert isinstance(reqfolder, reqif.RequirementsFolder)
+        actions = tchange.yield_mod_requirements_actions(reqfolder, self.titem)
+
+        assert list(actions) == [req_change, self.REQ_CHANGE1]
 
     def test_mod_requirements_attributes_with_none_values(
         self, migration_model: capellambse.MelodyModel
     ) -> None:
-        """Test that faulty values don't produce a ModAction if default."""
+        """Test that faulty values are patched to default values."""
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
         titem["attributes"]["Type"] = []
@@ -190,17 +204,16 @@ class TestModActions(ActionsTest):
             self.titem["id"]
         )
         assert isinstance(reqfolder, reqif.RequirementsFolder)
+        # Run these to populate promises lookup for new Release attribute
+        next(tchange.yield_mod_attribute_definition_actions())
+        next(tchange.yield_reqtype_mod_actions())
 
-        actions = tchange.yield_mod_requirements_actions(
-            reqfolder, titem, tchange.req_module
-        )
-        req_actions = actions["requirements"][  # type: ignore[typeddict-item,index]
-            "1cab372a-62cf-443b-b36d-77e66e5de97d"
-        ]
+        _, ra = list(tchange.yield_mod_requirements_actions(reqfolder, titem))
+        req_attr_mods = ra["modify"]["attributes"]
 
-        assert req_actions["attributes"][0]["value"] == ""
-        assert req_actions["attributes"][1]["values"] == ["Unset"]
-        assert req_actions["attributes"][2]["value"] is None
+        assert req_attr_mods["Capella ID"] == ""
+        assert req_attr_mods["Type"] == ["Unset"]
+        assert req_attr_mods["Submitted at"] is None
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
