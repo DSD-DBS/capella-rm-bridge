@@ -20,12 +20,11 @@ import yaml
 from capellambse import decl
 from capellambse.extensions import reqif
 
-from rm_bridge import types
-from rm_bridge.changeset import calculate_change_set, change
+from rm_bridge.changeset import actiontypes, calculate_change_set, change
 
 from .conftest import TEST_CONFIG, TEST_DATA_PATH
 
-TEST_SNAPSHOT: list[types.TrackerSnapshot] = yaml.safe_load(
+TEST_SNAPSHOT: list[actiontypes.TrackerSnapshot] = yaml.safe_load(
     (TEST_DATA_PATH / "snapshot.yaml").read_text(encoding="utf-8")
 )
 TEST_SNAPSHOT_1 = yaml.safe_load(

@@ -229,7 +229,7 @@ class TrackerChange:
     def create_data_type_action(
         self, name: str, values: cabc.Sequence[str]
     ) -> dict[str, t.Any]:
-        """Return an action for creating an ``EnumDataTypeDefinition``.
+        r"""Return an action for creating an ``EnumDataTypeDefinition``.
 
         See Also
         --------
@@ -282,7 +282,7 @@ class TrackerChange:
         name: str,
         item: act.AttributeDefinition | act.EnumAttributeDefinition,
     ) -> dict[str, t.Any]:
-        """Return a action for creating ``AttributeDefinition``\ s.
+        r"""Return a action for creating ``AttributeDefinition``\ s.
 
         In case of an ``AttributeDefinitionEnumeration`` requires
         ``name`` of possibly promised ``EnumerationDataTypeDefinition``.

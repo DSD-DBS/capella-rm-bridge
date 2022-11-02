@@ -9,9 +9,7 @@ import typing as t
 
 import capellambse
 
-from rm_bridge import types
-
-from .change import TrackerChange
+from . import actiontypes, change
 
 LOGGER = logging.getLogger(__name__)
 
@@ -19,7 +17,7 @@ LOGGER = logging.getLogger(__name__)
 def calculate_change_set(
     model: capellambse.MelodyModel,
     config: cabc.MutableMapping[str, t.Any],
-    snapshot: list[types.TrackerSnapshot],
+    snapshot: list[actiontypes.TrackerSnapshot],
 ) -> list[dict[str, t.Any]]:
     r"""Return a list of actions for a given ``model`` and ``snapshot``.
 
@@ -35,7 +33,7 @@ def calculate_change_set(
             for ctracker in trackers
             if str(ctracker["external-id"]) == str(tracker["id"])
         )
-        tchange = TrackerChange(tracker, model, tconfig)
+        tchange = change.TrackerChange(tracker, model, tconfig)
         tchange.calculate_change()
         actions.extend(tchange.actions)  # type: ignore[arg-type]
     return actions

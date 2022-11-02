@@ -20,6 +20,13 @@ class WorkItem(te.TypedDict, total=False):
     children: list[WorkItem]  # type: ignore[misc]
 
 
+class TrackerSnapshot(te.TypedDict):
+    id: int
+    version: int | float
+    attributes: dict[str, t.Any]
+    items: list[WorkItem]
+
+
 class AttributeDefinition(te.TypedDict):
     type: str
 
