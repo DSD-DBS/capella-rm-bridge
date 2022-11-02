@@ -64,7 +64,7 @@ class TestCreateActions(ActionsTest):
 
     tracker = TEST_SNAPSHOT[0]
     titem = tracker["items"][0]
-    tracker_change_creations = TEST_MODULE_CHANGE[0]["create"]
+    tracker_change_creations = TEST_MODULE_CHANGE[0]["extend"]
 
     ATTR_DEF_CHANGE = tracker_change_creations["requirement_types_folders"][0]
     REQ_CHANGE = tracker_change_creations["folders"][0]
@@ -75,7 +75,7 @@ class TestCreateActions(ActionsTest):
         """Test producing ``CreateAction`` for a RequirementsTypeFolder."""
         tchange = self.tracker_change(clean_model)
         actions = tchange.create_requirement_types_folder_action()
-        attr_def_action = actions["create"]["requirement_types_folders"][0]
+        attr_def_action = actions["extend"]["requirement_types_folders"][0]
 
         assert attr_def_action == self.ATTR_DEF_CHANGE
 

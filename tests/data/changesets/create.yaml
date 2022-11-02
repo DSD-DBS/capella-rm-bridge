@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 - parent: !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
-  create:
+  extend:
     requirement_types_folders:
       - long_name: Types
         identifier: "-2"

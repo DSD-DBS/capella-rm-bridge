@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 - parent: !uuid 487eca4d-8e98-4598-8ec0-4cdbdcbebd03
-  create:
+  extend:
     data_type_definitions:
       - long_name: Release
         values:
@@ -17,7 +17,7 @@
       - Folder
       - Non-Functional
 - parent: !uuid e941a947-54ac-48e4-a383-af0b6994076d
-  create:
+  extend:
     attribute_definitions:
       - long_name: Release
         data_type: !promise EnumerationDataTypeDefinition-Release
@@ -28,7 +28,7 @@
         promise_id: AttributeDefinition-Test after migration
         _type: AttributeDefinition
 - parent: !uuid 8a814f64-70d1-4fe1-a648-54c83c03d05b
-  create:
+  extend:
     attributes:
       - definition: !uuid d82b82e8-e1c5-4f07-8769-744a44764759
         value: RF-NFNC-00001
@@ -42,7 +42,7 @@
     long_name: Non-Functional Requirements
     text: <p>Changed Test Description</p>
 - parent: !uuid 1cab372a-62cf-443b-b36d-77e66e5de97d
-  create:
+  extend:
     attributes:
       - definition: !promise AttributeDefinition-Test after migration
         value: New

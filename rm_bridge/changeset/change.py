@@ -132,7 +132,7 @@ class TrackerChange:
             req = self.reqfinder.find_requirement_by_identifier(item["id"])
             if req is None:
                 action = self.create_requirements_actions(item)
-                _add_action_savely(base, "create", second_key, action)
+                _add_action_savely(base, "extend", second_key, action)
             else:
                 visited.add(req.identifier)
                 req_actions = self.yield_mod_requirements_actions(req, item)
@@ -223,7 +223,7 @@ class TrackerChange:
         }
         return {
             "parent": decl.UUIDReference(self.req_module.uuid),
-            "create": {"requirement_types_folders": [reqt_folder]},
+            "extend": {"requirement_types_folders": [reqt_folder]},
         }
 
     def create_data_type_action(
@@ -456,11 +456,11 @@ class TrackerChange:
 
         base = {"parent": decl.UUIDReference(self.reqt_folder.uuid)}
         if dt_defs_creations:
-            base["create"] = {"data_type_definitions": dt_defs_creations}
+            base["extend"] = {"data_type_definitions": dt_defs_creations}
         if dt_defs_deletions:
             base["delete"] = {"data_type_definitions": dt_defs_deletions}
 
-        if base.get("create", {}) or base.get("delete", {}):
+        if base.get("extend", {}) or base.get("delete", {}):
             yield base
 
         yield from dt_defs_modifications
@@ -543,11 +543,11 @@ class TrackerChange:
 
             base = {"parent": decl.UUIDReference(reqtype.uuid)}
             if attr_defs_creations:
-                base["create"] = {"attribute_definitions": attr_defs_creations}
+                base["extend"] = {"attribute_definitions": attr_defs_creations}
             if attr_defs_deletions:
                 base["delete"] = {"attribute_definitions": attr_defs_deletions}
 
-            if base.get("create", {}) or base.get("delete", {}):
+            if base.get("extend", {}) or base.get("delete", {}):
                 yield base
 
             yield from attr_defs_modifications
@@ -596,7 +596,7 @@ class TrackerChange:
         if attributes_modifications:
             base["modify"].update({"attributes": attributes_modifications})
         if attributes_creations:
-            base["create"] = {"attributes": attributes_creations}
+            base["extend"] = {"attributes": attributes_creations}
         if attributes_deletions:
             base["delete"] = {"attributes": attributes_deletions}
 
@@ -633,7 +633,7 @@ class TrackerChange:
             if cf_creations:
                 creations["folders"] = cf_creations
             if creations:
-                _deep_update(base, {"create": creations})
+                _deep_update(base, {"extend": creations})
 
             fold_dels = make_requirement_delete_actions(
                 req, child_folder_ids | self._location_changed, "folders"
@@ -652,7 +652,7 @@ class TrackerChange:
                 self._req_deletions[del_ref.uuid] = base
 
         if (
-            base.get("create", {})
+            base.get("extend", {})
             or base.get("modify", {})
             or base.get("delete", {})
         ):
