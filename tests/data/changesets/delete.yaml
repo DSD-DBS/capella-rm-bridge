@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
+
 - parent: !uuid 487eca4d-8e98-4598-8ec0-4cdbdcbebd03
   delete:
     data_type_definitions:
