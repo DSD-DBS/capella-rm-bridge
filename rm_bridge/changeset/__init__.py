@@ -37,5 +37,5 @@ def calculate_change_set(
         )
         tchange = TrackerChange(tracker, model, tconfig)
         tchange.calculate_change()
-        actions.extend(tchange.actions)
+        actions.extend(tchange.actions)  # type: ignore[arg-type]
     return actions

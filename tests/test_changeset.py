@@ -21,7 +21,7 @@ from capellambse import decl
 from capellambse.extensions import reqif
 
 from rm_bridge import types
-from rm_bridge.model_modifier.changeset import calculate_change_set, change
+from rm_bridge.changeset import calculate_change_set, change
 
 from .conftest import TEST_CONFIG, TEST_DATA_PATH
 
