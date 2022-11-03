@@ -54,6 +54,20 @@ class ReqFinder:
             LOGGER.warning("No RequirementsTypeFolder found.")
             return None
 
+    def find_reqtype_by_identifier(
+        self, uid: int | str, below: reqif.ReqIFElement | None = None
+    ) -> reqif.RequirementsType | None:
+        """Try to return the RequirementType."""
+        try:
+            reqtype = self.model.search(
+                reqif.XT_REQ_TYPE, below=below
+            ).by_identifier(uid, single=True)
+            assert isinstance(reqtype, reqif.RequirementsType)
+            return reqtype
+        except KeyError:
+            LOGGER.warning("No RequirementsType found.")
+            return None
+
     def find_requirement_by_identifier(
         self,
         cbid: int | str,
@@ -101,6 +115,23 @@ class ReqFinder:
             )
             assert isinstance(attrdef, cls)
             return attrdef
+        except KeyError:
+            LOGGER.warning(
+                "No %s found with long_name: '%s'", cls.__name__, name
+            )
+            return None
+
+    def find_enumvalue(
+        self, name: str, below: reqif.ReqIFElement | None = None
+    ) -> reqif.EnumValue | None:
+        """Try to return an EnumValue with given ``long_name``."""
+        try:
+            cls = reqif.EnumValue
+            enum_value = self.model.search(
+                reqif.XT_REQ_TYPE_ATTR_ENUM, below=below
+            ).by_long_name(name, single=True)
+            assert isinstance(enum_value, cls)
+            return enum_value
         except KeyError:
             LOGGER.warning(
                 "No %s found with long_name: '%s'", cls.__name__, name

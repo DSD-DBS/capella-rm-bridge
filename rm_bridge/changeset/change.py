@@ -74,8 +74,6 @@ class TrackerChange:
     """A lookup for AttributeDefinitions from the tracker snapshot."""
     data_type_definitions: cabc.Mapping[str, list[str]]
     """A lookup for DataTypeDefinitions from the tracker snapshot."""
-    promises: cabc.MutableMapping[str, decl.Promise]
-    """A mapping for promised RM objects."""
 
     def __init__(
         self,
@@ -90,7 +88,6 @@ class TrackerChange:
             for name, data in self.definitions.items()
             if data["type"] == "Enum"
         }
-        self.promises = {}
 
         self.model = model
         self.config = config
@@ -203,15 +200,6 @@ class TrackerChange:
         capellambse.extensions.reqif.RequirementsTypesFolder :
             Folder for (Data-)Type- and Attribute-Definitions
         """
-        identifier = "-".join(
-            (
-                reqif.RequirementsTypesFolder.__name__,
-                REQ_TYPES_FOLDER_NAME,
-                CACHEKEY_TYPES_FOLDER_IDENTIFIER,
-            )
-        )
-        promise = decl.Promise(identifier)
-        self.promises[promise.identifier] = promise
         reqt_folder = {
             "long_name": REQ_TYPES_FOLDER_NAME,
             "identifier": CACHEKEY_TYPES_FOLDER_IDENTIFIER,
@@ -237,13 +225,17 @@ class TrackerChange:
             Definition for the ``data_type`` attribute of
             :class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`\ s
         """
-        promise = decl.Promise(f"EnumerationDataTypeDefinition-{name}")
-        self.promises[promise.identifier] = promise
+        type = "EnumerationDataTypeDefinition"
+        enum_values = list[dict[str, str]]()
+        for value in values:
+            enum_values.append(
+                {"long_name": value, "promise_id": f"EnumValue {name} {value}"}
+            )
         return {
             "long_name": name,
-            "values": list(values),
-            "promise_id": promise.identifier,
-            "_type": "enum",
+            "values": enum_values,
+            "promise_id": f"{type} {name}",
+            "_type": type,
         }
 
     def create_requirement_type_action(self) -> dict[str, t.Any]:
@@ -258,19 +250,17 @@ class TrackerChange:
             that enables AttributeDefinitions via the ``definition``
             attribute.
         """
-        identifier = "-".join(
+        identifier = " ".join(
             (
                 reqif.RequirementType.__name__,
                 REQ_TYPE_NAME,
                 CACHEKEY_REQTYPE_IDENTIFIER,
             )
         )
-        promise = decl.Promise(identifier)
-        self.promises[promise.identifier] = promise
         return {
             "identifier": CACHEKEY_REQTYPE_IDENTIFIER,
             "long_name": REQ_TYPE_NAME,
-            "promise_id": promise.identifier,
+            "promise_id": identifier,
             "attribute_definitions": [
                 self.create_attribute_definition_action(name, data)
                 for name, data in self.definitions.items()
@@ -297,22 +287,21 @@ class TrackerChange:
         cls = reqif.AttributeDefinition
         if item["type"] == "Enum":
             cls = reqif.AttributeDefinitionEnumeration
-            data_type_ref = self.promises.get(
-                f"EnumerationDataTypeDefinition-{name}"
+            etdef = self.reqfinder.find_enum_data_type_definition(
+                name, below=self.reqt_folder
             )
-            if data_type_ref is None:
-                etdef = self.reqfinder.find_enum_data_type_definition(
-                    name, below=self.reqt_folder
+            if etdef is None:
+                data_type_ref = decl.Promise(
+                    f"EnumerationDataTypeDefinition {name}"
                 )
+            else:
                 data_type_ref = decl.UUIDReference(etdef.uuid)
 
             base["data_type"] = data_type_ref
             base["multi_valued"] = item.get("multi_values") is not None
 
-        promise = decl.Promise(f"{cls.__name__}-{name}")
-        self.promises[promise.identifier] = promise
         base["_type"] = cls.__name__
-        base["promise_id"] = promise.identifier
+        base["promise_id"] = f"{cls.__name__} {name}"
         return base
 
     def create_requirements_actions(
@@ -337,13 +326,14 @@ class TrackerChange:
                     self.create_attribute_value_action(name, value)
                 )
 
-        req_type_suffix = f"{REQ_TYPE_NAME}-{CACHEKEY_REQTYPE_IDENTIFIER}"
-        req_type_ref = promise = self.promises.get(
-            f"RequirementType-{req_type_suffix}"
+        reqtype = self.reqfinder.find_reqtype_by_identifier(
+            CACHEKEY_REQTYPE_IDENTIFIER
         )
-        if promise is None:
-            assert self.reqt_folder is not None
-            req_type_ref = decl.UUIDReference(self.reqt_folder.uuid)
+        if reqtype is None:
+            rt_suffix = f"{REQ_TYPE_NAME} {CACHEKEY_REQTYPE_IDENTIFIER}"
+            req_type_ref = decl.Promise(f"RequirementType {rt_suffix}")
+        else:
+            req_type_ref = decl.UUIDReference(reqtype.uuid)
 
         base: dict[str, t.Any] = {
             "long_name": item["long_name"],
@@ -387,19 +377,35 @@ class TrackerChange:
         """
         builder = self.patch_faulty_attribute_value(name, value)
         deftype = "AttributeDefinition"
+        values: list[decl.UUIDReference | decl.Promise] = []
         if builder.deftype == "Enum":
             deftype += "Enumeration"
+            assert isinstance(builder.value, list)
+            for enum_name in builder.value:
+                enumvalue = self.reqfinder.find_enumvalue(
+                    enum_name, below=self.req_module
+                )
+                if enumvalue is None:
+                    ev_ref = decl.Promise(f"EnumValue {name} {enum_name}")
+                    # TODO: Construct new promise instead of using a useless map
+                    assert ev_ref is not None
+                else:
+                    ev_ref = decl.UUIDReference(enumvalue.uuid)
 
-        definition_ref = promise = self.promises.get(f"{deftype}-{name}")
-        if promise is None:
-            definition = self.reqfinder.find_attribute_definition(
-                deftype, name, below=self.reqt_folder
-            )
+            values.append(ev_ref)
+
+        definition = self.reqfinder.find_attribute_definition(
+            deftype, name, below=self.reqt_folder
+        )
+        if definition is None:
+            definition_ref = decl.Promise(f"{deftype} {name}")
+        else:
             definition_ref = decl.UUIDReference(definition.uuid)
+
         return {
             "_type": builder.deftype.lower(),
             "definition": definition_ref,
-            builder.key: builder.value,
+            builder.key: values or builder.value,
         }
 
     def patch_faulty_attribute_value(
