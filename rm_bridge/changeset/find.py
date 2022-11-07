@@ -62,7 +62,7 @@ class ReqFinder:
             reqtype = self.model.search(
                 reqif.XT_REQ_TYPE, below=below
             ).by_identifier(uid, single=True)
-            assert isinstance(reqtype, reqif.RequirementsType)
+            assert isinstance(reqtype, reqif.RequirementType)
             return reqtype
         except KeyError:
             LOGGER.warning("No RequirementsType found.")
