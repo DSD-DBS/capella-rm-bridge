@@ -116,7 +116,6 @@ class TrackerChange:
         Requirements and Folders afterwards.
         """
         base = {"parent": decl.UUIDReference(self.req_module.uuid)}
-        action: cabc.Mapping[str, t.Any] | None
         if self.reqt_folder is None:
             base = self.create_requirement_types_folder_action()
         else:
@@ -128,18 +127,23 @@ class TrackerChange:
             second_key = "folders" if item.get("children") else "requirements"
             req = self.reqfinder.find_requirement_by_identifier(item["id"])
             if req is None:
-                action = self.create_requirements_actions(item)
-                _add_action_savely(base, "extend", second_key, action)
+                req_actions = self.create_requirements_actions(item)
+                item_action = next(req_actions)
+                _add_action_savely(base, "extend", second_key, item_action)
             else:
-                visited.add(req.identifier)
                 req_actions = self.yield_mod_requirements_actions(req, item)
-                self.actions.extend(req_actions)
-
-                if req not in getattr(self.req_module, second_key):
-                    loc_to_root = decl.UUIDReference(req.uuid)
-                    _add_action_savely(base, "extend", second_key, loc_to_root)
+                visited.add(req.identifier)
+                if req.parent != self.req_module:
+                    item_action = decl.UUIDReference(req.uuid)
+                    _add_action_savely(base, "extend", second_key, item_action)
                     self._location_changed.add(req.identifier)
                     self._invalidate_deletion(req)
+
+            self.actions.extend(req_actions)
+
+        for action in self._req_deletions.values():
+            if set(action) == {"parent"}:
+                self.actions.remove(action)
 
         _deep_update(base, self.delete_req_actions(visited))
         _deep_update(base, self.delete_req_actions(visited, "folders"))
@@ -165,8 +169,6 @@ class TrackerChange:
                 del deletions[key]
             if not deletions:
                 del self._req_deletions[requirement.uuid]["delete"]
-            if set(self._req_deletions[requirement.uuid]) == {"parent"}:
-                self.actions.remove(self._req_deletions[requirement.uuid])
         except KeyError:
             pass
 
@@ -306,8 +308,10 @@ class TrackerChange:
 
     def create_requirements_actions(
         self, item: dict[str, t.Any] | act.WorkItem
-    ) -> dict[str, t.Any]:
-        """Return an action for creating Requirements or Folders.
+    ) -> cabc.Iterator[dict[str, t.Any]]:
+        """Yield actions for creating Requirements or Folders.
+
+        Also yields creations or modifications for children.
 
         See Also
         --------
@@ -343,17 +347,34 @@ class TrackerChange:
         }
         if attributes:
             base["attributes"] = attributes
+
+        child_mods: list[dict[str, t.Any]] = []
         if (children := item.get("children")) is not None or folder_hint:
             base["requirements"] = []
             base["folders"] = []
             for child in children or ():
                 key = "folders" if child.get("children") else "requirements"
-                base[key].append(self.create_requirements_actions(child))
+                creq = self.reqfinder.find_requirement_by_identifier(
+                    child["id"]
+                )
+                if creq is None:
+                    child_actions = self.create_requirements_actions(child)
+                    action = next(child_actions)
+                else:
+                    child_actions = self.yield_mod_requirements_actions(
+                        creq, child, "To be created"
+                    )
+                    action = decl.UUIDReference(creq.uuid)
+
+                base[key].append(action)
+                child_mods.extend(child_actions)
+
             if not base["folders"]:
                 del base["folders"]
             if not base["requirements"]:
                 del base["requirements"]
-        return base
+        yield base
+        yield from child_mods
 
     def create_attribute_value_action(
         self, name: str, value: str | list[str]
@@ -561,7 +582,10 @@ class TrackerChange:
             yield self.create_requirement_type_action()
 
     def yield_mod_requirements_actions(
-        self, req: reqif.RequirementsModule | WorkItem, item: dict[str, t.Any]
+        self,
+        req: reqif.RequirementsModule | WorkItem,
+        item: dict[str, t.Any],
+        parent: reqif.RequirementsModule | WorkItem | None = None,
     ) -> cabc.Iterator[dict[str, t.Any]]:
         """Yield an action for modifying given ``req``.
 
@@ -606,12 +630,16 @@ class TrackerChange:
         if attributes_deletions:
             base["delete"] = {"attributes": attributes_deletions}
 
+        parent = self.req_module if parent is None else parent
+        if req.parent != parent:
+            self._location_changed.add(req.identifier)
+            self._invalidate_deletion(req)
+
         children = item.get("children", [])
-        containers = cr_creations, cf_creations = [
-            list[dict[str, t.Any]](),
-            list[dict[str, t.Any]](),
-        ]
-        to_be_modded: list[tuple[WorkItem, dict[str, t.Any]]] = []
+        cr_creations: list[dict[str, t.Any] | decl.UUIDReference] = []
+        cf_creations: list[dict[str, t.Any] | decl.UUIDReference] = []
+        containers = [cr_creations, cf_creations]
+        child_mods: list[dict[str, t.Any]] = []
         if isinstance(req, reqif.RequirementsFolder):
             child_req_ids = set[str]()
             child_folder_ids = set[str]()
@@ -623,15 +651,22 @@ class TrackerChange:
                     key = "requirements"
                     child_req_ids.add(str(child["id"]))
 
+                container = containers[key == "folders"]
                 creq = self.reqfinder.find_requirement_by_identifier(
                     child["id"]
                 )
                 if creq is None:
-                    action = self.create_requirements_actions(child)
-                    container = containers[key == "folders"]
+                    child_actions = self.create_requirements_actions(child)
+                    action = next(child_actions)
                     container.append(action)
                 else:
-                    to_be_modded.append((creq, child))
+                    child_actions = self.yield_mod_requirements_actions(
+                        creq, child, req
+                    )
+                    if creq.parent != req:
+                        container.append(decl.UUIDReference(creq.uuid))
+
+                child_mods.extend(child_actions)
 
             creations = dict[str, t.Any]()
             if cr_creations:
@@ -663,8 +698,8 @@ class TrackerChange:
             or base.get("delete", {})
         ):
             yield base
-        for creq, child in to_be_modded:
-            yield from self.yield_mod_requirements_actions(creq, child)
+
+        yield from child_mods
 
     def mod_attribute_value_action(
         self,
