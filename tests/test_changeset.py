@@ -83,19 +83,10 @@ class TestCreateActions(ActionsTest):
     ) -> None:
         """Test producing ``CreateAction``s for Requirements."""
         tchange = self.tracker_change(clean_model)
-        identifiers = (
-            "RequirementType-Requirement--3",
-            "AttributeDefinition-Capella ID",
-            "AttributeDefinitionEnumeration-Type",
-            "AttributeDefinition-Submitted at",
-        )
-        for id in identifiers:
-            promise = decl.Promise(id)
-            tchange.promises[promise.identifier] = promise
 
-        actions = tchange.create_requirements_actions(self.titem)
+        action = next(tchange.create_requirements_actions(self.titem))
 
-        assert actions == self.REQ_CHANGE
+        assert action == self.REQ_CHANGE
 
     def test_create_requirements_attributes_with_none_values(
         self, clean_model: capellambse.MelodyModel
@@ -108,23 +99,15 @@ class TestCreateActions(ActionsTest):
         first_child["attributes"]["Capella ID"] = None
         first_child["attributes"]["Type"] = None
         first_child["attributes"]["Submitted at"] = None
+        unset_promise = decl.Promise("EnumValue Type Unset")
         tchange = self.tracker_change(clean_model, tracker)
-        identifiers = (
-            "RequirementType-Requirement--3",
-            "AttributeDefinition-Capella ID",
-            "AttributeDefinitionEnumeration-Type",
-            "AttributeDefinition-Submitted at",
-        )
-        for id in identifiers:
-            promise = decl.Promise(id)
-            tchange.promises[promise.identifier] = promise
 
-        actions = tchange.create_requirements_actions(titem)
-        req_actions = actions["requirements"][0]["attributes"]  # type: ignore[typeddict-item]
+        action = next(tchange.create_requirements_actions(titem))
+        attributes = action["requirements"][0]["attributes"]  # type: ignore[typeddict-item]
 
-        assert req_actions[0]["value"] == ""
-        assert req_actions[1]["values"] == ["Unset"]
-        assert req_actions[2]["value"] is None
+        assert attributes[0]["value"] == ""
+        assert attributes[1]["values"] == [unset_promise]
+        assert attributes[2]["value"] is None
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -178,11 +161,8 @@ class TestModActions(ActionsTest):
                 ]
             },
         }
-        # Run these to populate promises lookup for new Release attribute
-        next(tchange.yield_mod_attribute_definition_actions())
-        next(tchange.yield_reqtype_mod_actions())
-
         assert isinstance(reqfolder, reqif.RequirementsFolder)
+
         actions = tchange.yield_mod_requirements_actions(reqfolder, self.titem)
 
         assert list(actions) == [req_change, self.REQ_CHANGE1]

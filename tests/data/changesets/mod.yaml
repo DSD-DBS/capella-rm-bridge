@@ -6,10 +6,12 @@
     data_type_definitions:
       - long_name: Release
         values:
-          - Rel. 1
-          - Rel. 2
-        promise_id: EnumerationDataTypeDefinition-Release
-        _type: enum
+          - long_name: Rel. 1
+            promise_id: EnumValue Release Rel. 1
+          - long_name: Rel. 2
+            promise_id: EnumValue Release Rel. 2
+        promise_id: EnumerationDataTypeDefinition Release
+        _type: EnumerationDataTypeDefinition
 - parent: !uuid f4b62994-37ac-45d6-add7-d320890e2969
   modify:
     values:
@@ -20,12 +22,12 @@
   extend:
     attribute_definitions:
       - long_name: Release
-        data_type: !promise EnumerationDataTypeDefinition-Release
+        data_type: !promise EnumerationDataTypeDefinition Release
         multi_valued: true
-        promise_id: AttributeDefinitionEnumeration-Release
+        promise_id: AttributeDefinitionEnumeration Release
         _type: AttributeDefinitionEnumeration
       - long_name: Test after migration
-        promise_id: AttributeDefinition-Test after migration
+        promise_id: AttributeDefinition Test after migration
         _type: AttributeDefinition
 - parent: !uuid 8a814f64-70d1-4fe1-a648-54c83c03d05b
   extend:
@@ -33,10 +35,10 @@
       - definition: !uuid d82b82e8-e1c5-4f07-8769-744a44764759
         value: RF-NFNC-00001
         _type: string
-      - definition: !promise AttributeDefinitionEnumeration-Release
+      - definition: !promise AttributeDefinitionEnumeration Release
         values:
-          - Rel. 1
-          - Rel. 2
+          - !promise EnumValue Release Rel. 1
+          - !promise EnumValue Release Rel. 2
         _type: enum
   modify:
     long_name: Non-Functional Requirements
@@ -44,7 +46,7 @@
 - parent: !uuid 1cab372a-62cf-443b-b36d-77e66e5de97d
   extend:
     attributes:
-      - definition: !promise AttributeDefinition-Test after migration
+      - definition: !promise AttributeDefinition Test after migration
         value: New
         _type: string
   modify:
