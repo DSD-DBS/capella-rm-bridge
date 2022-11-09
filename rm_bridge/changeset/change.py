@@ -408,12 +408,11 @@ class TrackerChange:
                 )
                 if enumvalue is None:
                     ev_ref = decl.Promise(f"EnumValue {name} {enum_name}")
-                    # TODO: Construct new promise instead of using a useless map
                     assert ev_ref is not None
                 else:
                     ev_ref = decl.UUIDReference(enumvalue.uuid)
 
-            values.append(ev_ref)
+                values.append(ev_ref)
 
         definition = self.reqfinder.find_attribute_definition(
             deftype, name, below=self.reqt_folder
