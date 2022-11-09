@@ -24,22 +24,19 @@ from rm_bridge.changeset import actiontypes, calculate_change_set, change
 
 from .conftest import TEST_CONFIG, TEST_DATA_PATH
 
+TEST_SNAPSHOT_PATH = TEST_DATA_PATH / "snapshots"
 TEST_SNAPSHOT: list[actiontypes.TrackerSnapshot] = yaml.safe_load(
-    (TEST_DATA_PATH / "snapshot.yaml").read_text(encoding="utf-8")
+    (TEST_SNAPSHOT_PATH / "snapshot.yaml").read_text(encoding="utf-8")
 )
 TEST_SNAPSHOT_1 = yaml.safe_load(
-    (TEST_DATA_PATH / "snapshot1.yaml").read_text(encoding="utf-8")
+    (TEST_SNAPSHOT_PATH / "snapshot1.yaml").read_text(encoding="utf-8")
 )
 TEST_SNAPSHOT_2 = yaml.safe_load(
-    (TEST_DATA_PATH / "snapshot2.yaml").read_text(encoding="utf-8")
+    (TEST_SNAPSHOT_PATH / "snapshot2.yaml").read_text(encoding="utf-8")
 )
 TEST_MODULE_CHANGE = decl.load(TEST_DATA_PATH / "changesets" / "create.yaml")
 TEST_MODULE_CHANGE_1 = decl.load(TEST_DATA_PATH / "changesets" / "mod.yaml")
 TEST_MODULE_CHANGE_2 = decl.load(TEST_DATA_PATH / "changesets" / "delete.yaml")
-TEST_TRACKER_ID = "25093"
-TEST_DATE = datetime.datetime(
-    2022, 6, 30, 15, 7, 18, 664000, tzinfo=datetime.timezone.utc
-)
 
 
 class ActionsTest:
