@@ -150,7 +150,7 @@ class TestModActions(ActionsTest):
     ) -> None:
         """Test that RequirementsModActions are produced."""
         tchange = self.tracker_change(migration_model)
-        reqfolder = tchange.reqfinder.find_requirement_by_identifier(
+        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
             self.titem["id"]
         )
         req_change = {
@@ -179,7 +179,7 @@ class TestModActions(ActionsTest):
         first_child["attributes"]["Type"] = None
         first_child["attributes"]["Submitted at"] = None
         tchange = self.tracker_change(migration_model, tracker)
-        reqfolder = tchange.reqfinder.find_requirement_by_identifier(
+        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
             self.titem["id"]
         )
         assert isinstance(reqfolder, reqif.RequirementsFolder)
@@ -234,7 +234,7 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test that RequirementsModActions are produced."""
         tchange = self.tracker_change(deletion_model)
-        reqfolder = tchange.reqfinder.find_requirement_by_identifier(
+        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
             self.titem["id"]
         )
         assert isinstance(reqfolder, reqif.RequirementsFolder)

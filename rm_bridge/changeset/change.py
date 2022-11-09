@@ -97,7 +97,7 @@ class TrackerChange:
         self._req_deletions = {}
 
         try:
-            self.req_module = self.reqfinder.find_module(
+            self.req_module = self.reqfinder.find_reqmodule(
                 config["capella-uuid"], config["external-id"]
             )
         except KeyError as error:
@@ -125,7 +125,7 @@ class TrackerChange:
         visited = set[str]()
         for item in self.tracker["items"]:
             second_key = "folders" if item.get("children") else "requirements"
-            req = self.reqfinder.find_requirement_by_identifier(item["id"])
+            req = self.reqfinder.find_work_item_by_identifier(item["id"])
             if req is None:
                 req_actions = self.create_requirements_actions(item)
                 item_action = next(req_actions)
@@ -354,9 +354,7 @@ class TrackerChange:
             base["folders"] = []
             for child in children or ():
                 key = "folders" if child.get("children") else "requirements"
-                creq = self.reqfinder.find_requirement_by_identifier(
-                    child["id"]
-                )
+                creq = self.reqfinder.find_work_item_by_identifier(child["id"])
                 if creq is None:
                     child_actions = self.create_requirements_actions(child)
                     action = next(child_actions)
@@ -651,9 +649,7 @@ class TrackerChange:
                     child_req_ids.add(str(child["id"]))
 
                 container = containers[key == "folders"]
-                creq = self.reqfinder.find_requirement_by_identifier(
-                    child["id"]
-                )
+                creq = self.reqfinder.find_work_item_by_identifier(child["id"])
                 if creq is None:
                     child_actions = self.create_requirements_actions(child)
                     action = next(child_actions)

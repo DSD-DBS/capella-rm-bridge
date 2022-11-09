@@ -14,12 +14,12 @@ LOGGER = logging.getLogger(__name__)
 
 
 class ReqFinder:
-    """Find RM elements in a `MelodyModel` easily and efficiently."""
+    """Find RM elements in a ``MelodyModel`` easily and efficiently."""
 
     def __init__(self, model: capellambse.MelodyModel) -> None:
         self.model = model
 
-    def find_module(
+    def find_reqmodule(
         self, uuid: str, cbid: int | str
     ) -> reqif.RequirementsModule:
         """Try to return the tracker/RequirementsModule."""
@@ -68,7 +68,7 @@ class ReqFinder:
             LOGGER.warning("No RequirementsType found.")
             return None
 
-    def find_requirement_by_identifier(
+    def find_work_item_by_identifier(
         self,
         cbid: int | str,
         below: reqif.ReqIFElement | None = None,
