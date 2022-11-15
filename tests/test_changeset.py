@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import collections.abc as cabc
 import copy
-import datetime
 import typing as t
 
 import capellambse
