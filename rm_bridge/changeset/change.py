@@ -136,7 +136,7 @@ class TrackerChange:
                 if req.parent != self.req_module:
                     item_action = decl.UUIDReference(req.uuid)
                     _add_action_savely(base, "extend", second_key, item_action)
-                    self._location_changed.add(req.identifier)
+                    self._location_changed.add(RMIdentifier(req.identifier))
                     self._invalidate_deletion(req)
 
             self.actions.extend(req_actions)
@@ -629,7 +629,7 @@ class TrackerChange:
 
         parent = self.req_module if parent is None else parent
         if req.parent != parent:
-            self._location_changed.add(req.identifier)
+            self._location_changed.add(RMIdentifier(req.identifier))
             self._invalidate_deletion(req)
 
         children = item.get("children", [])
