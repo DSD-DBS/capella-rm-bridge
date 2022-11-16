@@ -27,7 +27,7 @@ ATTRIBUTE_VALUE_CLASS_MAP: cabc.Mapping[
     str, tuple[type, act.Primitive | None]
 ] = {
     "String": (str, ""),
-    "Enum": (list, []),
+    "Enum": (list, list[str]()),
     "Date": (datetime.datetime, None),
     "Integer": (int, 0),
     "Float": (float, 0.0),
@@ -52,6 +52,7 @@ class TrackerChange:
     _req_deletions: cabc.MutableMapping[
         helpers.UUIDString, cabc.MutableMapping[str, t.Any]
     ]
+    _reqtype_ids: set[RMIdentifier]
 
     tracker: cabc.Mapping[str, t.Any]
     """Snapshot of tracker, i.e. a `reqif.RequirementsModule`."""
@@ -63,31 +64,27 @@ class TrackerChange:
     """Find ReqIF elements in the model."""
 
     req_module: reqif.RequirementsModule
-    """The corresponding `reqif.RequirementsModule` for the tracker."""
+    """The corresponding ``reqif.RequirementsModule`` for the tracker."""
     reqt_folder: reqif.RequirementsTypesFolder | None
     """The `reqif.RequirementsTypesFolder` storing fields data."""
+    reqtype_fields_filter: cabc.Mapping[RMIdentifier, set[str]]
+    """A mapping for whitelisted fieldnames per RequirementType."""
     actions: list[cabc.Mapping[str, t.Any]]
     """List of action requests for the tracker sync."""
-    definitions: cabc.Mapping[
-        str, act.AttributeDefinition | act.EnumAttributeDefinition
-    ]
-    """A lookup for AttributeDefinitions from the tracker snapshot."""
     data_type_definitions: cabc.Mapping[str, list[str]]
     """A lookup for DataTypeDefinitions from the tracker snapshot."""
+    requirement_types: cabc.Mapping[RMIdentifier, act.RequirementType]
+    """A lookup for RequirementTypes from the tracker snapshot."""
 
     def __init__(
         self,
         tracker: cabc.Mapping[str, t.Any],
         model: capellambse.MelodyModel,
-        config: cabc.Mapping[str, t.Any],
+        config: act.TrackerConfig,
     ) -> None:
         self.tracker = tracker
-        self.definitions = self.tracker["attributes"]
-        self.data_type_definitions = {
-            name: data["values"]  # type: ignore[typeddict-item]
-            for name, data in self.definitions.items()
-            if data["type"] == "Enum"
-        }
+        self.data_type_definitions = self.tracker["data_types"]
+        self.requirement_types = self.tracker["requirement_types"]
 
         self.model = model
         self.config = config
@@ -101,12 +98,24 @@ class TrackerChange:
                 config["capella-uuid"], config["external-id"]
             )
         except KeyError as error:
-            LOGGER.error("Skipping tracker: %s", self.config["external-id"])
+            LOGGER.error("Skipping tracker: %s", config["external-id"])
             raise KeyError from error
 
         self.reqt_folder = self.reqfinder.find_reqtypesfolder_by_identifier(
             CACHEKEY_TYPES_FOLDER_IDENTIFIER, below=self.req_module
         )
+
+        reqtype_name_id_map = {
+            reqtype["long_name"]: rt_id
+            for rt_id, reqtype in self.requirement_types.items()
+        }
+        self.reqtype_fields_filter = {
+            reqtype_name_id_map[reqtype["name"]]: set(
+                reqtype.get("fields", [])
+            )
+            for reqtype in config.get("workitem-types", [])
+        }
+
         self.actions = []
 
     def calculate_change(self) -> None:
@@ -202,19 +211,25 @@ class TrackerChange:
         capellambse.extensions.reqif.RequirementsTypesFolder :
             Folder for (Data-)Type- and Attribute-Definitions
         """
+        data_type_defs = self.yield_data_type_definition_create_actions()
+        req_types = self.yield_requirement_type_create_actions()
         reqt_folder = {
             "long_name": REQ_TYPES_FOLDER_NAME,
             "identifier": CACHEKEY_TYPES_FOLDER_IDENTIFIER,
-            "data_type_definitions": [
-                self.create_data_type_action(name, values)
-                for name, values in self.data_type_definitions.items()
-            ],
-            "requirement_types": [self.create_requirement_type_action()],
+            "data_type_definitions": list(data_type_defs),
+            "requirement_types": list(req_types),
         }
         return {
             "parent": decl.UUIDReference(self.req_module.uuid),
             "extend": {"requirement_types_folders": [reqt_folder]},
         }
+
+    def yield_data_type_definition_create_actions(
+        self,
+    ) -> cabc.Iterator[dict[str, t.Any]]:
+        r"""Yield actions for creating ``EnumDataTypeDefinition`` \s."""
+        for name, values in self.data_type_definitions.items():
+            yield self.create_data_type_action(name, values)
 
     def create_data_type_action(
         self, name: str, values: cabc.Sequence[str]
@@ -225,14 +240,14 @@ class TrackerChange:
         --------
         capellambse.extensions.reqif.EnumerationDataTypeDefinition :
             Definition for the ``data_type`` attribute of
-            :class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`\ s
+            :class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`
+            \s.
         """
         type = "EnumerationDataTypeDefinition"
-        enum_values = list[dict[str, str]]()
-        for value in values:
-            enum_values.append(
-                {"long_name": value, "promise_id": f"EnumValue {name} {value}"}
-            )
+        enum_values = [
+            {"long_name": value, "promise_id": f"EnumValue {name} {value}"}
+            for value in values
+        ]
         return {
             "long_name": name,
             "values": enum_values,
@@ -240,7 +255,16 @@ class TrackerChange:
             "_type": type,
         }
 
-    def create_requirement_type_action(self) -> dict[str, t.Any]:
+    def yield_requirement_type_create_actions(
+        self,
+    ) -> cabc.Iterator[dict[str, t.Any]]:
+        r"""Yield actions for creating ``RequirementType`` \s."""
+        for identifier, req_type in self.requirement_types.items():
+            yield self.create_requirement_type_action(identifier, req_type)
+
+    def create_requirement_type_action(
+        self, identifier: str, req_type: act.RequirementType
+    ) -> dict[str, t.Any]:
         """Return an action for creating the ``RequirementType``.
 
         See Also
@@ -252,20 +276,13 @@ class TrackerChange:
             that enables AttributeDefinitions via the ``definition``
             attribute.
         """
-        identifier = " ".join(
-            (
-                reqif.RequirementType.__name__,
-                REQ_TYPE_NAME,
-                CACHEKEY_REQTYPE_IDENTIFIER,
-            )
-        )
         return {
-            "identifier": CACHEKEY_REQTYPE_IDENTIFIER,
-            "long_name": REQ_TYPE_NAME,
-            "promise_id": identifier,
+            "identifier": identifier,
+            "long_name": req_type["long_name"],
+            "promise_id": f"RequirementType {identifier}",
             "attribute_definitions": [
-                self.create_attribute_definition_action(name, data)
-                for name, data in self.definitions.items()
+                self.create_attribute_definition_action(name, adef, identifier)
+                for name, adef in req_type["attributes"].items()
             ],
         }
 
@@ -273,8 +290,9 @@ class TrackerChange:
         self,
         name: str,
         item: act.AttributeDefinition | act.EnumAttributeDefinition,
+        req_type_id: str,
     ) -> dict[str, t.Any]:
-        r"""Return a action for creating ``AttributeDefinition``\ s.
+        r"""Return a action for creating ``AttributeDefinition`` \s.
 
         In case of an ``AttributeDefinitionEnumeration`` requires
         ``name`` of possibly promised ``EnumerationDataTypeDefinition``.
@@ -285,7 +303,8 @@ class TrackerChange:
         capellambse.extensions.reqif.AttributeDefinition
         capellambse.extensions.reqif.AttributeDefinitionEnumeration
         """
-        base: dict[str, t.Any] = {"long_name": name}
+        identifier = f"{name} {req_type_id}"
+        base: dict[str, t.Any] = {"long_name": name, "identifier": identifier}
         cls = reqif.AttributeDefinition
         if item["type"] == "Enum":
             cls = reqif.AttributeDefinitionEnumeration
@@ -303,7 +322,7 @@ class TrackerChange:
             base["multi_valued"] = item.get("multi_values") is not None
 
         base["_type"] = cls.__name__
-        base["promise_id"] = f"{cls.__name__} {name}"
+        base["promise_id"] = f"{cls.__name__} {identifier}"
         return base
 
     def create_requirements_actions(
@@ -318,6 +337,7 @@ class TrackerChange:
         capellambse.extensions.reqif.Requirement
         capellambse.extensions.reqif.RequirementsFolder
         """
+        req_type_id = item.get("type")
         attributes = []
         folder_hint = False
         for name, value in item.get("attributes", {}).items():
@@ -325,28 +345,43 @@ class TrackerChange:
                 if name == "Type" and value == "Folder":
                     folder_hint = True
                 continue
-            if name in self.definitions:
-                attributes.append(
-                    self.create_attribute_value_action(name, value)
-                )
 
-        reqtype = self.reqfinder.find_reqtype_by_identifier(
-            CACHEKEY_REQTYPE_IDENTIFIER
-        )
-        if reqtype is None:
-            rt_suffix = f"{REQ_TYPE_NAME} {CACHEKEY_REQTYPE_IDENTIFIER}"
-            req_type_ref = decl.Promise(f"RequirementType {rt_suffix}")
-        else:
-            req_type_ref = decl.UUIDReference(reqtype.uuid)
+            if not req_type_id:
+                LOGGER.error(
+                    "Requirement without type but with attributes found: '%r'",
+                    item,
+                )
+                break
+
+            req_type_id = RMIdentifier(req_type_id)
+            req_type = self.requirement_types[req_type_id]
+            fields_filter = set(req_type["attributes"])
+            if filters := self.reqtype_fields_filter[req_type_id]:
+                fields_filter &= filters
+
+            if name in fields_filter:
+                attributes.append(
+                    self.create_attribute_value_action(
+                        name, value, req_type_id
+                    )
+                )
 
         base: dict[str, t.Any] = {
             "long_name": item["long_name"],
             "identifier": str(item["id"]),
-            "text": item.get("text", ""),
-            "type": req_type_ref,
         }
+        if text := item.get("text"):
+            base["text"] = text
+
         if attributes:
             base["attributes"] = attributes
+
+        if req_type_id:
+            reqtype = self.reqfinder.find_reqtype_by_identifier(req_type_id)
+            if reqtype is None:
+                base["type"] = decl.Promise(f"RequirementType {req_type_id}")
+            else:
+                base["type"] = decl.UUIDReference(reqtype.uuid)
 
         child_mods: list[dict[str, t.Any]] = []
         if (children := item.get("children")) is not None or folder_hint:
@@ -375,7 +410,7 @@ class TrackerChange:
         yield from child_mods
 
     def create_attribute_value_action(
-        self, name: str, value: str | list[str]
+        self, name: str, value: str | list[str], req_type_id: RMIdentifier
     ) -> dict[str, t.Any]:
         """Return an action for creating an ``AttributeValue``.
 
@@ -394,7 +429,7 @@ class TrackerChange:
         capellambse.extension.reqif.BooleanValueAttribute
         capellambse.extension.reqif.EnumerationValueAttribute
         """
-        builder = self.patch_faulty_attribute_value(name, value)
+        builder = self.patch_faulty_attribute_value(name, value, req_type_id)
         deftype = "AttributeDefinition"
         values: list[decl.UUIDReference | decl.Promise] = []
         if builder.deftype == "Enum":
@@ -412,11 +447,12 @@ class TrackerChange:
 
                 values.append(ev_ref)
 
-        definition = self.reqfinder.find_attribute_definition(
-            deftype, name, below=self.reqt_folder
+        attr_def_id = f"{name} {req_type_id}"
+        definition = self.reqfinder.find_attribute_definition_by_identifier(
+            req_type_id, below=self.reqt_folder
         )
         if definition is None:
-            definition_ref = decl.Promise(f"{deftype} {name}")
+            definition_ref = decl.Promise(f"{deftype} {attr_def_id}")
         else:
             definition_ref = decl.UUIDReference(definition.uuid)
 
@@ -427,16 +463,17 @@ class TrackerChange:
         }
 
     def patch_faulty_attribute_value(
-        self, name: str, value: str | list[str]
+        self, name: str, value: str | list[str], req_type_id: RMIdentifier
     ) -> AttributeValueBuilder:
         """Swap value with faulty type with definition's default value."""
-        deftype = self.definitions[name]["type"]
+        reqtype = self.requirement_types[req_type_id]
+        deftype = reqtype["attributes"][name]["type"]
         type, default_value = ATTRIBUTE_VALUE_CLASS_MAP[deftype]
         pvalue: act.Primitive | None
         if deftype == "Enum":
-            default = self.data_type_definitions[name]
+            defined_values = self.data_type_definitions[name]
             is_faulty = not value or not isinstance(value, type)
-            pvalue = default[:1] if is_faulty else value
+            pvalue = defined_values[:1] if is_faulty else value
             key = "values"
         else:
             pvalue = value if isinstance(value, type) else default_value
@@ -774,7 +811,9 @@ class TrackerChange:
                 return None
             return {"parent": decl.UUIDReference(attrdef.uuid), "modify": mods}
         except KeyError:
-            return self.create_attribute_definition_action(name, data)
+            return self.create_attribute_definition_action(
+                name, data, reqtype.identifier
+            )
 
 
 def make_requirement_delete_actions(
@@ -863,3 +902,17 @@ def _deep_update(
 
         source[key] = update
     return source
+
+
+def _get_reqtype_identifier(name: str) -> str:
+    """Return an identifier for a given ``RequirementType`` name."""
+    length = 5
+    pieces = list[str]()
+    for piece in name.split(" "):
+        pieces.append(piece[:length].upper())
+        length -= 1
+
+        if length <= 3:
+            break
+
+    return "".join(pieces)

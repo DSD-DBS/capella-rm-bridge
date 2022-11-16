@@ -17,58 +17,110 @@
                 promise_id: EnumValue Type Functional
             promise_id: EnumerationDataTypeDefinition Type
             _type: EnumerationDataTypeDefinition
+          - long_name: Release
+            values:
+              - long_name: Feature Rel. 1
+                promise_id: EnumValue Release Feature Rel. 1
+              - long_name: Feature Rel. 2
+                promise_id: EnumValue Release Feature Rel. 2
+            promise_id: EnumerationDataTypeDefinition Release
+            _type: EnumerationDataTypeDefinition
         requirement_types:
-          - identifier: "-3"
-            long_name: Requirement
-            promise_id: RequirementType Requirement -3
+          - identifier: system_requirement
+            long_name: System Requirement
+            promise_id: RequirementType system_requirement
             attribute_definitions:
               - long_name: Capella ID
-                promise_id: AttributeDefinition Capella ID
+                identifier: Capella ID system_requirement
+                promise_id: AttributeDefinition Capella ID system_requirement
                 _type: AttributeDefinition
               - long_name: Type
+                identifier: Type system_requirement
                 data_type: !promise EnumerationDataTypeDefinition Type
                 multi_valued: false
-                promise_id: AttributeDefinitionEnumeration Type
+                promise_id: AttributeDefinitionEnumeration Type system_requirement
                 _type: AttributeDefinitionEnumeration
               - long_name: Submitted at
-                promise_id: AttributeDefinition Submitted at
+                identifier: Submitted at system_requirement
+                promise_id: AttributeDefinition Submitted at system_requirement
                 _type: AttributeDefinition
+              - long_name: Release
+                identifier: Release system_requirement
+                data_type: !promise EnumerationDataTypeDefinition Release
+                multi_valued: true
+                promise_id: AttributeDefinitionEnumeration Release system_requirement
+                _type: AttributeDefinitionEnumeration
+          - identifier: software_requirement
+            long_name: Software Requirement
+            promise_id: RequirementType software_requirement
+            attribute_definitions:
+              - long_name: Capella ID
+                identifier: Capella ID software_requirement
+                promise_id: AttributeDefinition Capella ID software_requirement
+                _type: AttributeDefinition
+              - long_name: Type
+                identifier: Type software_requirement
+                data_type: !promise EnumerationDataTypeDefinition Type
+                multi_valued: false
+                promise_id: AttributeDefinitionEnumeration Type software_requirement
+                _type: AttributeDefinitionEnumeration
+              - long_name: Submitted at
+                identifier: Submitted at software_requirement
+                promise_id: AttributeDefinition Submitted at software_requirement
+                _type: AttributeDefinition
+          - identifier: stakeholder_requirement
+            long_name: Stakeholder Requirement
+            promise_id: RequirementType stakeholder_requirement
+            attribute_definitions:
+              - long_name: Capella ID
+                identifier: Capella ID stakeholder_requirement
+                promise_id: AttributeDefinition Capella ID stakeholder_requirement
+                _type: AttributeDefinition
+              - long_name: Submitted at
+                identifier: Submitted at stakeholder_requirement
+                promise_id: AttributeDefinition Submitted at stakeholder_requirement
+                _type: AttributeDefinition
+              - long_name: Release
+                identifier: Release stakeholder_requirement
+                data_type: !promise EnumerationDataTypeDefinition Release
+                multi_valued: true
+                promise_id: AttributeDefinitionEnumeration Release stakeholder_requirement
+                _type: AttributeDefinitionEnumeration
     folders:
       - long_name: Functional Requirements
-        identifier: "5440"
+        identifier: REQ-001
         text: <p>Test Description</p>
-        type: !promise "RequirementType Requirement -3"
+        type: !promise RequirementType system_requirement
         folders:
           - long_name: Kinds
-            identifier: "5442"
-            text: ""
-            type: !promise RequirementType Requirement -3
+            identifier: REQ-003
+            type: !promise RequirementType software_requirement
             requirements:
               - long_name: Kind Requirement
-                identifier: "5443"
-                text: ""
-                type: !promise RequirementType Requirement -3
+                identifier: REQ-004
+                type: !promise RequirementType stakeholder_requirement
                 attributes:
-                  - definition: !promise AttributeDefinition Capella ID
+                  - definition: !promise AttributeDefinition Capella ID stakeholder_requirement
                     value: R-FNC-00002
                     _type: string
-                  - definition: !promise AttributeDefinitionEnumeration Type
-                    values:
-                      - !promise EnumValue Type Unset
-                    _type: enum
         requirements:
           - long_name: Function Requirement
-            identifier: "5441"
+            identifier: REQ-002
             text: "..."
-            type: !promise RequirementType Requirement -3
+            type: !promise RequirementType system_requirement
             attributes:
-              - definition: !promise AttributeDefinition Capella ID
+              - definition: !promise AttributeDefinition Capella ID system_requirement
                 value: R-FNC-00001
                 _type: string
-              - definition: !promise AttributeDefinitionEnumeration Type
+              - definition: !promise AttributeDefinitionEnumeration Type system_requirement
                 values:
                   - !promise EnumValue Type Functional
                 _type: enum
-              - definition: !promise AttributeDefinition Submitted at
+              - definition: !promise AttributeDefinitionEnumeration Release system_requirement
+                values:
+                  - !promise EnumValue Release Feature Rel. 1
+                  - !promise EnumValue Release Feature Rel. 2
+                _type: enum
+              - definition: !promise AttributeDefinition Submitted at system_requirement
                 value: 2022-06-30 15:07:18.664000+00:00
                 _type: date

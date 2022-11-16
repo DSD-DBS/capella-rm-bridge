@@ -16,8 +16,8 @@ LOGGER = logging.getLogger(__name__)
 
 def calculate_change_set(
     model: capellambse.MelodyModel,
-    config: cabc.MutableMapping[str, t.Any],
-    snapshot: list[actiontypes.TrackerSnapshot],
+    config: actiontypes.Config,
+    snapshot: cabc.Sequence[actiontypes.TrackerSnapshot],
 ) -> list[dict[str, t.Any]]:
     r"""Return a list of actions for a given ``model`` and ``snapshot``.
 

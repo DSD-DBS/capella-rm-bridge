@@ -100,27 +100,6 @@ class ReqFinder:
             )
             return None
 
-    def find_attribute_definition(
-        self, xtype: str, name: str, below: reqif.ReqIFElement | None
-    ) -> reqif.AttributeDefinition | reqif.AttributeDefinitionEnumeration:
-        """Try to return an AttributeDefinition with given ``long_name``."""
-        try:
-            if xtype.endswith("Enumeration"):
-                cls = reqif.AttributeDefinitionEnumeration
-            else:
-                cls = reqif.AttributeDefinition
-
-            attrdef = self.model.search(xtype, below=below).by_long_name(
-                name, single=True
-            )
-            assert isinstance(attrdef, cls)
-            return attrdef
-        except KeyError:
-            LOGGER.warning(
-                "No %s found with long_name: '%s'", cls.__name__, name
-            )
-            return None
-
     def find_enumvalue(
         self, name: str, below: reqif.ReqIFElement | None = None
     ) -> reqif.EnumValue | None:
@@ -135,5 +114,28 @@ class ReqFinder:
         except KeyError:
             LOGGER.warning(
                 "No %s found with long_name: '%s'", cls.__name__, name
+            )
+            return None
+
+    def find_attribute_definition_by_identifier(
+        self, uid: int | str, below: reqif.ReqIFElement | None
+    ) -> reqif.AttributeDefinition | reqif.AttributeDefinitionEnumeration:
+        """Try to return an AttributeDefinition with given ``long_name``."""
+        def_types = (
+            reqif.AttributeDefinition,
+            reqif.AttributeDefinitionEnumeration,
+        )
+        try:
+            attrdef = self.model.search(
+                reqif.XT_REQ_TYPE_ENUM_DEF,
+                reqif.XT_REQ_TYPE_ATTR_DEF,
+                below=below,
+            ).by_identifier(str(uid), single=True)
+            assert isinstance(attrdef, def_types)
+            return attrdef
+        except KeyError:
+            type_names = " or ".join((dt.__name__ for dt in def_types))
+            LOGGER.warning(
+                "No %s found with identifier: '%s'", type_names, uid
             )
             return None
