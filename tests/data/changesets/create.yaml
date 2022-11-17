@@ -76,16 +76,6 @@
                 identifier: Capella ID stakeholder_requirement
                 promise_id: AttributeDefinition Capella ID stakeholder_requirement
                 _type: AttributeDefinition
-              - long_name: Submitted at
-                identifier: Submitted at stakeholder_requirement
-                promise_id: AttributeDefinition Submitted at stakeholder_requirement
-                _type: AttributeDefinition
-              - long_name: Release
-                identifier: Release stakeholder_requirement
-                data_type: !promise EnumerationDataTypeDefinition Release
-                multi_valued: true
-                promise_id: AttributeDefinitionEnumeration Release stakeholder_requirement
-                _type: AttributeDefinitionEnumeration
     folders:
       - long_name: Functional Requirements
         identifier: REQ-001

@@ -105,17 +105,6 @@ class TrackerChange:
             CACHEKEY_TYPES_FOLDER_IDENTIFIER, below=self.req_module
         )
 
-        reqtype_name_id_map = {
-            reqtype["long_name"]: rt_id
-            for rt_id, reqtype in self.requirement_types.items()
-        }
-        self.reqtype_fields_filter = {
-            reqtype_name_id_map[reqtype["name"]]: set(
-                reqtype.get("fields", [])
-            )
-            for reqtype in config.get("workitem-types", [])
-        }
-
         self.actions = []
 
     def calculate_change(self) -> None:
@@ -355,11 +344,7 @@ class TrackerChange:
 
             req_type_id = RMIdentifier(req_type_id)
             req_type = self.requirement_types[req_type_id]
-            fields_filter = set(req_type["attributes"])
-            if filters := self.reqtype_fields_filter[req_type_id]:
-                fields_filter &= filters
-
-            if name in fields_filter:
+            if name in req_type["attributes"]:
                 attributes.append(
                     self.create_attribute_value_action(
                         name, value, req_type_id

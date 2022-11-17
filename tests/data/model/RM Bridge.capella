@@ -1879,12 +1879,6 @@ The predator is far away</bodies>
               ReqIFIdentifier="stakeholder_requirement" ReqIFLongName="Stakeholder Requirement">
             <ownedAttributes xsi:type="Requirements:AttributeDefinition" id="e949bf20-4abe-42dc-ac63-bf74b24571bb"
                 ReqIFIdentifier="Capella ID stakeholder_requirement" ReqIFLongName="Capella ID"/>
-            <ownedAttributes xsi:type="Requirements:AttributeDefinition" id="9a9499e3-db33-4eda-8d97-1c32402bb389"
-                ReqIFIdentifier="Submitted at stakeholder_requirement" ReqIFLongName="Submitted at"/>
-            <ownedAttributes xsi:type="Requirements:AttributeDefinitionEnumeration"
-                id="8e3e593a-7687-4640-a859-374e67c2bde8" ReqIFIdentifier="Release stakeholder_requirement"
-                ReqIFLongName="Release" definitionType="#98aaca05-d47f-4916-a9f9-770dc60aa04f"
-                multiValued="true"/>
           </ownedTypes>
         </ownedExtensions>
       </ownedExtensions>

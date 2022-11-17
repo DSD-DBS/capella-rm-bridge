@@ -41,12 +41,6 @@
       attributes:
         Capella ID:
           type: String
-        Submitted at:
-          type: Date
-        Release:
-          type: Enum
-          data_type: Release
-          multi_values: true
   items:
     - id: REQ-001
       long_name: Functional Requirements
@@ -77,7 +71,3 @@
               type: stakeholder_requirement
               attributes:
                 Capella ID: R-FNC-00002
-                Release:
-                  - Feature Rel. 1
-                  - Feature Rel. 2
-                Submitted at: 2022-06-30 17:07:18.664000+02:00
