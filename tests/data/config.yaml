@@ -1,9 +1,9 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
-trackers:
-  - external-id: MODULE-000
-    capella-uuid: 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
+modules:
+  - external-id: MODULE-000 # Optional: Sets this ReqIFIdentifier
+    uuid: 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
     project: library
     workitem-types:
       - name: System Requirement

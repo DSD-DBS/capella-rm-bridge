@@ -3,7 +3,7 @@
 
 # yaml-language-server: $schema=../../../rm_bridge/changeset/snapshot_input.schema.json
 - id: MODULE-000
-  data_types:
+  data_types: # Enumeration Data Type Definitions
     Type:
       - Unset
       - Folder
@@ -11,17 +11,17 @@
     Release:
       - Feature Rel. 1
       - Feature Rel. 2
-  requirement_types:
+  requirement_types: # WorkItemTypes
     system_requirement:
       long_name: System Requirement
-      attributes:
-        Capella ID:
-          type: String
+      attributes: # Field Definitions, we don't need the IDs
+        Capella ID: # Field name
+          type: String # -> AttributeDefinition
         Type:
           type: Enum
-          data_type: Type
+          data_type: Type # -> EnumerationAttributeDefinition
         Submitted at:
-          type: Date
+          type: Date # -> AttributeDefinition
         Release:
           type: Enum
           data_type: Release
@@ -41,25 +41,25 @@
       attributes:
         Capella ID:
           type: String
-  items:
+  items: # WorkItems
     - id: REQ-001
       long_name: Functional Requirements
       text: <p>Test Description</p>
-      type: system_requirement
+      type: system_requirement # WorkItemType ID NOT name
       attributes:
-        Type: [Folder]
-      children:
+        Type: [Folder] # THIS IS BULLSHIT FROM CODEBEAMER and cleaned in RM Bridge
+      children: # Folder b/c non-empty children
         - id: REQ-002
           long_name: Function Requirement
           text: ...
           type: system_requirement
-          attributes:
-            Capella ID: R-FNC-00001
-            Type: [Functional]
+          attributes: # Fields
+            Capella ID: R-FNC-00001 # name, value pair
+            Type: [Functional] # values in a list for enum fields
             Release:
               - Feature Rel. 1
               - Feature Rel. 2
-            Submitted at: 2022-06-30 17:07:18.664000+02:00
+            Submitted at: 2022-06-30 17:07:18.664000+02:00 # datetime.datetime for dates
         - id: REQ-003
           long_name: Kinds
           type: software_requirement

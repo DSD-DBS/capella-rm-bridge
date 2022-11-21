@@ -20,10 +20,12 @@ class WorkitemTypeConfig(te.TypedDict):
 TrackerConfig = te.TypedDict(
     "TrackerConfig",
     {
-        "external-id": str,
-        "capella-uuid": str,
+        "uuid": str,
         "project": str,
         "workitem-types": cabc.Sequence[WorkitemTypeConfig],
+        "title": t.Optional[str],
+        "space": t.Optional[str],
+        "external-id": t.Optional[str],
     },
 )
 
@@ -33,8 +35,12 @@ class ModelConfig(te.TypedDict):
 
 
 class Config(te.TypedDict):
-    trackers: cabc.Sequence[TrackerConfig]
+    modules: cabc.Sequence[TrackerConfig]
     model: ModelConfig
+
+
+class InvalidTrackerConfig(Exception):
+    """Raised when the given config is missing a non-optional key."""
 
 
 class WorkItem(te.TypedDict, total=False):
@@ -43,8 +49,7 @@ class WorkItem(te.TypedDict, total=False):
     text: str
     type: str
     attributes: cabc.Mapping[str, t.Any]
-    # <https://github.com/python/mypy/issues/731>
-    children: cabc.Sequence[WorkItem]  # type: ignore[misc]
+    children: cabc.Sequence[WorkItem]
 
 
 class TrackerSnapshot(te.TypedDict):

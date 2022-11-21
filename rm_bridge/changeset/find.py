@@ -20,21 +20,34 @@ class ReqFinder:
         self.model = model
 
     def find_reqmodule(
-        self, uuid: str, cbid: int | str
-    ) -> reqif.RequirementsModule:
-        """Try to return the tracker/RequirementsModule."""
+        self, uuid: str, identifier: int | str | None = None
+    ) -> reqif.RequirementsModule | None:
+        """Try to return the ``RequirementsModule``.
+
+        Parameters
+        ----------
+        uuid
+            UUID string for the RequirementsModule to find.
+        identifier : optional
+            The ReqIFIdentifier that is written if the given doesn't
+            match the found. Optional
+
+        Returns
+        -------
+        requirement_module
+            The ``RequirementsModule`` with the given ``uuid``.
+        """
         req_module = None
         try:
             req_module = self.model.by_uuid(uuid)
             assert isinstance(req_module, reqif.RequirementsModule)
-            if req_module.identifier != str(cbid):
-                req_module.identifier = str(cbid)
-            return req_module
-        except KeyError as error:
+            if identifier and req_module.identifier != str(identifier):
+                req_module.identifier = str(identifier)
+        except KeyError:
             LOGGER.error(
-                "No RequirementsModule found for tracker: '%s'.", cbid
+                "No RequirementsModule found for tracker: '%s'.", identifier
             )
-            raise KeyError from error
+        return req_module
 
     def find_reqtypesfolder_by_identifier(
         self,
