@@ -234,6 +234,7 @@ class TestDeleteActions(ActionsTest):
             self.titem["id"]
         )
         assert isinstance(reqfolder, reqif.RequirementsFolder)
+
         actions = tchange.yield_mod_requirements_actions(reqfolder, self.titem)
 
         assert list(actions) == self.REQ_CHANGES

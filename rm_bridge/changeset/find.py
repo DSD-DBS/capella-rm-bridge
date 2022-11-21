@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
-"""Functionality for finding Reqif elements in a `MelodyModel`."""
+"""Functionality for finding ReqIF elements in a ``MelodyModel``."""
 from __future__ import annotations
 
 import logging
@@ -104,20 +104,19 @@ class ReqFinder:
         self, xtype: str, name: str, below: reqif.ReqIFElement | None
     ) -> reqif.AttributeDefinition | reqif.AttributeDefinitionEnumeration:
         """Try to return an AttributeDefinition with given ``long_name``."""
+        supported_classes = (
+            reqif.AttributeDefinition,
+            reqif.AttributeDefinitionEnumeration,
+        )
         try:
-            if xtype.endswith("Enumeration"):
-                cls = reqif.AttributeDefinitionEnumeration
-            else:
-                cls = reqif.AttributeDefinition
-
             attrdef = self.model.search(xtype, below=below).by_long_name(
                 name, single=True
             )
-            assert isinstance(attrdef, cls)
+            assert isinstance(attrdef, supported_classes)
             return attrdef
         except KeyError:
             LOGGER.warning(
-                "No %s found with long_name: '%s'", cls.__name__, name
+                "No %s found with long_name: '%s'", xtype.split(":")[-1], name
             )
             return None
 

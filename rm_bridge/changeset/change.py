@@ -23,17 +23,20 @@ CACHEKEY_TYPES_FOLDER_IDENTIFIER = "-2"
 CACHEKEY_REQTYPE_IDENTIFIER = "-3"
 
 REQ_TYPE_NAME = "Requirement"
-ATTRIBUTE_VALUE_CLASS_MAP: cabc.Mapping[
-    str, tuple[type, act.Primitive | None]
-] = {
-    "String": (str, ""),
-    "Enum": (list, []),
-    "Date": (datetime.datetime, None),
-    "Integer": (int, 0),
-    "Float": (float, 0.0),
-    "Boolean": (bool, False),
-}
 ATTR_BLACKLIST = frozenset({("Type", "Folder")})
+
+# TODO Remove default value patching; Snapshort should be correct
+_ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[
+    str, cabc.Callable[[], tuple[type, act.Primitive | None]]
+] = {
+    "String": lambda: (str, ""),
+    "Enum": lambda: (list, []),
+    "Date": lambda: (datetime.datetime, None),
+    "Integer": lambda: (int, 0),
+    "Float": lambda: (float, 0.0),
+    "Boolean": lambda: (bool, False),
+}
+
 
 WorkItem = t.Union[reqif.Requirement, reqif.RequirementsFolder]
 RMIdentifier = t.NewType("RMIdentifier", str)
@@ -429,9 +432,12 @@ class TrackerChange:
     def patch_faulty_attribute_value(
         self, name: str, value: str | list[str]
     ) -> AttributeValueBuilder:
-        """Swap value with faulty type with definition's default value."""
+        """Swap value with faulty type with definition's default value.
+
+        TODO Remove default value patching; Snapshort should be correct
+        """
         deftype = self.definitions[name]["type"]
-        type, default_value = ATTRIBUTE_VALUE_CLASS_MAP[deftype]
+        type, default_value = _ATTR_VALUE_DEFAULT_MAP[deftype]()
         pvalue: act.Primitive | None
         if deftype == "Enum":
             default = self.data_type_definitions[name]
@@ -638,15 +644,15 @@ class TrackerChange:
         containers = [cr_creations, cf_creations]
         child_mods: list[dict[str, t.Any]] = []
         if isinstance(req, reqif.RequirementsFolder):
-            child_req_ids = set[str]()
-            child_folder_ids = set[str]()
+            child_req_ids = set[RMIdentifier]()
+            child_folder_ids = set[RMIdentifier]()
             for child in children:
                 if child.get("children", []):
                     key = "folders"
-                    child_folder_ids.add(str(child["id"]))
+                    child_folder_ids.add(RMIdentifier(child["id"]))
                 else:
                     key = "requirements"
-                    child_req_ids.add(str(child["id"]))
+                    child_req_ids.add(RMIdentifier(child["id"]))
 
                 container = containers[key == "folders"]
                 creq = self.reqfinder.find_work_item_by_identifier(child["id"])
@@ -739,8 +745,8 @@ class TrackerChange:
     ) -> dict[str, t.Any] | None:
         """Return an action for an ``AttributeDefinition``.
 
-        If a :class:`capellambse.extentions.reqif.AttributeDefinition`
-        or :class:`capellambse.extentions.reqif.AttributeDefinitionEnumeration`
+        If a :class:`capellambse.extensions.reqif.AttributeDefinition`
+        or :class:`capellambse.extensions.reqif.AttributeDefinitionEnumeration`
         can be found via ``long_name`` it is compared against the
         snapshot. If any changes are identified an action for
         modification is returned else None. If the definition can't be
@@ -779,7 +785,7 @@ class TrackerChange:
 
 def make_requirement_delete_actions(
     req: reqif.RequirementsFolder,
-    child_ids: cabc.Iterable[str],
+    child_ids: cabc.Container[RMIdentifier],
     key: str = "requirements",
 ) -> list[decl.UUIDReference]:
     """Return actions for deleting elements behind ``req.key``.
@@ -854,7 +860,7 @@ def _deep_update(
     source: cabc.MutableMapping[str, t.Any],
     overrides: cabc.Mapping[str, t.Any],
 ) -> cabc.MutableMapping[str, t.Any]:
-    """Update a nested dictionary inplace."""
+    """Update a nested dictionary in place."""
     for key, value in overrides.items():
         if isinstance(value, cabc.Mapping) and value:
             update = _deep_update(source.get(key, {}), value)
