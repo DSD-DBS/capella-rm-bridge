@@ -23,18 +23,14 @@ CACHEKEY_TYPES_FOLDER_IDENTIFIER = "-2"
 CACHEKEY_REQTYPE_IDENTIFIER = "-3"
 
 REQ_TYPE_NAME = "Requirement"
-ATTR_BLACKLIST = frozenset({("Type", "Folder")})
-
-# TODO Remove default value patching; Snapshort should be correct
-_ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[
-    str, cabc.Callable[[], tuple[type, act.Primitive | None]]
-] = {
-    "String": lambda: (str, ""),
-    "Enum": lambda: (list, []),
-    "Date": lambda: (datetime.datetime, None),
-    "Integer": lambda: (int, 0),
-    "Float": lambda: (float, 0.0),
-    "Boolean": lambda: (bool, False),
+_ATTR_BLACKLIST = frozenset({("Type", "Folder")})
+_ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[str, type] = {
+    "String": str,
+    "Enum": list,
+    "Date": datetime.datetime,
+    "Integer": int,
+    "Float": float,
+    "Boolean": bool,
 }
 
 
@@ -400,7 +396,7 @@ class TrackerChange:
         capellambse.extension.reqif.BooleanValueAttribute
         capellambse.extension.reqif.EnumerationValueAttribute
         """
-        builder = self.patch_faulty_attribute_value(name, value)
+        builder = self.check_attribute_value_is_valid(name, value)
         deftype = "AttributeDefinition"
         values: list[decl.UUIDReference | decl.Promise] = []
         if builder.deftype == "Enum":
@@ -432,25 +428,26 @@ class TrackerChange:
             builder.key: values or builder.value,
         }
 
-    def patch_faulty_attribute_value(
+    def check_attribute_value_is_valid(
         self, name: str, value: str | list[str]
     ) -> AttributeValueBuilder:
-        """Swap value with faulty type with definition's default value.
-
-        TODO Remove default value patching; Snapshort should be correct
-        """
+        """Raise a if ."""
         deftype = self.definitions[name]["type"]
-        type, default_value = _ATTR_VALUE_DEFAULT_MAP[deftype]()
-        pvalue: act.Primitive | None
+        matches_type = isinstance(value, _ATTR_VALUE_DEFAULT_MAP[deftype])
         if deftype == "Enum":
-            default = self.data_type_definitions[name]
-            is_faulty = not value or not isinstance(value, type)
-            pvalue = default[:1] if is_faulty else value
+            options = self.data_type_definitions[name]
+            is_faulty = not matches_type or not set(value) & set(options)
             key = "values"
         else:
-            pvalue = value if isinstance(value, type) else default_value
+            is_faulty = not matches_type
             key = "value"
-        return AttributeValueBuilder(deftype, key, pvalue)
+
+        if is_faulty:
+            raise act.InvalidFieldValue(
+                f"Broken snapshot: Invalid field {key} '{value!r}' for {name}"
+            )
+
+        return AttributeValueBuilder(deftype, key, value)
 
     def yield_mod_attribute_definition_actions(
         self,
@@ -727,15 +724,15 @@ class TrackerChange:
         """
         try:
             attr = req.attributes.by_definition.long_name(name, single=True)
-            builder = self.patch_faulty_attribute_value(name, value)
+            self.check_attribute_value_is_valid(name, value)
             if isinstance(attr, reqif.EnumerationValueAttribute):
-                assert isinstance(builder.value, list)
-                differ = set(attr.values.by_long_name) != set(builder.value)
+                assert isinstance(value, list)
+                differ = set(attr.values.by_long_name) != set(value)
             else:
-                differ = bool(attr.value != builder.value)
+                differ = bool(attr.value != value)
 
             if differ:
-                return (name, builder.value)
+                return (name, value)
             return None
         except KeyError:
             return self.create_attribute_value_action(name, value)
@@ -808,7 +805,7 @@ def _blacklisted(name: str, value: act.Primitive | None) -> bool:
     if value is None:
         return False
     if not isinstance(value, cabc.Iterable) or isinstance(value, str):
-        return (name, value) in ATTR_BLACKLIST
+        return (name, value) in _ATTR_BLACKLIST
     return all((_blacklisted(name, val) for val in value))
 
 

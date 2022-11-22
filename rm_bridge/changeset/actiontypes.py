@@ -34,3 +34,7 @@ class AttributeDefinition(te.TypedDict):
 class EnumAttributeDefinition(AttributeDefinition, total=False):
     values: list[str]
     multi_values: bool
+
+
+class InvalidFieldValue(Exception):
+    """Raised if a value isn't matching the defined type or options."""
