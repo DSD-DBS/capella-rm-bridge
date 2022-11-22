@@ -126,18 +126,18 @@ class TrackerChange:
 
         visited = set[str]()
         for item in self.tracker["items"]:
-            second_key = "folders" if item.get("children") else "requirements"
+            second_key = "folders" if "children" in item else "requirements"
             req = self.reqfinder.work_item_by_identifier(item["id"])
             if req is None:
                 req_actions = self.create_requirements_actions(item)
                 item_action = next(req_actions)
-                _add_action_savely(base, "extend", second_key, item_action)
+                _add_action_safely(base, "extend", second_key, item_action)
             else:
                 req_actions = self.yield_mod_requirements_actions(req, item)
                 visited.add(req.identifier)
                 if req.parent != self.req_module:
                     item_action = decl.UUIDReference(req.uuid)
-                    _add_action_savely(base, "extend", second_key, item_action)
+                    _add_action_safely(base, "extend", second_key, item_action)
                     self._location_changed.add(RMIdentifier(req.identifier))
                     self._invalidate_deletion(req)
 
@@ -313,7 +313,10 @@ class TrackerChange:
     ) -> cabc.Iterator[dict[str, t.Any]]:
         """Yield actions for creating Requirements or Folders.
 
-        Also yields creations or modifications for children.
+        The ``WorkItem`` is identified as a ``RequirementsFolder`` if
+        there are non-empty ``children`` or a ``(Type, "Folder")`` pair
+        in the attributes exists. Also yields creations or modifications
+        for children.
 
         See Also
         --------
@@ -351,10 +354,11 @@ class TrackerChange:
             base["attributes"] = attributes
 
         child_mods: list[dict[str, t.Any]] = []
-        if (children := item.get("children")) is not None or folder_hint:
+        if "children" in item or folder_hint:
             base["requirements"] = []
             base["folders"] = []
-            for child in children or ():
+            child: act.WorkItem
+            for child in item["children"]:
                 key = "folders" if child.get("children") else "requirements"
                 creq = self.reqfinder.work_item_by_identifier(child["id"])
                 if creq is None:
@@ -799,14 +803,11 @@ def make_requirement_delete_actions(
     ]
 
 
-def _blacklisted(
-    name: str,
-    value: str | datetime.datetime | cabc.Iterable[str] | None,
-) -> bool:
+def _blacklisted(name: str, value: act.Primitive | None) -> bool:
     """Identify if a key value pair is supported."""
     if value is None:
         return False
-    if isinstance(value, (str, datetime.datetime)):
+    if not isinstance(value, cabc.Iterable) or isinstance(value, str):
         return (name, value) in ATTR_BLACKLIST
     return all((_blacklisted(name, val) for val in value))
 
@@ -846,7 +847,7 @@ def _compare_simple_attributes(
     return mods
 
 
-def _add_action_savely(
+def _add_action_safely(
     base: dict[str, t.Any],
     first_key: str,
     second_key: str,
@@ -861,13 +862,13 @@ def _add_action_savely(
 def _deep_update(
     source: cabc.MutableMapping[str, t.Any],
     overrides: cabc.Mapping[str, t.Any],
-) -> cabc.MutableMapping[str, t.Any]:
+) -> None:
     """Update a nested dictionary in place."""
     for key, value in overrides.items():
         if isinstance(value, cabc.Mapping) and value:
-            update = _deep_update(source.get(key, {}), value)
+            update = source.get(key, {})
+            _deep_update(update, value)
         else:
             update = overrides[key]
 
         source[key] = update
-    return source
