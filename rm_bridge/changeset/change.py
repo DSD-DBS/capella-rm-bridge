@@ -276,7 +276,7 @@ class TrackerChange:
         name: str,
         item: act.AttributeDefinition | act.EnumAttributeDefinition,
     ) -> dict[str, t.Any]:
-        r"""Return a action for creating ``AttributeDefinition``\ s.
+        r"""Return an action for creating ``AttributeDefinition``\ s.
 
         In case of an ``AttributeDefinitionEnumeration`` requires
         ``name`` of possibly promised ``EnumerationDataTypeDefinition``.
@@ -816,7 +816,10 @@ def _compare_simple_attributes(
     item: dict[str, t.Any],
     filter: cabc.Iterable[str],
 ) -> dict[str, t.Any]:
-    """Return a diff dictionary about changed attributes for given `req`.
+    """Return a diff dictionary about changed attributes.
+
+    The given ``req`` is compared against given ``item`` and any
+    attribute name in given ``filter`` is skipped.
 
     Parameters
     ----------
