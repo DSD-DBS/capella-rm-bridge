@@ -146,9 +146,7 @@ class TestModActions(ActionsTest):
     ) -> None:
         """Test that RequirementsModActions are produced."""
         tchange = self.tracker_change(migration_model)
-        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
-            self.titem["id"]
-        )
+        reqfolder = tchange.reqfinder.work_item_by_identifier(self.titem["id"])
         req_change = {
             **self.REQ_CHANGE,
             "delete": {
@@ -175,9 +173,7 @@ class TestModActions(ActionsTest):
         first_child["attributes"]["Type"] = None
         first_child["attributes"]["Submitted at"] = None
         tchange = self.tracker_change(migration_model, tracker)
-        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
-            self.titem["id"]
-        )
+        reqfolder = tchange.reqfinder.work_item_by_identifier(self.titem["id"])
         assert isinstance(reqfolder, reqif.RequirementsFolder)
         # Run these to populate promises lookup for new Release attribute
         next(tchange.yield_mod_attribute_definition_actions())
@@ -230,9 +226,7 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test that RequirementsModActions are produced."""
         tchange = self.tracker_change(deletion_model)
-        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
-            self.titem["id"]
-        )
+        reqfolder = tchange.reqfinder.work_item_by_identifier(self.titem["id"])
         assert isinstance(reqfolder, reqif.RequirementsFolder)
 
         actions = tchange.yield_mod_requirements_actions(reqfolder, self.titem)

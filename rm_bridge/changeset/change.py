@@ -99,15 +99,14 @@ class TrackerChange:
         self._location_changed = set[RMIdentifier]()
         self._req_deletions = {}
 
-        try:
-            self.req_module = self.reqfinder.find_reqmodule(
-                config["capella-uuid"], config["external-id"]
-            )
-        except KeyError as error:
-            LOGGER.error("Skipping tracker: %s", self.config["external-id"])
-            raise KeyError from error
+        self.req_module = self.reqfinder.reqmodule(
+            config["capella-uuid"], config["external-id"]
+        )
+        if self.req_module is None:
+            LOGGER.error("Skipping module: %s", self.config["external-id"])
+            raise KeyError
 
-        self.reqt_folder = self.reqfinder.find_reqtypesfolder_by_identifier(
+        self.reqt_folder = self.reqfinder.reqtypesfolder_by_identifier(
             CACHEKEY_TYPES_FOLDER_IDENTIFIER, below=self.req_module
         )
         self.actions = []
@@ -128,7 +127,7 @@ class TrackerChange:
         visited = set[str]()
         for item in self.tracker["items"]:
             second_key = "folders" if item.get("children") else "requirements"
-            req = self.reqfinder.find_work_item_by_identifier(item["id"])
+            req = self.reqfinder.work_item_by_identifier(item["id"])
             if req is None:
                 req_actions = self.create_requirements_actions(item)
                 item_action = next(req_actions)
@@ -292,7 +291,7 @@ class TrackerChange:
         cls = reqif.AttributeDefinition
         if item["type"] == "Enum":
             cls = reqif.AttributeDefinitionEnumeration
-            etdef = self.reqfinder.find_enum_data_type_definition(
+            etdef = self.reqfinder.enum_data_type_definition_by_long_name(
                 name, below=self.reqt_folder
             )
             if etdef is None:
@@ -333,7 +332,7 @@ class TrackerChange:
                     self.create_attribute_value_action(name, value)
                 )
 
-        reqtype = self.reqfinder.find_reqtype_by_identifier(
+        reqtype = self.reqfinder.reqtype_by_identifier(
             CACHEKEY_REQTYPE_IDENTIFIER
         )
         if reqtype is None:
@@ -357,7 +356,7 @@ class TrackerChange:
             base["folders"] = []
             for child in children or ():
                 key = "folders" if child.get("children") else "requirements"
-                creq = self.reqfinder.find_work_item_by_identifier(child["id"])
+                creq = self.reqfinder.work_item_by_identifier(child["id"])
                 if creq is None:
                     child_actions = self.create_requirements_actions(child)
                     action = next(child_actions)
@@ -404,7 +403,7 @@ class TrackerChange:
             deftype += "Enumeration"
             assert isinstance(builder.value, list)
             for enum_name in builder.value:
-                enumvalue = self.reqfinder.find_enumvalue(
+                enumvalue = self.reqfinder.enum_value_by_long_name(
                     enum_name, below=self.req_module
                 )
                 if enumvalue is None:
@@ -415,7 +414,7 @@ class TrackerChange:
 
                 values.append(ev_ref)
 
-        definition = self.reqfinder.find_attribute_definition(
+        definition = self.reqfinder.attribute_definition_by_long_name(
             deftype, name, below=self.reqt_folder
         )
         if definition is None:
@@ -655,7 +654,7 @@ class TrackerChange:
                     child_req_ids.add(RMIdentifier(child["id"]))
 
                 container = containers[key == "folders"]
-                creq = self.reqfinder.find_work_item_by_identifier(child["id"])
+                creq = self.reqfinder.work_item_by_identifier(child["id"])
                 if creq is None:
                     child_actions = self.create_requirements_actions(child)
                     action = next(child_actions)
