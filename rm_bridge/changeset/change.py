@@ -587,7 +587,7 @@ class TrackerChange:
     def yield_mod_requirements_actions(
         self,
         req: reqif.RequirementsModule | WorkItem,
-        item: dict[str, t.Any],
+        item: dict[str, t.Any] | act.WorkItem,
         parent: reqif.RequirementsModule | WorkItem | None = None,
     ) -> cabc.Iterator[dict[str, t.Any]]:
         """Yield an action for modifying given ``req``.
@@ -647,15 +647,16 @@ class TrackerChange:
             child_req_ids = set[RMIdentifier]()
             child_folder_ids = set[RMIdentifier]()
             for child in children:
+                cid = RMIdentifier(str(child["id"]))
                 if child.get("children", []):
                     key = "folders"
-                    child_folder_ids.add(RMIdentifier(child["id"]))
+                    child_folder_ids.add(cid)
                 else:
                     key = "requirements"
-                    child_req_ids.add(RMIdentifier(child["id"]))
+                    child_req_ids.add(cid)
 
                 container = containers[key == "folders"]
-                creq = self.reqfinder.work_item_by_identifier(child["id"])
+                creq = self.reqfinder.work_item_by_identifier(cid)
                 if creq is None:
                     child_actions = self.create_requirements_actions(child)
                     action = next(child_actions)
@@ -811,7 +812,7 @@ def _blacklisted(name: str, value: act.Primitive | None) -> bool:
 
 def _compare_simple_attributes(
     req: reqif.RequirementsModule | WorkItem,
-    item: dict[str, t.Any],
+    item: dict[str, t.Any] | act.WorkItem,
     filter: cabc.Iterable[str],
 ) -> dict[str, t.Any]:
     """Return a diff dictionary about changed attributes.
