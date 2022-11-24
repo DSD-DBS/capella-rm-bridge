@@ -71,7 +71,7 @@ class TestCreateActions(ActionsTest):
     def test_create_data_type_definition_actions(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
-        r"""Test producing ``CreateAction`` \s for EnumDataTypeDefinitions."""
+        r"""Test producing ``CreateAction`` \ s for EnumDataTypeDefinitions."""
         tchange = self.tracker_change(clean_model)
         action = tchange.actions[0]
         rtf_action = action["extend"]["requirement_types_folders"][0]
@@ -81,7 +81,7 @@ class TestCreateActions(ActionsTest):
     def test_create_requirement_type_actions(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
-        r"""Test producing ``CreateAction`` \s for RequirementTypes."""
+        r"""Test producing ``CreateAction`` \ s for RequirementTypes."""
         tchange = self.tracker_change(clean_model)
         action = tchange.actions[0]
         rtf_action = action["extend"]["requirement_types_folders"][0]
@@ -101,7 +101,7 @@ class TestCreateActions(ActionsTest):
     def test_create_requirements_actions(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
-        r"""Test producing ``CreateAction`` \s for Requirements."""
+        r"""Test producing ``CreateAction`` \ s for Requirements."""
         tchange = self.tracker_change(clean_model)
 
         action = next(tchange.requirements_create_actions(self.titem))
@@ -127,11 +127,10 @@ class TestCreateActions(ActionsTest):
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
         first_child = titem["children"][0]
-        first_child["attributes"][attr] = faulty_value
-        tchange = self.tracker_change(clean_model, tracker)
+        first_child["attributes"][attr] = faulty_value  # type:ignore[index]
 
         with pytest.raises(actiontypes.InvalidFieldValue):
-            next(tchange.create_requirements_actions(titem))
+            self.tracker_change(clean_model, tracker)
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -145,7 +144,6 @@ class TestCreateActions(ActionsTest):
         assert change_set == TEST_MODULE_CHANGE
 
 
-@pytest.mark.skip("Currently broken.")
 class TestModActions(ActionsTest):
     """Tests all methods that request modifications."""
 
@@ -160,20 +158,24 @@ class TestModActions(ActionsTest):
     def test_mod_data_type_definition_actions(
         self, migration_model: capellambse.MelodyModel
     ) -> None:
-        r"""Test producing ``ModAction`` \s for EnumDataTypeDefinitions."""
-        tchange = self.tracker_change(migration_model)
-        actions = tchange.yield_data_type_definition_mod_actions()
+        r"""Test producing ``ModAction`` \ s for EnumDataTypeDefinitions."""
+        snapshot = copy.deepcopy(self.tracker)
+        snapshot["requirement_types"] = TEST_SNAPSHOT[0]["requirement_types"]
+        snapshot["items"] = TEST_SNAPSHOT[0]["items"]
+        tchange = self.tracker_change(migration_model, snapshot)
 
-        assert list(actions) == self.ENUM_DATA_TYPE_MODS
+        assert tchange.actions == self.ENUM_DATA_TYPE_MODS
 
     def test_mod_requirement_type_actions(
         self, migration_model: capellambse.MelodyModel
     ) -> None:
-        r"""Test producing ``ModAction`` \s for RequirementTypes."""
-        tchange = self.tracker_change(migration_model)
-        actions = tchange.yield_requirement_type_mod_actions()
+        r"""Test producing ``ModAction`` \ s for RequirementTypes."""
+        snapshot = copy.deepcopy(self.tracker)
+        snapshot["data_types"] = TEST_SNAPSHOT[0]["data_types"]
+        snapshot["items"] = TEST_SNAPSHOT[0]["items"]
+        tchange = self.tracker_change(migration_model, snapshot)
 
-        assert list(actions) == self.REQ_TYPE_MODS
+        assert tchange.actions == self.REQ_TYPE_MODS
 
     def test_mod_requirements_actions(
         self, migration_model: capellambse.MelodyModel
@@ -181,19 +183,17 @@ class TestModActions(ActionsTest):
         """Test that RequirementsModActions are produced."""
         tchange = self.tracker_change(migration_model)
         reqfolder = tchange.reqfinder.work_item_by_identifier(self.titem["id"])
-        req_change = {
-            **self.REQ_CHANGE,
-            "delete": {
-                "folders": [
-                    decl.UUIDReference("04574907-fa9f-423a-b9fd-fc22dc975dc8")
-                ]
-            },
-        }
+        # req_change = {
+        #     **self.REQ_CHANGE,
+        #     "delete": {
+        #         "folders": [
+        #             decl.UUIDReference("04574907-fa9f-423a-b9fd-fc22dc975dc8")
+        #         ]
+        #     },
+        # }
         assert isinstance(reqfolder, reqif.RequirementsFolder)
 
-        actions = tchange.yield_requirements_mod_actions(reqfolder, self.titem)
-
-        assert list(actions) == self.REQ_CHANGE
+        assert tchange.actions == self.REQ_CHANGE
 
     @pytest.mark.parametrize(
         "attr,faulty_value",

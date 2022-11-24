@@ -56,7 +56,7 @@ class TrackerSnapshot(te.TypedDict):
     id: int
     version: int | float
     data_types: cabc.Mapping[str, cabc.Sequence[str]]
-    types: cabc.Mapping[str, cabc.Sequence[cabc.Mapping[str, str]]]
+    requirement_types: cabc.Mapping[str, cabc.Sequence[cabc.Mapping[str, str]]]
     items: cabc.Sequence[WorkItem]
 
 

@@ -604,7 +604,7 @@ class TrackerChange:
     def requirement_type_delete_actions(self) -> dict[str, t.Any]:
         r"""Return an action for deleting ``RequirementType`` \s."""
         assert self.reqt_folder
-        parent_ref = decl.UUIDReference(self.reqt_folder)
+        parent_ref = decl.UUIDReference(self.reqt_folder.uuid)
         dels = [
             decl.UUIDReference(reqtype.uuid)
             for reqtype in self.reqt_folder.requirement_types
@@ -679,14 +679,35 @@ class TrackerChange:
         children the method is called recursively and yields actions
         from it.
         """
+        base = {"parent": decl.UUIDReference(req.uuid)}
+        mods = _compare_simple_attributes(
+            req, item, filter=("id", "type", "attributes", "children")
+        )
+        req_type_id = RMIdentifier(item.get("type", ""))
+        if req_type_id != req.type.identifier:
+            if req_type_id and req_type_id not in self.requirement_types:
+                LOGGER.warning(
+                    "Faulty Requirement in snapshot: "
+                    "Unknown RequirementType '%s'",
+                    req_type_id,
+                )
+
+            mods["type"] = req_type_id
+
         item_attributes = item.get("attributes", {})
         attributes_creations = list[dict[str, t.Any]]()
         attributes_modifications = dict[str, t.Any]()
         for name, value in item_attributes.items():
+            reqtype_defs = self.requirement_types.get(req_type_id)
+            if reqtype_defs and name not in reqtype_defs["attributes"]:
+                continue
+
             if value is not None and _blacklisted(name, value):
                 continue
 
-            action = self.attribute_value_mod_action(req, name, value)
+            action = self.attribute_value_mod_action(
+                req, name, value, req_type_id
+            )
             if action is None:
                 continue
 
@@ -699,21 +720,6 @@ class TrackerChange:
             for attr in req.attributes
             if attr.definition.long_name not in item_attributes
         ]
-
-        base = {"parent": decl.UUIDReference(req.uuid)}
-        mods = _compare_simple_attributes(
-            req, item, filter=("id", "type", "attributes", "children")
-        )
-        reqtype_id = item.get("type")
-        if reqtype_id != req.type.identifier:
-            if reqtype_id and reqtype_id not in self.requirement_types:
-                LOGGER.warning(
-                    "Faulty Requirement in snapshot: "
-                    "Unknown RequirementType '%s'",
-                    reqtype_id,
-                )
-
-            mods["type"] = reqtype_id
 
         if mods:
             base["modify"] = mods
@@ -801,14 +807,31 @@ class TrackerChange:
         req: reqif.RequirementsModule | WorkItem,
         name: str,
         value: str | list[str],
+        req_type_id: RMIdentifier | None = None,
     ) -> dict[str, t.Any] | tuple[str, act.Primitive | None] | None:
         """Return an action for modifying an ``AttributeValue``.
 
-        If a ``AttributeValue`` can be found via
+        If an ``AttributeValue`` can be found via
         ``definition.long_name`` it is compared against the snapshot. If
         any changes to its ``value/s`` are identified a tuple of the
         name and value is returned else None. If the attribute can't be
         found an action for creation is returned.
+
+        Parameters
+        ----------
+        req
+            The ReqIFElement under which the attribute value
+            modification takes place.
+        name
+            The name of the definition for the attribute value.
+        value
+            The value from the snapshot that is compared against the
+            value on the found attribute if it exists. Else a new
+            ``AttributeValue`` with this value is created.
+        req_type_id : optional
+            The identifier of ``RequirementType`` for given ``req`` if
+            it was changed. If not given or ``None`` the identifier
+            ``req.type.identifier`` is taken.
 
         Returns
         -------
@@ -816,13 +839,13 @@ class TrackerChange:
             Either a create-action, the value to modify or ``None`` if
             nothing changed.
         """
-        reqtype_id = RMIdentifier(req.type.identifier)
+        req_type_id = req_type_id or RMIdentifier(req.type.identifier)
         try:
             builder = self.check_attribute_value_is_valid(
-                name, value, reqtype_id
+                name, value, req_type_id
             )
             attrdef = self.reqfinder.attribute_definition_by_identifier(
-                builder.deftype, f"{name} {req.type.identifier}", req.type
+                builder.deftype, f"{name} {req_type_id}", self.reqt_folder
             )
             attr = req.attributes.by_definition(attrdef, single=True)
             if isinstance(attr, reqif.EnumerationValueAttribute):
@@ -835,7 +858,7 @@ class TrackerChange:
                 return (name, value)
             return None
         except KeyError:
-            return self.attribute_value_create_action(name, value, reqtype_id)
+            return self.attribute_value_create_action(name, value, req_type_id)
 
     def attribute_definition_mod_action(
         self,

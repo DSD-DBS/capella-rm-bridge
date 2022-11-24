@@ -51,7 +51,7 @@
   modify:
     long_name: Non-Function Requirement
     attributes:
-      Capella ID: R-NFNC-00001
+      Capella ID: R-NFNC-00002
       Type:
         - !promise EnumValue Type Non-Functional
 - parent: !uuid 9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19
