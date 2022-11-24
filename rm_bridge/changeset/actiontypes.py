@@ -64,13 +64,17 @@ class AttributeDefinition(te.TypedDict):
     type: str
 
 
-class EnumAttributeDefinition(AttributeDefinition):
-    data_type: str
-    multi_values: te.NotRequired[bool]
-
-
 class RequirementType(t.TypedDict):
     long_name: str
     attributes: cabc.Mapping[
         str, t.Union[AttributeDefinition, EnumAttributeDefinition]
     ]
+
+
+class EnumAttributeDefinition(AttributeDefinition, total=False):
+    values: list[str]
+    multi_values: bool
+
+
+class InvalidFieldValue(Exception):
+    """Raised if a value isn't matching the defined type or options."""

@@ -23,17 +23,16 @@ CACHEKEY_TYPES_FOLDER_IDENTIFIER = "-2"
 CACHEKEY_REQTYPE_IDENTIFIER = "-3"
 
 REQ_TYPE_NAME = "Requirement"
-ATTRIBUTE_VALUE_CLASS_MAP: cabc.Mapping[
-    str, tuple[type, act.Primitive | None]
-] = {
-    "String": (str, ""),
-    "Enum": (list, list[str]()),
-    "Date": (datetime.datetime, None),
-    "Integer": (int, 0),
-    "Float": (float, 0.0),
-    "Boolean": (bool, False),
+_ATTR_BLACKLIST = frozenset({("Type", "Folder")})
+_ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[str, type] = {
+    "String": str,
+    "Enum": list,
+    "Date": datetime.datetime,
+    "Integer": int,
+    "Float": float,
+    "Boolean": bool,
 }
-ATTR_BLACKLIST = frozenset({("Type", "Folder")})
+
 
 WorkItem = t.Union[reqif.Requirement, reqif.RequirementsFolder]
 RMIdentifier = t.NewType("RMIdentifier", str)
@@ -98,7 +97,7 @@ class TrackerChange:
         self._req_deletions = {}
 
         try:
-            self.req_module = self.reqfinder.find_reqmodule(
+            self.req_module = self.reqfinder.reqmodule(
                 config["uuid"], config.get("external-id")
             )
         except KeyError as error:
@@ -111,7 +110,7 @@ class TrackerChange:
             LOGGER.error("Skipping tracker: %s", config["uuid"])
             raise MissingRequirementsModuleError("")
 
-        self.reqt_folder = self.reqfinder.find_reqtypesfolder_by_identifier(
+        self.reqt_folder = self.reqfinder.reqtypesfolder_by_identifier(
             CACHEKEY_TYPES_FOLDER_IDENTIFIER, below=self.req_module
         )
 
@@ -136,18 +135,18 @@ class TrackerChange:
 
         visited = set[str]()
         for item in self.tracker["items"]:
-            second_key = "folders" if item.get("children") else "requirements"
-            req = self.reqfinder.find_work_item_by_identifier(item["id"])
+            second_key = "folders" if "children" in item else "requirements"
+            req = self.reqfinder.work_item_by_identifier(item["id"])
             if req is None:
                 req_actions = self.requirements_create_actions(item)
                 item_action = next(req_actions)
-                _add_action_savely(base, "extend", second_key, item_action)
+                _add_action_safely(base, "extend", second_key, item_action)
             else:
                 req_actions = self.yield_requirements_mod_actions(req, item)
                 visited.add(req.identifier)
                 if req.parent != self.req_module:
                     item_action = decl.UUIDReference(req.uuid)
-                    _add_action_savely(base, "extend", second_key, item_action)
+                    _add_action_safely(base, "extend", second_key, item_action)
                     self._location_changed.add(RMIdentifier(req.identifier))
                     self._invalidate_deletion(req)
 
@@ -295,7 +294,7 @@ class TrackerChange:
         item: act.AttributeDefinition | act.EnumAttributeDefinition,
         req_type_id: str,
     ) -> dict[str, t.Any]:
-        r"""Return a action for creating ``AttributeDefinition`` \s.
+        r"""Return an action for creating ``AttributeDefinition``\ s.
 
         In case of an ``AttributeDefinitionEnumeration`` requires
         ``name`` of possibly promised ``EnumerationDataTypeDefinition``.
@@ -311,7 +310,7 @@ class TrackerChange:
         cls = reqif.AttributeDefinition
         if item["type"] == "Enum":
             cls = reqif.AttributeDefinitionEnumeration
-            etdef = self.reqfinder.find_enum_data_type_definition(
+            etdef = self.reqfinder.enum_data_type_definition_by_long_name(
                 name, below=self.reqt_folder
             )
             if etdef is None:
@@ -333,7 +332,10 @@ class TrackerChange:
     ) -> cabc.Iterator[dict[str, t.Any]]:
         """Yield actions for creating Requirements or Folders.
 
-        Also yields creations or modifications for children.
+        The ``WorkItem`` is identified as a ``RequirementsFolder`` if
+        there are non-empty ``children`` or a ``(Type, "Folder")`` pair
+        in the attributes exists. Also yields creations or modifications
+        for children.
 
         See Also
         --------
@@ -376,19 +378,22 @@ class TrackerChange:
             base["attributes"] = attributes
 
         if req_type_id:
-            reqtype = self.reqfinder.find_reqtype_by_identifier(req_type_id)
+            reqtype = self.reqfinder.reqtype_by_identifier(
+                req_type_id, below=self.reqt_folder
+            )
             if reqtype is None:
                 base["type"] = decl.Promise(f"RequirementType {req_type_id}")
             else:
                 base["type"] = decl.UUIDReference(reqtype.uuid)
 
         child_mods: list[dict[str, t.Any]] = []
-        if (children := item.get("children")) is not None or folder_hint:
+        if "children" in item or folder_hint:
             base["requirements"] = []
             base["folders"] = []
-            for child in children or ():
+            child: act.WorkItem
+            for child in item["children"]:
                 key = "folders" if child.get("children") else "requirements"
-                creq = self.reqfinder.find_work_item_by_identifier(child["id"])
+                creq = self.reqfinder.work_item_by_identifier(child["id"])
                 if creq is None:
                     child_actions = self.requirements_create_actions(child)
                     action = next(child_actions)
@@ -428,14 +433,14 @@ class TrackerChange:
         capellambse.extension.reqif.BooleanValueAttribute
         capellambse.extension.reqif.EnumerationValueAttribute
         """
-        builder = self.patch_faulty_attribute_value(name, value, req_type_id)
+        builder = self.check_attribute_value_is_valid(name, value, req_type_id)
         deftype = "AttributeDefinition"
         values: list[decl.UUIDReference | decl.Promise] = []
         if builder.deftype == "Enum":
             deftype += "Enumeration"
             assert isinstance(builder.value, list)
             for enum_name in builder.value:
-                enumvalue = self.reqfinder.find_enumvalue(
+                enumvalue = self.reqfinder.enum_value_by_long_name(
                     enum_name, below=self.req_module
                 )
                 if enumvalue is None:
@@ -447,8 +452,8 @@ class TrackerChange:
                 values.append(ev_ref)
 
         attr_def_id = f"{name} {req_type_id}"
-        definition = self.reqfinder.find_attribute_definition_by_identifier(
-            attr_def_id, below=self.reqt_folder
+        definition = self.reqfinder.attribute_definition_by_identifier(
+            deftype, attr_def_id, below=self.reqt_folder
         )
         if definition is None:
             definition_ref = decl.Promise(f"{deftype} {attr_def_id}")
@@ -461,23 +466,27 @@ class TrackerChange:
             builder.key: values or builder.value,
         }
 
-    def patch_faulty_attribute_value(
+    def check_attribute_value_is_valid(
         self, name: str, value: str | list[str], req_type_id: RMIdentifier
     ) -> AttributeValueBuilder:
-        """Swap value with faulty type with definition's default value."""
-        reqtype = self.requirement_types[req_type_id]
-        deftype = reqtype["attributes"][name]["type"]  # TODO Raise Exception
-        type, default_value = ATTRIBUTE_VALUE_CLASS_MAP[deftype]
-        pvalue: act.Primitive | None
+        """Raise a if ."""
+        reqtype_attr_defs = self.requirement_types[req_type_id]["attributes"]
+        deftype = reqtype_attr_defs[name]["type"]
+        matches_type = isinstance(value, _ATTR_VALUE_DEFAULT_MAP[deftype])
         if deftype == "Enum":
-            defined_values = self.data_type_definitions[name]
-            is_faulty = not value or not isinstance(value, type)
-            pvalue = defined_values[:1] if is_faulty else value
+            options = self.data_type_definitions[name]
+            is_faulty = not matches_type or not set(value) & set(options)
             key = "values"
         else:
-            pvalue = value if isinstance(value, type) else default_value
+            is_faulty = not matches_type
             key = "value"
-        return AttributeValueBuilder(deftype, key, pvalue)
+
+        if is_faulty:
+            raise act.InvalidFieldValue(
+                f"Broken snapshot: Invalid field {key} '{value!r}' for {name}"
+            )
+
+        return AttributeValueBuilder(deftype, key, value)
 
     def yield_data_type_definition_mod_actions(
         self,
@@ -728,18 +737,19 @@ class TrackerChange:
         containers = [cr_creations, cf_creations]
         child_mods: list[dict[str, t.Any]] = []
         if isinstance(req, reqif.RequirementsFolder):
-            child_req_ids = set[str]()
-            child_folder_ids = set[str]()
+            child_req_ids = set[RMIdentifier]()
+            child_folder_ids = set[RMIdentifier]()
             for child in children:
+                cid = RMIdentifier(str(child["id"]))
                 if child.get("children", []):
                     key = "folders"
-                    child_folder_ids.add(str(child["id"]))
+                    child_folder_ids.add(cid)
                 else:
                     key = "requirements"
-                    child_req_ids.add(str(child["id"]))
+                    child_req_ids.add(cid)
 
                 container = containers[key == "folders"]
-                creq = self.reqfinder.find_work_item_by_identifier(child["id"])
+                creq = self.reqfinder.work_item_by_identifier(cid)
                 if creq is None:
                     child_actions = self.requirements_create_actions(child)
                     action = next(child_actions)
@@ -808,22 +818,21 @@ class TrackerChange:
         """
         reqtype_id = RMIdentifier(req.type.identifier)
         try:
-            identifier = f"{name} {req.type.identifier}"
-            attrdef = self.reqfinder.find_attribute_definition_by_identifier(
-                identifier, req.type
-            )
-            attr = req.attributes.by_definition(attrdef, single=True)
-            builder = self.patch_faulty_attribute_value(
+            builder = self.check_attribute_value_is_valid(
                 name, value, reqtype_id
             )
+            attrdef = self.reqfinder.attribute_definition_by_identifier(
+                builder.deftype, f"{name} {req.type.identifier}", req.type
+            )
+            attr = req.attributes.by_definition(attrdef, single=True)
             if isinstance(attr, reqif.EnumerationValueAttribute):
-                assert isinstance(builder.value, list)
-                differ = set(attr.values.by_long_name) != set(builder.value)
+                assert isinstance(value, list)
+                differ = set(attr.values.by_long_name) != set(value)
             else:
-                differ = bool(attr.value != builder.value)
+                differ = bool(attr.value != value)
 
             if differ:
-                return (name, builder.value)
+                return (name, value)
             return None
         except KeyError:
             return self.attribute_value_create_action(name, value, reqtype_id)
@@ -836,8 +845,8 @@ class TrackerChange:
     ) -> dict[str, t.Any] | None:
         """Return an action for an ``AttributeDefinition``.
 
-        If a :class:`capellambse.extentions.reqif.AttributeDefinition`
-        or :class:`capellambse.extentions.reqif.AttributeDefinitionEnumeration`
+        If a :class:`capellambse.extensions.reqif.AttributeDefinition`
+        or :class:`capellambse.extensions.reqif.AttributeDefinitionEnumeration`
         can be found via ``long_name`` it is compared against the
         snapshot. If any changes are identified an action for
         modification is returned else None. If the definition can't be
@@ -878,7 +887,7 @@ class TrackerChange:
 
 def make_requirement_delete_actions(
     req: reqif.RequirementsFolder,
-    child_ids: cabc.Iterable[str],
+    child_ids: cabc.Container[RMIdentifier],
     key: str = "requirements",
 ) -> list[decl.UUIDReference]:
     """Return actions for deleting elements behind ``req.key``.
@@ -893,15 +902,12 @@ def make_requirement_delete_actions(
     ]
 
 
-def _blacklisted(
-    name: str,
-    value: str | datetime.datetime | cabc.Iterable[str] | None,
-) -> bool:
+def _blacklisted(name: str, value: act.Primitive | None) -> bool:
     """Identify if a key value pair is supported."""
     if value is None:
         return False
-    if isinstance(value, (str, datetime.datetime)):
-        return (name, value) in ATTR_BLACKLIST
+    if not isinstance(value, cabc.Iterable) or isinstance(value, str):
+        return (name, value) in _ATTR_BLACKLIST
     return all((_blacklisted(name, val) for val in value))
 
 
@@ -910,7 +916,10 @@ def _compare_simple_attributes(
     item: dict[str, t.Any] | act.WorkItem | act.RequirementType,
     filter: cabc.Iterable[str],
 ) -> dict[str, t.Any]:
-    """Return a diff dictionary about changed attributes for given `req`.
+    """Return a diff dictionary about changed attributes.
+
+    The given ``req`` is compared against given ``item`` and any
+    attribute name in given ``filter`` is skipped.
 
     Parameters
     ----------
@@ -937,7 +946,7 @@ def _compare_simple_attributes(
     return mods
 
 
-def _add_action_savely(
+def _add_action_safely(
     base: dict[str, t.Any],
     first_key: str,
     second_key: str,
@@ -952,27 +961,13 @@ def _add_action_savely(
 def _deep_update(
     source: cabc.MutableMapping[str, t.Any],
     overrides: cabc.Mapping[str, t.Any],
-) -> cabc.MutableMapping[str, t.Any]:
-    """Update a nested dictionary inplace."""
+) -> None:
+    """Update a nested dictionary in place."""
     for key, value in overrides.items():
         if isinstance(value, cabc.Mapping) and value:
-            update = _deep_update(source.get(key, {}), value)
+            update = source.get(key, {})
+            _deep_update(update, value)
         else:
             update = overrides[key]
 
         source[key] = update
-    return source
-
-
-def _get_reqtype_identifier(name: str) -> str:
-    """Return an identifier for a given ``RequirementType`` name."""
-    length = 5
-    pieces = list[str]()
-    for piece in name.split(" "):
-        pieces.append(piece[:length].upper())
-        length -= 1
-
-        if length <= 3:
-            break
-
-    return "".join(pieces)

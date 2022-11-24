@@ -108,26 +108,30 @@ class TestCreateActions(ActionsTest):
 
         assert action == self.REQ_CHANGE
 
-    def test_create_requirements_attributes_with_none_values(
-        self, clean_model: capellambse.MelodyModel
+    @pytest.mark.parametrize(
+        "attr,faulty_value",
+        [
+            ("Type", ["Not an option"]),
+            ("Type", None),
+            ("Capella ID", None),
+            ("Submitted at", 1),
+        ],
+    )
+    def test_faulty_attribute_values_raise_InvalidFieldValue(
+        self,
+        clean_model: capellambse.MelodyModel,
+        attr: str,
+        faulty_value: actiontypes.Primitive,
     ) -> None:
-        """Test that default values are chosen instead of faulty values."""
+        """Test raising an ``InvalidFieldValue`` on faulty field data."""
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
-        titem["attributes"]["Type"] = []  # type: ignore[index]
         first_child = titem["children"][0]
-        first_child["attributes"]["Capella ID"] = None
-        first_child["attributes"]["Type"] = None
-        first_child["attributes"]["Submitted at"] = None
-        unset_promise = decl.Promise("EnumValue Type Unset")
+        first_child["attributes"][attr] = faulty_value
         tchange = self.tracker_change(clean_model, tracker)
 
-        action = next(tchange.requirements_create_actions(titem))
-        attributes = action["requirements"][0]["attributes"]
-
-        assert attributes[0]["value"] == ""
-        assert attributes[1]["values"] == [unset_promise]
-        assert attributes[3]["value"] is None
+        with pytest.raises(actiontypes.InvalidFieldValue):
+            next(tchange.create_requirements_actions(titem))
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -176,9 +180,7 @@ class TestModActions(ActionsTest):
     ) -> None:
         """Test that RequirementsModActions are produced."""
         tchange = self.tracker_change(migration_model)
-        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
-            self.titem["id"]
-        )
+        reqfolder = tchange.reqfinder.work_item_by_identifier(self.titem["id"])
         req_change = {
             **self.REQ_CHANGE,
             "delete": {
@@ -193,32 +195,35 @@ class TestModActions(ActionsTest):
 
         assert list(actions) == self.REQ_CHANGE
 
-    def test_mod_requirements_attributes_with_none_values(
-        self, migration_model: capellambse.MelodyModel
+    @pytest.mark.parametrize(
+        "attr,faulty_value",
+        [
+            ("Type", ["Not an option"]),
+            ("Type", None),
+            ("Capella ID", None),
+            ("Submitted at", 1),
+        ],
+    )
+    def test_faulty_attribute_values_raise_InvalidFieldValue(
+        self,
+        migration_model: capellambse.MelodyModel,
+        attr: str,
+        faulty_value: actiontypes.Primitive,
     ) -> None:
-        """Test that faulty values are patched to default values."""
+        """Test raising an ``InvalidFieldValue`` on faulty field data."""
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
-        titem["attributes"]["Type"] = []
         first_child = titem["children"][0]
-        first_child["attributes"]["Capella ID"] = None
-        first_child["attributes"]["Type"] = None
-        first_child["attributes"]["Submitted at"] = None
+        first_child["attributes"][attr] = faulty_value
         tchange = self.tracker_change(migration_model, tracker)
-        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
-            self.titem["id"]
-        )
+        reqfolder = tchange.reqfinder.work_item_by_identifier(self.titem["id"])
         assert isinstance(reqfolder, reqif.RequirementsFolder)
         # Run these to populate promises lookup for new Release attribute
         next(tchange.yield_attribute_definition_mod_actions())
         next(tchange.yield_requirement_type_mod_actions())
 
-        _, ra = list(tchange.yield_requirements_mod_actions(reqfolder, titem))
-        req_attr_mods = ra["modify"]["attributes"]
-
-        assert req_attr_mods["Capella ID"] == ""
-        assert req_attr_mods["Type"] == ["Unset"]
-        assert req_attr_mods["Submitted at"] is None
+        with pytest.raises(actiontypes.InvalidFieldValue):
+            list(tchange.yield_mod_requirements_actions(reqfolder, titem))
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -261,11 +266,10 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test that RequirementsModActions are produced."""
         tchange = self.tracker_change(deletion_model)
-        reqfolder = tchange.reqfinder.find_work_item_by_identifier(
-            self.titem["id"]
-        )
+        reqfolder = tchange.reqfinder.work_item_by_identifier(self.titem["id"])
         assert isinstance(reqfolder, reqif.RequirementsFolder)
-        actions = tchange.yield_requirements_mod_actions(reqfolder, self.titem)
+
+        actions = tchange.yield_mod_requirements_actions(reqfolder, self.titem)
 
         assert list(actions) == self.REQ_CHANGES
 
