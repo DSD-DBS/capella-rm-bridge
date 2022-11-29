@@ -76,5 +76,9 @@ class EnumAttributeDefinition(AttributeDefinition, total=False):
     multi_values: bool
 
 
+class InvalidWorkItemType(Exception):
+    """Raised if the type isn't matching any of the defined types."""
+
+
 class InvalidFieldValue(Exception):
     """Raised if a value isn't matching the defined type or options."""

@@ -42,31 +42,44 @@
         values:
           - !promise EnumValue Release Rel. 1
         _type: enum
-- parent: !uuid 1cab372a-62cf-443b-b36d-77e66e5de97d
+- parent: !uuid 25ccf941-17ed-4226-847b-040575922283
+  modify:
+    long_name: Non-Function Requirement
   extend:
     attributes:
       - definition: !promise AttributeDefinition Test after migration system_requirement
         value: New
         _type: string
-  modify:
-    long_name: Non-Function Requirement
+  delete:
     attributes:
-      Capella ID: R-NFNC-00002
-      Type:
-        - !promise EnumValue Type Non-Functional
+      - !uuid 0386897b-1e6c-41d0-bb9f-0127c6afe2f1
+- parent: !uuid dda9887a-a0a2-4d58-9040-9b023544b5b4
+  modify:
+    value: R-NFNC-00002
+- parent: !uuid 6708cf60-2f06-4ccf-9973-21a035415ccb
+  modify:
+    values:
+      - !promise EnumValue Type Non-Functional
 - parent: !uuid 9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19
   modify:
     long_name: Functional Requirements
     text: <p>Brand new</p>
-- parent: !uuid 94e00375-d52c-4ca6-8c06-225ab13e9afb
+- parent: !uuid 163394f5-c1ba-4712-a238-b0b143c66aed
   modify:
     long_name: Function Requirement
     type: !uuid bde333d5-141d-4ced-acf8-6f8507337c90
+  delete:
     attributes:
-      Capella ID: R-FNC-00001
-- parent: !uuid 1fca2a91-c678-448c-ad44-c80b0e174e55
-  modify:
-    definition: !uuid 7c3a47a0-efff-4cda-baae-0ef3bfb2cbed
+      - !uuid 1fca2a91-c678-448c-ad44-c80b0e174e55
+  extend:
+    attributes:
+      - definition: !uuid 7c3a47a0-efff-4cda-baae-0ef3bfb2cbed
+        value: R-FNC-00001
+        _type: string
+      - definition: !uuid 79ffc1c8-38d3-4c65-a45f-c9f52de30834
+        values:
+          - !uuid 61d37f6e-b821-49fa-b68d-c4ff48b8cbbf
+        _type: enum
 - parent: !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
   extend:
     folders:

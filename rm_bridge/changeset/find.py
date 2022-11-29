@@ -44,8 +44,11 @@ class ReqFinder:
         given and doesn't match on the found object, it is changed.
         """
         req_module = self._get(uuid, reqif.XT_MODULE, attr="uuid")
-        assert isinstance(req_module, reqif.RequirementsModule)
-        if identifier is not None and req_module.identifier != str(identifier):
+        if (
+            req_module
+            and identifier
+            and req_module.identifier != str(identifier)
+        ):
             req_module.identifier = str(identifier)
         return req_module
 

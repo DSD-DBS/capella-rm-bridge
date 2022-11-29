@@ -2,30 +2,38 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # yaml-language-server: $schema=../../rm_bridge/model_modifier/changeset/snapshot_input.schema.json
-- id: "25093"
-  attributes:
-    Capella ID:
-      type: String
+- id: MODULE-000
+  data_types:
     Type:
-      type: Enum
-      values:
-        - Unset
-        - Folder
-        - Non-Functional
-    Submitted at:
-      type: Date
+      - Unset
+      - Folder
+      - Non-Functional
+  requirement_types:
+    system_requirement:
+      long_name: System Requirement
+      attributes:
+        Capella ID:
+          type: String
+        Type:
+          type: Enum
+          data_type: Type
+        Submitted at:
+          type: Date
+    software_requirement:
+      long_name: Software Requirement
+      attributes:
+        Capella ID:
+          type: String
+        Type:
+          type: Enum
+          data_type: Type
+        Submitted at:
+          type: Date
   items:
-    - id: "5440"
+    - id: REQ-001
       long_name: Non-Functional Requirements
       text: <p>Changed Test Description</p>
+      type: system_requirement
       attributes:
         Capella ID: RF-NFNC-00001
-        Type: [Folder]
-      children:
-        - id: "5441"
-          long_name: Non-Function Requirement
-          text: '...'
-          attributes:
-            Capella ID: R-NFNC-00001
-            Type: [Non-Functional]
-            Submitted at: 2022-06-30T17:07:18.664+02:00
+        Type: [Non-Functional]

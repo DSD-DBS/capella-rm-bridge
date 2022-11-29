@@ -1830,7 +1830,7 @@ The predator is far away</bodies>
             <ownedAttributes xsi:type="Requirements:EnumerationValueAttribute" id="0386897b-1e6c-41d0-bb9f-0127c6afe2f1"
                 definition="#e46d4629-da10-4f7f-954e-146bd2697638" values="#e91aa844-584d-451d-a201-2bb7bf13dcb0 #3a39327a-a40d-47a6-a054-d29b1851e478"/>
             <ownedAttributes xsi:type="Requirements:DateValueAttribute" id="d244dd2c-f643-4579-b89a-1d6f36625119"
-                definition="#5c266812-9458-4cf6-a35f-41ea34d96cd7" value="2022-06-30T17:18:22.664+0200"/>
+                definition="#5c266812-9458-4cf6-a35f-41ea34d96cd7" value="2022-06-30T17:07:18.664+0200"/>
           </ownedRequirements>
         </ownedRequirements>
         <ownedExtensions xsi:type="CapellaRequirements:CapellaTypesFolder" id="a15e8b60-bf39-47ba-b7c7-74ceecb25c9c"

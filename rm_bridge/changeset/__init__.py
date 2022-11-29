@@ -30,7 +30,7 @@ def calculate_change_set(
         try:
             tchange = change.TrackerChange(tracker, model, tconfig)
             actions.extend(tchange.actions)
-        except change.MissingRequirementsModuleError:
+        except change.MissingRequirementsModule:
             continue
 
     return actions
