@@ -52,9 +52,7 @@ class TrackerChange:
     """Unites the calculators for finding actions to sync requirements."""
 
     _location_changed: set[RMIdentifier]
-    _req_deletions: cabc.MutableMapping[
-        helpers.UUIDString, cabc.MutableMapping[str, t.Any]
-    ]
+    _req_deletions: dict[helpers.UUIDString, dict[str, t.Any]]
     _reqtype_ids: set[RMIdentifier]
 
     tracker: cabc.Mapping[str, t.Any]
