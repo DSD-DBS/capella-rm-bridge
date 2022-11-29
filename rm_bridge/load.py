@@ -7,10 +7,8 @@ import typing as t
 
 import yaml
 
-CONFIG_PATH = pathlib.Path(__file__).parents[2] / "config" / "config.yaml"
 
-
-def load_yaml(config_path: pathlib.Path | str | None) -> dict[str, t.Any]:
+def load_yaml(config_path: pathlib.Path | str) -> dict[str, t.Any]:
     """Return Requirements Management (RM) Bridge YAML configuration.
 
     .. code-block::
@@ -37,10 +35,6 @@ def load_yaml(config_path: pathlib.Path | str | None) -> dict[str, t.Any]:
     config
         The whole RM Bridge configuration.
     """
-
-    if config_path is None:
-        config_path = CONFIG_PATH
-
     return yaml.safe_load(
         pathlib.Path(config_path).read_text(encoding="utf-8")
     )
