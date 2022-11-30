@@ -18,7 +18,6 @@ import capellambse
 import pytest
 import yaml
 from capellambse import decl
-from capellambse.extensions import reqif
 
 from rm_bridge.changeset import actiontypes, calculate_change_set, change
 
@@ -59,17 +58,18 @@ class ActionsTest:
 class TestTrackerChangeInit(ActionsTest):
     """UnitTests for init of ``TrackerChange``."""
 
-    def test_init_on_missing_module_UUID_raises_InvalidTrackerConfig(
+    def test_init_on_missing_capella_UUID_raises_InvalidTrackerConfig(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
         """Test that an invalid config raises InvalidTrackerConfig.
 
-        A configuration file without a UUID of the RequirementsModule
-        will lead to an ``InvalidTrackerConfig`` being raised during
-        initialization of a ``TrackerChange`` object.
+        A configuration file without all of the mandatory keys in the
+        config of the RequirementsModule will lead to an
+        ``InvalidTrackerConfig`` being raised during initialization of a
+        ``TrackerChange`` object.
         """
         tconfig = copy.deepcopy(self.tconfig)
-        del tconfig["uuid"]  # type:ignore[misc]
+        del tconfig["capella-uuid"]  # type:ignore[misc]
 
         with pytest.raises(actiontypes.InvalidTrackerConfig):
             self.tracker_change(clean_model, TEST_SNAPSHOT[0], tconfig)
@@ -89,12 +89,38 @@ class TestTrackerChangeInit(ActionsTest):
         with pytest.raises(change.MissingRequirementsModule):
             self.tracker_change(clean_model, TEST_SNAPSHOT[0])
 
+    def test_init_on_missing_module_id_raises_InvalidSnapshotModule(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        del snapshot["id"]  # type: ignore[misc]
+
+        with pytest.raises(actiontypes.InvalidSnapshotModule):
+            self.tracker_change(clean_model, snapshot)
+
+    def test_calculate_change_set_continues_on_InvalidTrackerConfig(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        config = copy.deepcopy(TEST_CONFIG)
+        del config["modules"][0]["capella-uuid"]  # type: ignore[misc]
+
+        calculate_change_set(clean_model, config, TEST_SNAPSHOT)
+
     def test_calculate_change_set_continues_on_MissingRequirementsModule(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
         del clean_model.la.requirement_modules[0]
 
         calculate_change_set(clean_model, TEST_CONFIG, TEST_SNAPSHOT)
+
+    def test_calculate_change_set_continues_on_InvalidSnapshotModule(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        del snapshot["id"]  # type: ignore[misc]
+
+        with pytest.raises(actiontypes.InvalidSnapshotModule):
+            self.tracker_change(clean_model, snapshot)
 
 
 class TestCreateActions(ActionsTest):

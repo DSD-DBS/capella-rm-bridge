@@ -1808,7 +1808,7 @@ The predator is far away</bodies>
     <ownedArchitectures xsi:type="org.polarsys.capella.core.data.la:LogicalArchitecture"
         id="853cb005-cba0-489b-8fe3-bb694ad4543b" name="Logical Architecture">
       <ownedExtensions xsi:type="CapellaRequirements:CapellaModule" id="3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4"
-          ReqIFIdentifier="25177" ReqIFLongName="System Requirement Specifications">
+          ReqIFIdentifier="project/space/example title" ReqIFLongName="example title">
         <ownedRequirements xsi:type="Requirements:Folder" id="b2c39449-ebbe-43cb-a712-22c740707a8b"
             ReqIFIdentifier="REQ-001" ReqIFLongName="Functional Requirements" requirementType="#02bb4cdd-52cc-4fc3-af1c-e57dad8c51de"
             ReqIFText="&lt;p>Test Description&lt;/p>">

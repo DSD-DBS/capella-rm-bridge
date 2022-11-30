@@ -2,7 +2,8 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # yaml-language-server: $schema=../../../rm_bridge/changeset/snapshot_input.schema.json
-- id: MODULE-000
+- id: project/space/example title
+  long_name: example title
   data_types: # Enumeration Data Type Definitions
     Type:
       - Unset

@@ -59,7 +59,7 @@ class TrackerChange:
     """Snapshot of tracker, i.e. a `reqif.RequirementsModule`."""
     model: capellambse.MelodyModel
     """Model instance."""
-    config: cabc.Mapping[str, t.Any]
+    config: act.TrackerConfig
     """Config section for the tracker."""
     reqfinder: find.ReqFinder
     """Find ReqIF elements in the model."""
@@ -90,35 +90,13 @@ class TrackerChange:
         self.model = model
         self.config = config
         self.reqfinder = find.ReqFinder(model)
+        self.actions = []
 
         self._location_changed = set[RMIdentifier]()
         self._req_deletions = {}
 
         self.__reqtype_action: dict[str, t.Any] | None = None
 
-        try:
-            module_uuid = config["uuid"]
-            self.req_module = self.reqfinder.reqmodule(
-                module_uuid, config.get("external-id")
-            )
-        except KeyError as error:
-            raise act.InvalidTrackerConfig(
-                "The given tracker configuration is missing 'uuid' of the "
-                "target RequirementsModule"
-            ) from error
-
-        if self.req_module is None:
-            LOGGER.error("Skipping tracker: %s", module_uuid)
-            raise MissingRequirementsModule(
-                f"No RequirementsModule with UUID '{module_uuid}' "
-                f"in {self.model.info!r}"
-            )
-
-        self.reqt_folder = self.reqfinder.reqtypesfolder_by_identifier(
-            CACHEKEY_TYPES_FOLDER_IDENTIFIER, below=self.req_module
-        )
-
-        self.actions = []
         self.calculate_change()
 
     def calculate_change(self) -> None:
@@ -127,9 +105,12 @@ class TrackerChange:
         Handles synchronization of RequirementTypesFolder first and
         Requirements and Folders afterwards.
         """
-        base = {"parent": decl.UUIDReference(self.req_module.uuid)}
+        base = self.check_requirements_module()
+        self.reqt_folder = self.reqfinder.reqtypesfolder_by_identifier(
+            CACHEKEY_TYPES_FOLDER_IDENTIFIER, below=self.req_module
+        )
         if self.reqt_folder is None:
-            base = self.requirement_types_folder_create_action()
+            base = self.requirement_types_folder_create_action(base)
         else:
             self.data_type_definition_mod_actions()
             self.requirement_type_delete_actions()
@@ -163,6 +144,44 @@ class TrackerChange:
         _deep_update(base, self.req_delete_actions(visited, "folders"))
         if set(base) != {"parent"}:
             self.actions.append(base)
+
+    def check_requirements_module(self) -> dict[str, t.Any]:
+        """Return the starting action for the ``RequirementsModule``.
+
+        Check if a ``RequirementsModule`` can be found and that the
+        config is valid.
+        """
+        try:
+            module_uuid = self.config["capella-uuid"]
+            self.req_module = self.reqfinder.reqmodule(module_uuid)
+        except KeyError as error:
+            raise act.InvalidTrackerConfig(
+                "The given tracker configuration is missing 'UUID' of the "
+                "target RequirementsModule"
+            ) from error
+
+        if self.req_module is None:
+            raise MissingRequirementsModule(
+                f"No RequirementsModule with UUID '{module_uuid}' "
+                f"in {self.model.info!r}"
+            )
+
+        try:
+            identifier = self.tracker["id"]
+        except KeyError as error:
+            raise act.InvalidSnapshotModule(
+                "In the snapshot the module is missing an 'id' key"
+            ) from error
+
+        base = {"parent": decl.UUIDReference(self.req_module.uuid)}
+        if self.req_module.identifier != identifier:
+            base["modify"] = {"identifier": identifier}
+
+        long_name = self.tracker.get("long_name", self.req_module.long_name)
+        if self.req_module.long_name != long_name:
+            base.setdefault("modify", {})["long_name"] = long_name
+
+        return base
 
     def _invalidate_deletion(self, requirement: WorkItem) -> None:
         """Try to remove ``requirement`` from deletions.
@@ -208,7 +227,9 @@ class TrackerChange:
             return {"parent": parent_ref}
         return {"parent": parent_ref, "delete": {attr_name: dels}}
 
-    def requirement_types_folder_create_action(self) -> dict[str, t.Any]:
+    def requirement_types_folder_create_action(
+        self, base: dict[str, t.Any]
+    ) -> dict[str, t.Any]:
         """Return an action for creating the ``RequirementTypesFolder``.
 
         See Also
@@ -224,10 +245,8 @@ class TrackerChange:
             "data_type_definitions": list(data_type_defs),
             "requirement_types": list(req_types),
         }
-        return {
-            "parent": decl.UUIDReference(self.req_module.uuid),
-            "extend": {"requirement_types_folders": [reqt_folder]},
-        }
+        base["extend"] = {"requirement_types_folders": [reqt_folder]}
+        return base
 
     def yield_data_type_definition_create_actions(
         self,
