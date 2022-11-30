@@ -1,43 +1,73 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# yaml-language-server: $schema=../../rm_bridge/model_modifier/changeset/snapshot_input.schema.json
-- id: "25093"
-  attributes:
-    Capella ID:
-      type: String
+# yaml-language-server: $schema=../../../rm_bridge/changeset/snapshot_input.schema.json
+- id: MODULE-000
+  data_types: # Enumeration Data Type Definitions
     Type:
-      type: Enum
-      values:
-        - Unset
-        - Folder
-        - Functional
-    Submitted at:
-      type: Date
-  items:
-    - id: "5440"
+      - Unset
+      - Folder
+      - Functional
+    Release:
+      - Feature Rel. 1
+      - Feature Rel. 2
+  requirement_types: # WorkItemTypes
+    system_requirement:
+      long_name: System Requirement
+      attributes: # Field Definitions, we don't need the IDs
+        Capella ID: # Field name
+          type: String # -> AttributeDefinition
+        Type:
+          type: Enum
+          data_type: Type # -> EnumerationAttributeDefinition
+        Submitted at:
+          type: Date # -> AttributeDefinition
+        Release:
+          type: Enum
+          data_type: Release
+          multi_values: true
+    software_requirement:
+      long_name: Software Requirement
+      attributes:
+        Capella ID:
+          type: String
+        Type:
+          type: Enum
+          data_type: Type
+        Submitted at:
+          type: Date
+    stakeholder_requirement:
+      long_name: Stakeholder Requirement
+      attributes:
+        Capella ID:
+          type: String
+  items: # WorkItems
+    - id: REQ-001
       long_name: Functional Requirements
       text: <p>Test Description</p>
+      type: system_requirement # WorkItemType ID NOT name
       attributes:
-        Type: [Folder]
-      children:
-        - id: "5441"
+        Type: [Folder] # THIS IS BULLSHIT FROM CODEBEAMER and cleaned in RM Bridge
+      children: # Folder b/c non-empty children
+        - id: REQ-002
           long_name: Function Requirement
-          text: '...'
-          attributes:
-            Capella ID: R-FNC-00001
-            Type: [Functional]
+          text: ...
+          type: system_requirement
+          attributes: # Fields
+            Capella ID: R-FNC-00001 # name, value pair
+            Type: [Functional] # values in a list for enum fields
             Release:
               - Feature Rel. 1
               - Feature Rel. 2
-            Submitted at: 2022-06-30 17:07:18.664000+02:00
-        - id: "5442"
+            Submitted at: 2022-06-30 17:07:18.664000+02:00 # datetime.datetime for dates
+        - id: REQ-003
           long_name: Kinds
+          type: software_requirement
           attributes:
             Type: [Folder]
           children:
-            - id: "5443"
+            - id: REQ-004
               long_name: Kind Requirement
+              type: stakeholder_requirement
               attributes:
                 Capella ID: R-FNC-00002
-                Type: [Unset]

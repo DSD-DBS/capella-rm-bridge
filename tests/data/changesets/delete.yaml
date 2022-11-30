@@ -1,26 +1,28 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
-- parent: !uuid 487eca4d-8e98-4598-8ec0-4cdbdcbebd03
+- parent: !uuid a15e8b60-bf39-47ba-b7c7-74ceecb25c9c
   delete:
     data_type_definitions:
-      - !uuid 00000000-0000-0000-0000-000000000001
-- parent: !uuid e941a947-54ac-48e4-a383-af0b6994076d
+      - !uuid 98aaca05-d47f-4916-a9f9-770dc60aa04f
+    requirement_types:
+      - !uuid cbc96c24-58c9-4292-9dfa-1ecb5ee16a82
+- parent: !uuid 686e198b-8baf-49f9-9d85-24571bd05d93
+  delete:
+    values:
+      - !uuid 5a03662a-d602-4524-8706-5bf83275ee2a
+- parent: !uuid 02bb4cdd-52cc-4fc3-af1c-e57dad8c51de
   delete:
     attribute_definitions:
-      - !uuid 00000000-0000-0000-0000-000000000002
-      - !uuid 00000000-0000-0000-0000-000000000003
-- parent: !uuid 8a814f64-70d1-4fe1-a648-54c83c03d05b
+      - !uuid e46d4629-da10-4f7f-954e-146bd2697638
+      - long_name Test after migration
+- parent: !uuid b2c39449-ebbe-43cb-a712-22c740707a8b
   delete:
     attributes:
-      - !uuid 00000000-0000-0000-0000-000000000004
-- parent: !uuid 1cab372a-62cf-443b-b36d-77e66e5de97d
-  modify:
-    long_name: Non-Function Requirement
-  delete:
-    attributes:
-      - !uuid 00000000-0000-0000-0000-000000000005
+      - definition.long_name Release
+    requirements:
+      - !uuid 25ccf941-17ed-4226-847b-040575922283
 - parent: !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
   delete:
     folders:
-      - !uuid 00000000-0000-0000-0000-000000000006
+      - !uuid 9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19

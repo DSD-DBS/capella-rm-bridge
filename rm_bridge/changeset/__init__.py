@@ -16,24 +16,21 @@ LOGGER = logging.getLogger(__name__)
 
 def calculate_change_set(
     model: capellambse.MelodyModel,
-    config: cabc.MutableMapping[str, t.Any],
-    snapshot: list[actiontypes.TrackerSnapshot],
+    config: actiontypes.Config,
+    snapshot: cabc.Sequence[actiontypes.TrackerSnapshot],
 ) -> list[dict[str, t.Any]]:
     r"""Return a list of actions for a given ``model`` and ``snapshot``.
 
     The ``ChangeSet`` stores the needed actions to synchronize the
     ``model`` with the ``snapshot``. The ``snapshot`` stores modules
-    which correspond to ``reqif.RequirementsModule``\ s.
+    which correspond to ``reqif.RequirementsModule`` \s.
     """
-    trackers = config["trackers"]
     actions: list[dict[str, t.Any]] = []
-    for tracker in snapshot:
-        tconfig = next(
-            ctracker
-            for ctracker in trackers
-            if str(ctracker["external-id"]) == str(tracker["id"])
-        )
-        tchange = change.TrackerChange(tracker, model, tconfig)
-        tchange.calculate_change()
-        actions.extend(tchange.actions)  # type: ignore[arg-type]
+    for tracker, tconfig in zip(snapshot, config["modules"]):
+        try:
+            tchange = change.TrackerChange(tracker, model, tconfig)
+            actions.extend(tchange.actions)
+        except change.MissingRequirementsModule:
+            continue
+
     return actions
