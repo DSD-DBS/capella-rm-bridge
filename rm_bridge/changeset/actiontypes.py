@@ -3,14 +3,12 @@
 
 from __future__ import annotations
 
+import datetime
 import typing as t
 
 import typing_extensions as te
 
-
-class CBAttributeDefinition(te.TypedDict):
-    type: str
-    values: te.NotRequired[list[str]]
+Primitive = t.Union[int, float, str, list[str], bool, datetime.datetime]
 
 
 class WorkItem(te.TypedDict, total=False):
@@ -27,3 +25,16 @@ class TrackerSnapshot(te.TypedDict):
     version: int | float
     attributes: dict[str, t.Any]
     items: list[WorkItem]
+
+
+class AttributeDefinition(te.TypedDict):
+    type: str
+
+
+class EnumAttributeDefinition(AttributeDefinition, total=False):
+    values: list[str]
+    multi_values: bool
+
+
+class InvalidFieldValue(Exception):
+    """Raised if a value isn't matching the defined type or options."""

@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-License-Identifier: Apache-2.0
+
+- parent: !uuid 487eca4d-8e98-4598-8ec0-4cdbdcbebd03
+  delete:
+    data_type_definitions:
+      - !uuid 00000000-0000-0000-0000-000000000001
+- parent: !uuid e941a947-54ac-48e4-a383-af0b6994076d
+  delete:
+    attribute_definitions:
+      - !uuid 00000000-0000-0000-0000-000000000002
+      - !uuid 00000000-0000-0000-0000-000000000003
+- parent: !uuid 8a814f64-70d1-4fe1-a648-54c83c03d05b
+  delete:
+    attributes:
+      - !uuid 00000000-0000-0000-0000-000000000004
+- parent: !uuid 1cab372a-62cf-443b-b36d-77e66e5de97d
+  modify:
+    long_name: Non-Function Requirement
+  delete:
+    attributes:
+      - !uuid 00000000-0000-0000-0000-000000000005
+- parent: !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
+  delete:
+    folders:
+      - !uuid 00000000-0000-0000-0000-000000000006

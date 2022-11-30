@@ -1809,6 +1809,27 @@ The predator is far away</bodies>
         id="853cb005-cba0-489b-8fe3-bb694ad4543b" name="Logical Architecture">
       <ownedExtensions xsi:type="CapellaRequirements:CapellaModule" id="3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4"
           ReqIFIdentifier="25177" ReqIFLongName="System Requirement Specifications">
+        <ownedExtensions xsi:type="CapellaRequirements:CapellaTypesFolder" id="487eca4d-8e98-4598-8ec0-4cdbdcbebd03"
+            ReqIFIdentifier="-2" ReqIFLongName="Types">
+          <ownedDefinitionTypes xsi:type="Requirements:EnumerationDataTypeDefinition"
+              id="f4b62994-37ac-45d6-add7-d320890e2969" ReqIFLongName="Type">
+            <specifiedValues xsi:type="Requirements:EnumValue" id="fd147509-ad8c-48ff-8b5f-593ec32d6ef8"
+                ReqIFLongName="Unset"/>
+            <specifiedValues xsi:type="Requirements:EnumValue" id="55479dae-d1b5-49c3-9717-5cb17936facb"
+                ReqIFLongName="Folder"/>
+            <specifiedValues xsi:type="Requirements:EnumValue" id="004bd7d4-9af5-4738-a4c9-10b04dc4608b"
+                ReqIFLongName="Functional"/>
+          </ownedDefinitionTypes>
+          <ownedTypes xsi:type="Requirements:RequirementType" id="e941a947-54ac-48e4-a383-af0b6994076d"
+              ReqIFIdentifier="-3" ReqIFLongName="Requirement">
+            <ownedAttributes xsi:type="Requirements:AttributeDefinition" id="d82b82e8-e1c5-4f07-8769-744a44764759"
+                ReqIFLongName="Capella ID"/>
+            <ownedAttributes xsi:type="Requirements:AttributeDefinitionEnumeration"
+                id="145e5d5a-9f07-426a-b126-2b2cbbf2aeb9" ReqIFLongName="Type" definitionType="#f4b62994-37ac-45d6-add7-d320890e2969"/>
+            <ownedAttributes xsi:type="Requirements:AttributeDefinition" id="bfa091fc-7df9-4973-b74f-e5c4f0c5e935"
+                ReqIFLongName="Submitted at"/>
+          </ownedTypes>
+        </ownedExtensions>
         <ownedRequirements xsi:type="Requirements:Folder" id="8a814f64-70d1-4fe1-a648-54c83c03d05b"
             ReqIFIdentifier="5440" ReqIFLongName="Functional Requirements" ReqIFPrefix=""
             ReqIFText="&lt;p>Test Description&lt;/p>">
@@ -1834,27 +1855,6 @@ The predator is far away</bodies>
             </ownedRequirements>
           </ownedRequirements>
         </ownedRequirements>
-        <ownedExtensions xsi:type="CapellaRequirements:CapellaTypesFolder" id="487eca4d-8e98-4598-8ec0-4cdbdcbebd03"
-            ReqIFIdentifier="-2" ReqIFLongName="Types">
-          <ownedDefinitionTypes xsi:type="Requirements:EnumerationDataTypeDefinition"
-              id="f4b62994-37ac-45d6-add7-d320890e2969" ReqIFLongName="Type">
-            <specifiedValues xsi:type="Requirements:EnumValue" id="fd147509-ad8c-48ff-8b5f-593ec32d6ef8"
-                ReqIFLongName="Unset"/>
-            <specifiedValues xsi:type="Requirements:EnumValue" id="55479dae-d1b5-49c3-9717-5cb17936facb"
-                ReqIFLongName="Folder"/>
-            <specifiedValues xsi:type="Requirements:EnumValue" id="004bd7d4-9af5-4738-a4c9-10b04dc4608b"
-                ReqIFLongName="Functional"/>
-          </ownedDefinitionTypes>
-          <ownedTypes xsi:type="Requirements:RequirementType" id="e941a947-54ac-48e4-a383-af0b6994076d"
-              ReqIFIdentifier="-3" ReqIFLongName="Requirement">
-            <ownedAttributes xsi:type="Requirements:AttributeDefinition" id="d82b82e8-e1c5-4f07-8769-744a44764759"
-                ReqIFLongName="Capella ID"/>
-            <ownedAttributes xsi:type="Requirements:AttributeDefinitionEnumeration"
-                id="145e5d5a-9f07-426a-b126-2b2cbbf2aeb9" ReqIFLongName="Type" definitionType="#f4b62994-37ac-45d6-add7-d320890e2969"/>
-            <ownedAttributes xsi:type="Requirements:AttributeDefinition" id="bfa091fc-7df9-4973-b74f-e5c4f0c5e935"
-                ReqIFLongName="Submitted at"/>
-          </ownedTypes>
-        </ownedExtensions>
       </ownedExtensions>
       <ownedFunctionPkg xsi:type="org.polarsys.capella.core.data.la:LogicalFunctionPkg"
           id="21bc1668-0632-4287-b126-ea9a01635c8d" name="Logical Functions">
@@ -1951,9 +1951,9 @@ The predator is far away</bodies>
             <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
                 id="24d3e25a-5399-4374-aa85-8a4fd2b2a815" name="teach Care of Magical Creatures"/>
             <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
-                id="a7acb298-d14b-4707-a419-fea272434541" name="teach  Potions">
+                id="83ba0220-54f2-48f7-bca1-cd87e39639f2" name="teach  Potions">
               <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
-                  id="3612f112-f0c7-42ec-b0e9-f53afc1ef486" name="FOP 1"/>
+                  id="a88ff724-b8af-4609-8142-550a9aaabc78" name="FOP 1"/>
             </ownedFunctions>
             <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
                 id="cdc69c5e-ddd8-4e59-8b99-f510400650aa" name="educate"/>

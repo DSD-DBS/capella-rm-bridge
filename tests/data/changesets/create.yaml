@@ -1,0 +1,74 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-License-Identifier: Apache-2.0
+
+- parent: !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4
+  extend:
+    requirement_types_folders:
+      - long_name: Types
+        identifier: "-2"
+        data_type_definitions:
+          - long_name: Type
+            values:
+              - long_name: Unset
+                promise_id: EnumValue Type Unset
+              - long_name: Folder
+                promise_id: EnumValue Type Folder
+              - long_name: Functional
+                promise_id: EnumValue Type Functional
+            promise_id: EnumerationDataTypeDefinition Type
+            _type: EnumerationDataTypeDefinition
+        requirement_types:
+          - identifier: "-3"
+            long_name: Requirement
+            promise_id: RequirementType Requirement -3
+            attribute_definitions:
+              - long_name: Capella ID
+                promise_id: AttributeDefinition Capella ID
+                _type: AttributeDefinition
+              - long_name: Type
+                data_type: !promise EnumerationDataTypeDefinition Type
+                multi_valued: false
+                promise_id: AttributeDefinitionEnumeration Type
+                _type: AttributeDefinitionEnumeration
+              - long_name: Submitted at
+                promise_id: AttributeDefinition Submitted at
+                _type: AttributeDefinition
+    folders:
+      - long_name: Functional Requirements
+        identifier: "5440"
+        text: <p>Test Description</p>
+        type: !promise "RequirementType Requirement -3"
+        folders:
+          - long_name: Kinds
+            identifier: "5442"
+            text: ""
+            type: !promise RequirementType Requirement -3
+            requirements:
+              - long_name: Kind Requirement
+                identifier: "5443"
+                text: ""
+                type: !promise RequirementType Requirement -3
+                attributes:
+                  - definition: !promise AttributeDefinition Capella ID
+                    value: R-FNC-00002
+                    _type: string
+                  - definition: !promise AttributeDefinitionEnumeration Type
+                    values:
+                      - !promise EnumValue Type Unset
+                    _type: enum
+        requirements:
+          - long_name: Function Requirement
+            identifier: "5441"
+            text: "..."
+            type: !promise RequirementType Requirement -3
+            attributes:
+              - definition: !promise AttributeDefinition Capella ID
+                value: R-FNC-00001
+                _type: string
+              - definition: !promise AttributeDefinitionEnumeration Type
+                values:
+                  - !promise EnumValue Type Functional
+                _type: enum
+              - definition: !promise AttributeDefinition Submitted at
+                value: 2022-06-30 15:07:18.664000+00:00
+                _type: date

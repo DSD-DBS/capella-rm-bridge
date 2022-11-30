@@ -20,12 +20,12 @@
       text: <p>Changed Test Description</p>
       attributes:
         Capella ID: RF-NFNC-00001
-        Type: Folder
+        Type: [Folder]
       children:
         - id: "5441"
           long_name: Non-Function Requirement
           text: '...'
           attributes:
             Capella ID: R-NFNC-00001
-            Type: Non-Functional
+            Type: [Non-Functional]
             Submitted at: 2022-06-30T17:07:18.664+02:00
