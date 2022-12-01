@@ -20,12 +20,10 @@
           type: String # -> AttributeDefinition
         Type:
           type: Enum
-          data_type: Type # -> EnumerationAttributeDefinition
         Submitted at:
           type: Date # -> AttributeDefinition
         Release:
           type: Enum
-          data_type: Release
           multi_values: true
     software_requirement:
       long_name: Software Requirement
@@ -34,7 +32,6 @@
           type: String
         Type:
           type: Enum
-          data_type: Type
         Submitted at:
           type: Date
     stakeholder_requirement:
@@ -48,7 +45,7 @@
       text: <p>Test Description</p>
       type: system_requirement # WorkItemType ID NOT name
       attributes:
-        Type: [Folder] # THIS IS BULLSHIT FROM CODEBEAMER and cleaned in RM Bridge
+        Type: [Folder] # artifact from CODEBEAMER and cleaned in RM Bridge
       children: # Folder b/c non-empty children
         - id: REQ-002
           long_name: Function Requirement
