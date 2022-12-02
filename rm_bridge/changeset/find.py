@@ -32,7 +32,7 @@ class ReqFinder:
             return getattr(objs, f"by_{attr}")(value, single=True)
         except KeyError:
             types = " or ".join(xt.split(":")[-1] for xt in xtypes)
-            LOGGER.error("No %s found with %s: %r", types, attr, value)
+            LOGGER.info("No %s found with %s: %r", types, attr, value)
         return None
 
     def reqmodule(
