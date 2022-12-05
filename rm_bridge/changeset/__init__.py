@@ -8,6 +8,8 @@ Management tools and config YAML file. With the declarative modelling
 feature of capellambse_ a
 :external:class:`~capellambse.model.MelodyModel` can be altered with
 :external:func:`capellambse.decl.apply`.
+
+.. _capellambse: https://dsd-dbs.github.io/py-capellambse/start/declarative.html
 """
 from __future__ import annotations
 
@@ -36,14 +38,20 @@ def calculate_change_set(
     Parameters
     ----------
     model
-        An instance of :external:class:`~capellambse.model.MelodyModel`.
+        The ``model`` for comparison with the given ``snapshot``.
     config
         A configuration dictionary that stores the information on which
-        :external:class:`~capellambse.extensions.reqif.elements.RequirementsModule`
-        \s are taken.
+        :external:class:`~capellambse.extensions.reqif.elements.RequirementsModule`\
+        s are taken for comparison.
     snapshot
-        A sequence of module snapshots based on the content from the RM
-        tool.
+        A sequence of module snapshots based on the content from the
+        external RM tool.
+
+    Returns
+    -------
+    actions
+        The sequence of actions to synchronize Requirements of the RM
+        tool to a Capela model.
 
     See Also
     --------
@@ -52,11 +60,6 @@ def calculate_change_set(
     rm_bridge.changeset.actiontypes.TrackerSnapshot :
         The expected keys and value types of a snapshot.
 
-    Returns
-    -------
-    actions
-        The sequence of actions to synchronize Requirements of the RM
-        tool to a Capela model.
     """
     actions: list[dict[str, t.Any]] = []
     for tracker, tconfig in zip(snapshot, config["modules"]):

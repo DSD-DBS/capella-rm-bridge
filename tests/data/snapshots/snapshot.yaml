@@ -12,6 +12,7 @@
     Release:
       - Feature Rel. 1
       - Feature Rel. 2
+
   requirement_types: # WorkItemTypes
     system_requirement:
       long_name: System Requirement
@@ -39,13 +40,16 @@
       attributes:
         Capella ID:
           type: String
+
   items: # WorkItems
     - id: REQ-001
       long_name: Functional Requirements
       text: <p>Test Description</p>
       type: system_requirement # WorkItemType ID NOT name
+
       attributes:
         Type: [Folder] # artifact from CODEBEAMER and cleaned in RM Bridge
+
       children: # Folder b/c non-empty children
         - id: REQ-002
           long_name: Function Requirement

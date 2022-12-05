@@ -97,10 +97,10 @@ class TrackerChange:
             ``requirement_types`` and ``items`` defined. Maybe called
             module in different RM tools.
         model
-            An instance of ``MelodyModel``.
+            An instance of ``MelodyModel`` for comparison with the
+            snapshot.
         config
-            A dictionary contrary to
-            :class:`rm_bridge.changeset.actiontypes.TrackerConfig`.
+            A configuration for the module (tracker).
 
         Raises
         ------
@@ -108,17 +108,18 @@ class TrackerChange:
             If the given ``config`` is missing any of the mandatory
             keys (uuid, project and/or title).
         MissingRequirementsModule
-            If the model is missing a ``RequirementsModule`` with the
-            identifier built from the project/(space/)title values.
+            If the model is missing a ``RequirementsModule`` from the
+            UUID declared in the ``config``.
         InvalidWorkItemType
             May be raised during
-            :meth:`TrackerChange.calculate_change` if the integrity of
-            the ``requirement_types`` section in the snapshot is faulty.
+            :meth:`TrackerChange.calculate_change` if an unknown ID of a
+            RequirementType is used (i.e. the integrity of the
+            ``requirement_types`` section in the snapshot is broken).
         InvalidFieldValue
             May be raised during
             :meth:`TrackerChange.calculate_change` if it is tried to
             set an unavailable field value (i.e. the integrity of the
-            ``attributes`` of a work item is faulty).
+            ``attributes`` of a work item is broken).
         """
         self.tracker = tracker
         self.data_type_definitions = self.tracker.get("data_types", {})

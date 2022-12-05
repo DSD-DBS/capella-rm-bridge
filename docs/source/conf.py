@@ -88,13 +88,18 @@ intersphinx_mapping = {
 # a list of builtin themes.
 
 html_theme = "furo"
+html_css_files = [
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css",
+]
 html_theme_options = {
     "footer_icons": [
         {
             "name": "GitHub",
-            "url": "https://github.com/DSD-DBS/py-capellambse",
-            "html": '<img src="/_static/img/github-logo.svg"/>',
-            "class": "",
+            "url": "https://github.com/DSD-DBS/rm-bridge",
+            "html": "",
+            "class": "fa-solid fa-brands fa-github fa-2x",
         },
     ],
 }

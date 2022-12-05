@@ -15,17 +15,20 @@ example for the initial migration of the snapshot example:
 
 .. literalinclude:: ../../tests/data/changesets/create.yaml
    :language: yaml
+   :lines: 4-
 
 The following change set shows modifications (i.e. synchronizations) after the
 initial migration:
 
 .. literalinclude:: ../../tests/data/changesets/mod.yaml
    :language: yaml
+   :lines: 4-
 
 Then an example for deletions is given by:
 
 .. literalinclude:: ../../tests/data/changesets/delete.yaml
    :language: yaml
+   :lines: 4-
 
 A module in the snapshot is resolved in the
 :py:class:`~rm_bridge.changeset.change.TrackerChange` and its method
