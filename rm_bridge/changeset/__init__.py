@@ -4,12 +4,10 @@
 
 The :py:func:`~rm_bridge.changeset.calculate_change_set` function
 calculates these actions from a given snapshot of supported Requirement
-Management tools and config YAML file. With the declarative modelling
-feature of capellambse_ a
-:external:class:`~capellambse.model.MelodyModel` can be altered with
-:external:func:`capellambse.decl.apply`.
-
-.. _capellambse: https://dsd-dbs.github.io/py-capellambse/start/declarative.html
+Management tools and config YAML file. With the
+:ref:`declarative modelling <declarative-modelling>` feature of
+capellambse a :external:class:`~capellambse.model.MelodyModel` can be
+altered with :external:func:`capellambse.decl.apply`.
 """
 from __future__ import annotations
 
