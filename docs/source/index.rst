@@ -16,17 +16,18 @@ Capella-RM-Bridge
 **Date**: |today| **Version**: |Version|
 
 This library was designed to enable and support outsourcing requirements
-management for Capella_ models via specific RM tools like **Codebeamer** or
-**SIEMENS' Polarion ALM**. So all this library does is calculating a
-:ref:`change set <change-set>`, based on an exported :ref:`snapshot <snapshot>`
-from the RM software. This change set can then be applied to a
+management for Capella_ models via specific RM tools like `Codebeamer`_ or
+SIEMENS' `Polarion`_. So all this library does is, based on an exported
+:ref:`snapshot <snapshot>` from the RM software calculating a :ref:`change set
+<change-set>`. This change set can then be applied to a
 :external:class:`~capellambse.model.MelodyModel` instance from the
 `capellambse`_ headless model API.
 
-It is essential for the **synchronization process of ReqIFElements** from any
-RM tool to Capella.
+It is essential for a safe **synchronization process of ReqIFElements** from
+any RM tool to Capella via `capellambse`_.
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Input
 
@@ -34,12 +35,14 @@ RM tool to Capella.
 
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
    :caption: Output
 
    changeset
 
 .. toctree::
+   :hidden:
    :maxdepth: 3
    :caption: API reference
 
@@ -47,4 +50,6 @@ RM tool to Capella.
 
 
 .. _Capella: https://www.eclipse.org/capella/
+.. _Codebeamer: https://codebeamer.com/
+.. _Polarion: https://polarion.plm.automation.siemens.com/
 .. _capellambse: https://github.com/DSD-DBS/py-capellambse
