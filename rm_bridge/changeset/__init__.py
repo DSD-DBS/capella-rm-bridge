@@ -35,7 +35,8 @@ def calculate_change_set(
             actiontypes.InvalidSnapshotModule,
             change.MissingRequirementsModule,
         ) as error:
-            LOGGER.error("Skipping module: %s", error.args[0])
+            tid = tracker.get("id", "MISSING ID")
+            LOGGER.error("Skipping module: %s", f"'{tid}'\n{error.args[0]}")
             continue
 
     return actions

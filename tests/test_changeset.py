@@ -104,15 +104,6 @@ class TestTrackerChangeInit(ActionsTest):
         with pytest.raises(actiontypes.InvalidSnapshotModule):
             self.tracker_change(clean_model, snapshot)
 
-    def test_calculate_change_set_continues_on_InvalidSnapshotModule(
-        self, clean_model: capellambse.MelodyModel
-    ) -> None:
-        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
-        del snapshot["id"]  # type: ignore[misc]
-
-        with pytest.raises(actiontypes.InvalidSnapshotModule):
-            self.tracker_change(clean_model, snapshot)
-
 
 class TestCreateActions(ActionsTest):
     """UnitTests for all methods requesting creations."""
@@ -413,7 +404,7 @@ class TestDeleteActions(ActionsTest):
 class TestCalculateChangeSet(ActionsTest):
     """Integration tests for ``calculate_change_set``."""
 
-    SKIP_MESSAGE = "Skipping module: MODULE-000"
+    SKIP_MESSAGE = "Skipping module: 'project/space/example title'"
 
     def test_missing_module_UUID_logs_InvalidTrackerConfig_error(
         self,
@@ -424,7 +415,7 @@ class TestCalculateChangeSet(ActionsTest):
         config = copy.deepcopy(TEST_CONFIG)
         del config["modules"][0]["capella-uuid"]  # type:ignore[misc]
         message = (
-            "The given tracker configuration is missing 'uuid' of the target "
+            "The given tracker configuration is missing 'UUID' of the target "
             "RequirementsModule"
         )
 
@@ -449,3 +440,20 @@ class TestCalculateChangeSet(ActionsTest):
             calculate_change_set(clean_model, TEST_CONFIG, TEST_SNAPSHOT)
 
         assert caplog.messages[0] == f"{self.SKIP_MESSAGE}\n{message}"
+
+    def test_missing_module_id_logs_InvalidSnapshotModule_error(
+        self,
+        clean_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        snapshot = copy.deepcopy(TEST_SNAPSHOT)
+        del snapshot[0]["id"]  # type: ignore[misc]
+        message = (
+            "Skipping module: 'MISSING ID'\n"
+            "In the snapshot the module is missing an 'id' key"
+        )
+
+        with caplog.at_level(logging.ERROR):
+            calculate_change_set(clean_model, TEST_CONFIG, snapshot)
+
+        assert caplog.messages[0] == message
