@@ -18,7 +18,6 @@ TEST_MODEL_PATH = TEST_DATA_PATH / "model" / "RM Bridge.aird"
 TEST_MOD_CHANGESET_PATH = TEST_DATA_PATH / "changesets" / "mod.yaml"
 TEST_REQ_MODULE_UUID = "3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4"
 TEST_REQ_MODULE_LONG_NAME = "example title"
-TEST_REQ_MODULE_IDENTIFIER = f"project/space/{TEST_REQ_MODULE_LONG_NAME}"
 
 
 @pytest.fixture

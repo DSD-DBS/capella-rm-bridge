@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import collections.abc as cabc
 import copy
+import logging
 import operator
 import typing as t
 
@@ -21,7 +22,12 @@ from capellambse import decl
 
 from rm_bridge.changeset import actiontypes, calculate_change_set, change
 
-from .conftest import TEST_CONFIG, TEST_DATA_PATH, TEST_MOD_CHANGESET_PATH
+from .conftest import (
+    TEST_CONFIG,
+    TEST_DATA_PATH,
+    TEST_MOD_CHANGESET_PATH,
+    TEST_REQ_MODULE_UUID,
+)
 
 TEST_SNAPSHOT_PATH = TEST_DATA_PATH / "snapshots"
 TEST_SNAPSHOT: list[actiontypes.TrackerSnapshot] = yaml.safe_load(
@@ -97,21 +103,6 @@ class TestTrackerChangeInit(ActionsTest):
 
         with pytest.raises(actiontypes.InvalidSnapshotModule):
             self.tracker_change(clean_model, snapshot)
-
-    def test_calculate_change_set_continues_on_InvalidTrackerConfig(
-        self, clean_model: capellambse.MelodyModel
-    ) -> None:
-        config = copy.deepcopy(TEST_CONFIG)
-        del config["modules"][0]["capella-uuid"]  # type: ignore[misc]
-
-        calculate_change_set(clean_model, config, TEST_SNAPSHOT)
-
-    def test_calculate_change_set_continues_on_MissingRequirementsModule(
-        self, clean_model: capellambse.MelodyModel
-    ) -> None:
-        del clean_model.la.requirement_modules[0]
-
-        calculate_change_set(clean_model, TEST_CONFIG, TEST_SNAPSHOT)
 
     def test_calculate_change_set_continues_on_InvalidSnapshotModule(
         self, clean_model: capellambse.MelodyModel
@@ -189,28 +180,33 @@ class TestCreateActions(ActionsTest):
         assert action == self.REQ_CHANGE
 
     @pytest.mark.parametrize(
-        "attr,faulty_value",
+        "attr,faulty_value,key",
         [
-            ("Type", ["Not an option"]),
-            ("Type", None),
-            ("Capella ID", None),
-            ("Submitted at", 1),
+            ("Type", ["Not an option"], "values"),
+            ("Type", None, "values"),
+            ("Capella ID", None, "value"),
+            ("Submitted at", 1, "value"),
         ],
     )
-    def test_faulty_attribute_values_raise_InvalidFieldValue(
+    def test_faulty_attribute_values_log_InvalidFieldValue_as_error(
         self,
         clean_model: capellambse.MelodyModel,
         attr: str,
         faulty_value: actiontypes.Primitive,
+        key: str,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
-        """Test raising an ``InvalidFieldValue`` on faulty field data."""
+        """Test logging ``InvalidFieldValue`` on faulty field data."""
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
         first_child = titem["children"][0]
         first_child["attributes"][attr] = faulty_value  # type:ignore[index]
+        message_end = f"Invalid field found: {key} {faulty_value} for {attr}"
 
-        with pytest.raises(actiontypes.InvalidFieldValue):
+        with caplog.at_level(logging.ERROR):
             self.tracker_change(clean_model, tracker)
+
+        assert caplog.messages[0].endswith(message_end)
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -269,28 +265,33 @@ class TestModActions(ActionsTest):
         assert tchange.actions[4:] == self.REQ_CHANGE + [self.REQ_FOLDER_MOVE]
 
     @pytest.mark.parametrize(
-        "attr,faulty_value",
+        "attr,faulty_value,key",
         [
-            ("Type", ["Not an option"]),
-            ("Type", None),
-            ("Capella ID", None),
-            ("Submitted at", 1),
+            ("Type", ["Not an option"], "values"),
+            ("Type", None, "values"),
+            ("Capella ID", None, "value"),
+            ("Submitted at", 1, "value"),
         ],
     )
-    def test_faulty_attribute_values_raise_InvalidFieldValue(
+    def test_faulty_attribute_values_log_InvalidFieldValue_as_error(
         self,
         migration_model: capellambse.MelodyModel,
         attr: str,
         faulty_value: actiontypes.Primitive,
+        key: str,
+        caplog: pytest.LogCaptureFixture,
     ) -> None:
-        """Test raising an ``InvalidFieldValue`` on faulty field data."""
+        """Test logging ``InvalidFieldValue`` on faulty field data."""
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
         first_child = titem["children"][0]
         first_child["attributes"][attr] = faulty_value
+        message_end = f"Invalid field found: {key} {faulty_value} for {attr}"
 
-        with pytest.raises(actiontypes.InvalidFieldValue):
+        with caplog.at_level(logging.ERROR):
             self.tracker_change(migration_model, tracker)
+
+        assert caplog.messages[0].endswith(message_end)
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -406,3 +407,45 @@ class TestDeleteActions(ActionsTest):
         )
 
         assert change_set == expected_change_set
+
+
+@pytest.mark.integtest
+class TestCalculateChangeSet(ActionsTest):
+    """Integration tests for ``calculate_change_set``."""
+
+    SKIP_MESSAGE = "Skipping module: MODULE-000"
+
+    def test_missing_module_UUID_logs_InvalidTrackerConfig_error(
+        self,
+        clean_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test that an invalid config logs an error."""
+        config = copy.deepcopy(TEST_CONFIG)
+        del config["modules"][0]["capella-uuid"]  # type:ignore[misc]
+        message = (
+            "The given tracker configuration is missing 'uuid' of the target "
+            "RequirementsModule"
+        )
+
+        with caplog.at_level(logging.ERROR):
+            calculate_change_set(clean_model, config, TEST_SNAPSHOT)
+
+        assert caplog.messages[0] == f"{self.SKIP_MESSAGE}\n{message}"
+
+    def test_missing_module_logs_MissingRequirementsModule_error(
+        self,
+        clean_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test that a model w/o module raises MissingRequirementsModule."""
+        del clean_model.la.requirement_modules[0]
+        message = (
+            f"No RequirementsModule with UUID '{TEST_REQ_MODULE_UUID}' "
+            f"in {clean_model.info!r}"
+        )
+
+        with caplog.at_level(logging.ERROR):
+            calculate_change_set(clean_model, TEST_CONFIG, TEST_SNAPSHOT)
+
+        assert caplog.messages[0] == f"{self.SKIP_MESSAGE}\n{message}"

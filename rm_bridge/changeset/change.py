@@ -25,12 +25,13 @@ CACHEKEY_REQTYPE_IDENTIFIER = "-3"
 REQ_TYPE_NAME = "Requirement"
 _ATTR_BLACKLIST = frozenset({("Type", "Folder")})
 _ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[str, type] = {
-    "String": str,
-    "Enum": list,
-    "Date": datetime.datetime,
-    "Integer": int,
-    "Float": float,
     "Boolean": bool,
+    "Date": datetime.datetime,
+    "Datetime": datetime.datetime,
+    "Enum": list,
+    "Float": float,
+    "Integer": int,
+    "String": str,
 }
 
 
@@ -126,7 +127,14 @@ class TrackerChange:
                 item_action = next(req_actions)
                 _add_action_safely(base, "extend", second_key, item_action)
             else:
-                req_actions = self.yield_requirements_mod_actions(req, item)
+                try:
+                    req_actions = self.yield_requirements_mod_actions(
+                        req, item
+                    )
+                except act.InvalidWorkItemType as error:
+                    LOGGER.error("%s for workitem: %r", error.args[0], item)
+                    continue
+
                 visited.add(req.identifier)
                 if req.parent != self.req_module:
                     item_action = decl.UUIDReference(req.uuid)
@@ -376,7 +384,7 @@ class TrackerChange:
 
             if not req_type_id:
                 LOGGER.error(
-                    "Requirement without type but with attributes found: '%r'",
+                    "Requirement without type but with attributes found: %r",
                     item,
                 )
                 break
@@ -384,11 +392,15 @@ class TrackerChange:
             req_type_id = RMIdentifier(req_type_id)
             req_type = self.requirement_types[req_type_id]
             if name in req_type["attributes"]:
-                attributes.append(
-                    self.attribute_value_create_action(
+                try:
+                    action = self.attribute_value_create_action(
                         name, value, req_type_id
                     )
-                )
+                    attributes.append(action)
+                except act.InvalidFieldValue as error:
+                    LOGGER.error(
+                        "Invalid workitem found: %r.\n%s", item, error.args[0]
+                    )
 
         identifier = RMIdentifier(str(item["id"]))
         base: dict[str, t.Any] = {
@@ -498,7 +510,13 @@ class TrackerChange:
         """Raise a if ."""
         reqtype_attr_defs = self.requirement_types[req_type_id]["attributes"]
         deftype = reqtype_attr_defs[name]["type"]
-        matches_type = isinstance(value, _ATTR_VALUE_DEFAULT_MAP[deftype])
+        if default_type := _ATTR_VALUE_DEFAULT_MAP.get(deftype):
+            matches_type = isinstance(value, default_type)
+        else:
+            matches_type = True
+            LOGGER.warning(
+                "Unknown field type '%s' for %s: %r", deftype, name, value
+            )
         if deftype == "Enum":
             options = self.data_type_definitions[name]
             is_faulty = not matches_type or not set(value) & set(options)
@@ -509,7 +527,7 @@ class TrackerChange:
 
         if is_faulty:
             raise act.InvalidFieldValue(
-                f"Broken snapshot: Invalid field {key} '{value!r}' for {name}"
+                f"Invalid field found: {key} {value!r} for {name}"
             )
 
         return _AttributeValueBuilder(deftype, key, value)
@@ -697,8 +715,8 @@ class TrackerChange:
         if req_type_id != req.type.identifier:
             if req_type_id and req_type_id not in self.requirement_types:
                 raise act.InvalidWorkItemType(
-                    "Faulty Requirement in snapshot: "
-                    f"Unknown RequirementType {req_type_id}"
+                    "Faulty workitem in snapshot: "
+                    f"Unknown workitem-type {req_type_id}"
                 )
 
             reqtype = self.reqfinder.reqtype_by_identifier(
@@ -717,6 +735,13 @@ class TrackerChange:
         attributes_creations = list[dict[str, t.Any]]()
         attributes_modifications = list[dict[str, t.Any]]()
         for name, value in item_attributes.items():
+            if not req_type_id:
+                LOGGER.error(
+                    "Requirement without type but with attributes found: %r",
+                    item,
+                )
+                break
+
             reqtype_defs = self.requirement_types.get(req_type_id)
             if reqtype_defs and name not in reqtype_defs["attributes"]:
                 continue
@@ -726,10 +751,15 @@ class TrackerChange:
 
             action: act.Primitive | dict[str, t.Any] | None
             if mods.get("type"):
-                action = self.attribute_value_create_action(
-                    name, value, req_type_id
-                )
-                attributes_creations.append(action)
+                try:
+                    action = self.attribute_value_create_action(
+                        name, value, req_type_id
+                    )
+                    attributes_creations.append(action)
+                except act.InvalidFieldValue as error:
+                    LOGGER.error(
+                        "Invalid workitem found: %r.\n%s", item, error.args[0]
+                    )
             else:
                 try:
                     action = self.attribute_value_mod_action(
@@ -744,6 +774,10 @@ class TrackerChange:
                         name, value, req_type_id
                     )
                     attributes_creations.append(action)
+                except act.InvalidFieldValue as error:
+                    LOGGER.error(
+                        "Invalid workitem found: %r.\n%s", item, error.args[0]
+                    )
 
         if not attributes_deletions:
             attributes_deletions = [
@@ -792,9 +826,15 @@ class TrackerChange:
                     action = next(child_actions)
                     container.append(action)
                 else:
-                    child_actions = self.yield_requirements_mod_actions(
-                        creq, child, req
-                    )
+                    try:
+                        child_actions = self.yield_requirements_mod_actions(
+                            creq, child, req
+                        )
+                    except act.InvalidWorkItemType as error:
+                        LOGGER.error(
+                            "%s for workitem: %r", error.args[0], child
+                        )
+
                     if creq.parent != req:
                         container.append(decl.UUIDReference(creq.uuid))
 
