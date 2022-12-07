@@ -64,17 +64,18 @@ class ActionsTest:
 class TestTrackerChangeInit(ActionsTest):
     """UnitTests for init of ``TrackerChange``."""
 
-    def test_init_on_missing_module_UUID_raises_InvalidTrackerConfig(
+    def test_init_on_missing_capella_UUID_raises_InvalidTrackerConfig(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
         """Test that an invalid config raises InvalidTrackerConfig.
 
-        A configuration file without a UUID of the RequirementsModule
-        will lead to an ``InvalidTrackerConfig`` being raised during
-        initialization of a ``TrackerChange`` object.
+        A configuration file without all of the mandatory keys in the
+        config of the RequirementsModule will lead to an
+        ``InvalidTrackerConfig`` being raised during initialization of a
+        ``TrackerChange`` object.
         """
         tconfig = copy.deepcopy(self.tconfig)
-        del tconfig["uuid"]  # type:ignore[misc]
+        del tconfig["capella-uuid"]  # type:ignore[misc]
 
         with pytest.raises(actiontypes.InvalidTrackerConfig):
             self.tracker_change(clean_model, TEST_SNAPSHOT[0], tconfig)
@@ -93,6 +94,15 @@ class TestTrackerChangeInit(ActionsTest):
 
         with pytest.raises(change.MissingRequirementsModule):
             self.tracker_change(clean_model, TEST_SNAPSHOT[0])
+
+    def test_init_on_missing_module_id_raises_InvalidSnapshotModule(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        del snapshot["id"]  # type: ignore[misc]
+
+        with pytest.raises(actiontypes.InvalidSnapshotModule):
+            self.tracker_change(clean_model, snapshot)
 
 
 class TestCreateActions(ActionsTest):
@@ -394,7 +404,7 @@ class TestDeleteActions(ActionsTest):
 class TestCalculateChangeSet(ActionsTest):
     """Integration tests for ``calculate_change_set``."""
 
-    SKIP_MESSAGE = "Skipping module: MODULE-000"
+    SKIP_MESSAGE = "Skipping module: 'project/space/example title'"
 
     def test_missing_module_UUID_logs_InvalidTrackerConfig_error(
         self,
@@ -403,9 +413,9 @@ class TestCalculateChangeSet(ActionsTest):
     ) -> None:
         """Test that an invalid config logs an error."""
         config = copy.deepcopy(TEST_CONFIG)
-        del config["modules"][0]["uuid"]  # type:ignore[misc]
+        del config["modules"][0]["capella-uuid"]  # type:ignore[misc]
         message = (
-            "The given tracker configuration is missing 'uuid' of the target "
+            "The given tracker configuration is missing 'UUID' of the target "
             "RequirementsModule"
         )
 
@@ -430,3 +440,20 @@ class TestCalculateChangeSet(ActionsTest):
             calculate_change_set(clean_model, TEST_CONFIG, TEST_SNAPSHOT)
 
         assert caplog.messages[0] == f"{self.SKIP_MESSAGE}\n{message}"
+
+    def test_missing_module_id_logs_InvalidSnapshotModule_error(
+        self,
+        clean_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        snapshot = copy.deepcopy(TEST_SNAPSHOT)
+        del snapshot[0]["id"]  # type: ignore[misc]
+        message = (
+            "Skipping module: 'MISSING ID'\n"
+            "In the snapshot the module is missing an 'id' key"
+        )
+
+        with caplog.at_level(logging.ERROR):
+            calculate_change_set(clean_model, TEST_CONFIG, snapshot)
+
+        assert caplog.messages[0] == message

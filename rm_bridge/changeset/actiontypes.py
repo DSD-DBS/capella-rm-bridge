@@ -20,23 +20,14 @@ class WorkitemTypeConfig(te.TypedDict):
 TrackerConfig = te.TypedDict(
     "TrackerConfig",
     {
-        "uuid": str,
-        "project": str,
+        "capella-uuid": str,
         "workitem-types": cabc.Sequence[WorkitemTypeConfig],
-        "title": t.Optional[str],
-        "space": t.Optional[str],
-        "external-id": t.Optional[str],
     },
 )
 
 
-class ModelConfig(te.TypedDict):
-    path: str
-
-
 class Config(te.TypedDict):
     modules: cabc.Sequence[TrackerConfig]
-    model: ModelConfig
 
 
 class InvalidTrackerConfig(Exception):
@@ -74,6 +65,10 @@ class RequirementType(t.TypedDict):
 class EnumAttributeDefinition(AttributeDefinition, total=False):
     values: list[str]
     multi_values: bool
+
+
+class InvalidSnapshotModule(Exception):
+    """Raised if the module snapshot is invalid."""
 
 
 class InvalidWorkItemType(Exception):

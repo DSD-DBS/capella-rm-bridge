@@ -35,22 +35,9 @@ class ReqFinder:
             LOGGER.info("No %s found with %s: %r", types, attr, value)
         return None
 
-    def reqmodule(
-        self, uuid: str, identifier: int | str | None = None
-    ) -> reqif.RequirementsModule | None:
-        """Try to return the ``RequirementsModule``.
-
-        The object is matched with given ``uuid``. If an ``identifier`` is
-        given and doesn't match on the found object, it is changed.
-        """
-        req_module = self._get(uuid, reqif.XT_MODULE, attr="uuid")
-        if (
-            req_module
-            and identifier
-            and req_module.identifier != str(identifier)
-        ):
-            req_module.identifier = str(identifier)
-        return req_module
+    def reqmodule(self, uuid: str) -> reqif.RequirementsModule | None:
+        """Try to return the ``RequirementsModule``."""
+        return self._get(uuid, reqif.XT_MODULE, attr="uuid")
 
     def reqtypesfolder_by_identifier(
         self,
