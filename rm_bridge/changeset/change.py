@@ -25,12 +25,13 @@ CACHEKEY_REQTYPE_IDENTIFIER = "-3"
 REQ_TYPE_NAME = "Requirement"
 _ATTR_BLACKLIST = frozenset({("Type", "Folder")})
 _ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[str, type] = {
-    "String": str,
-    "Enum": list,
-    "Date": datetime.datetime,
-    "Integer": int,
-    "Float": float,
     "Boolean": bool,
+    "Date": datetime.datetime,
+    "Datetime": datetime.datetime,
+    "Enum": list,
+    "Float": float,
+    "Integer": int,
+    "String": str,
 }
 
 
@@ -489,7 +490,13 @@ class TrackerChange:
         """Raise a if ."""
         reqtype_attr_defs = self.requirement_types[req_type_id]["attributes"]
         deftype = reqtype_attr_defs[name]["type"]
-        matches_type = isinstance(value, _ATTR_VALUE_DEFAULT_MAP[deftype])
+        if default_type := _ATTR_VALUE_DEFAULT_MAP.get(deftype):
+            matches_type = isinstance(value, default_type)
+        else:
+            matches_type = True
+            LOGGER.warning(
+                "Unknown field type '%s' for %s: %r", deftype, name, value
+            )
         if deftype == "Enum":
             options = self.data_type_definitions[name]
             is_faulty = not matches_type or not set(value) & set(options)
