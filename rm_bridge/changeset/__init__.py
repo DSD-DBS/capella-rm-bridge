@@ -30,7 +30,13 @@ def calculate_change_set(
         try:
             tchange = change.TrackerChange(tracker, model, tconfig)
             actions.extend(tchange.actions)
-        except change.MissingRequirementsModule:
+        except (
+            change.MissingRequirementsModule,
+            actiontypes.InvalidTrackerConfig,
+        ) as error:
+            LOGGER.error(
+                "Skipping module: %s\n%s", tracker["id"], error.args[0]
+            )
             continue
 
     return actions
