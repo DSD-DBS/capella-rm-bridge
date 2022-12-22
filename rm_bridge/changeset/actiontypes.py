@@ -75,5 +75,9 @@ class InvalidWorkItemType(Exception):
     """Raised if the type isn't matching any of the defined types."""
 
 
+class InvalidWorkItem(Exception):
+    """Raised if the work item is faulty, e.g. missing a work-item-type."""
+
+
 class InvalidFieldValue(Exception):
     """Raised if a value isn't matching the defined type or options."""
