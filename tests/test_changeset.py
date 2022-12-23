@@ -506,10 +506,9 @@ class TestCalculateChangeSet(ActionsTest):
         assert errors[0].startswith(self.SKIP_MESSAGE)
         assert message in errors[0]
 
-    def test_snapshot_errors_are_gathered(
+    def test_snapshot_errors_from_ChangeSet_calculation_are_gathered(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
-        """Test that errors from the ``ChangeSet`` calculation are gathered."""
         snapshot = copy.deepcopy(TEST_SNAPSHOT)
         titem = snapshot[0]["items"][0]
         first_child = titem["children"][0]

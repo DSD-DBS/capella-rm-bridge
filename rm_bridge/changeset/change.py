@@ -388,41 +388,19 @@ class TrackerChange:
         capellambse.extensions.reqif.Requirement
         capellambse.extensions.reqif.RequirementsFolder
         """
-        req_type_id = RMIdentifier(item.get("type", ""))
-        attributes = []
-        folder_hint = False
         iid = item["id"]
+        attributes = list[dict[str, t.Any]]()
+        req_type_id = RMIdentifier(item.get("type", ""))
         for name, value in item.get("attributes", {}).items():
-            if not req_type_id:
-                self._handle_user_error(
-                    f"Invalid workitem '{iid}'. "
-                    "Missing type but attributes found"
-                )
+            check = self._check_attribute((name, value), (req_type_id, iid))
+            if check == "break":
                 break
-
-            if _blacklisted(name, value):
-                if name == "Type" and value == "Folder":
-                    folder_hint = True
+            elif check == "continue":
                 continue
 
-            reqtype_defs = self.requirement_types.get(req_type_id)
-            if reqtype_defs and name not in reqtype_defs["attributes"]:
-                self._handle_user_error(
-                    f"Invalid workitem '{iid}'. "
-                    f"Invalid field found: field name '{name}' not defined in "
-                    f"attributes of requirement type '{req_type_id}'"
-                )
-                continue
-
-            try:
-                action = self.attribute_value_create_action(
-                    name, value, req_type_id
-                )
-                attributes.append(action)
-            except act.InvalidFieldValue as error:
-                self._handle_user_error(
-                    f"Invalid workitem '{iid}'. {error.args[0]}"
-                )
+            self._try_create_attribute_value(
+                (name, value), (req_type_id, iid), attributes
+            )
 
         identifier = RMIdentifier(str(item["id"]))
         base: dict[str, t.Any] = {
@@ -445,7 +423,7 @@ class TrackerChange:
                 base["type"] = decl.UUIDReference(reqtype.uuid)
 
         child_mods: list[dict[str, t.Any]] = []
-        if "children" in item or folder_hint:
+        if "children" in item:
             base["requirements"] = []
             base["folders"] = []
             child: act.WorkItem
@@ -472,6 +450,51 @@ class TrackerChange:
                 del base["requirements"]
         yield base
         yield from child_mods
+
+    def _check_attribute(
+        self,
+        attribute: tuple[t.Any, t.Any],
+        identifiers: tuple[RMIdentifier, t.Any],
+    ) -> str | None:
+        name, value = attribute
+        req_type_id, iitem_id = identifiers
+        if not req_type_id:
+            self._handle_user_error(
+                f"Invalid workitem '{iitem_id}'. "
+                "Missing type but attributes found"
+            )
+            return "break"
+
+        if _blacklisted(name, value):
+            return "continue"
+
+        reqtype_defs = self.requirement_types.get(req_type_id)
+        if reqtype_defs and name not in reqtype_defs["attributes"]:
+            self._handle_user_error(
+                f"Invalid workitem '{iitem_id}'. "
+                f"Invalid field found: field name '{name}' not defined in "
+                f"attributes of requirement type '{req_type_id}'"
+            )
+            return "continue"
+        return None
+
+    def _try_create_attribute_value(
+        self,
+        attribute: tuple[t.Any, t.Any],
+        identifiers: tuple[RMIdentifier, t.Any],
+        actions: list[dict[str, t.Any]],
+    ) -> None:
+        name, value = attribute
+        req_type_id, iitem_id = identifiers
+        try:
+            action = self.attribute_value_create_action(
+                name, value, req_type_id
+            )
+            actions.append(action)
+        except act.InvalidFieldValue as error:
+            self._handle_user_error(
+                f"Invalid workitem '{iitem_id}'. {error.args[0]}"
+            )
 
     def attribute_value_create_action(
         self, name: str, value: str | list[str], req_type_id: RMIdentifier
@@ -758,35 +781,17 @@ class TrackerChange:
         attributes_creations = list[dict[str, t.Any]]()
         attributes_modifications = list[dict[str, t.Any]]()
         for name, value in item_attributes.items():
-            if not req_type_id:
-                self._handle_user_error(
-                    f"Invalid workitem '{iid}'. "
-                    "Missing work item type but attributes found"
-                )
-
-            reqtype_defs = self.requirement_types.get(req_type_id)
-            if reqtype_defs and name not in reqtype_defs["attributes"]:
-                self._handle_user_error(
-                    f"Invalid workitem '{iid}'. "
-                    f"Invalid field found: field name '{name}' not defined in "
-                    f"attributes of requirement type '{req_type_id}'"
-                )
-                continue
-
-            if _blacklisted(name, value):
+            check = self._check_attribute((name, value), (req_type_id, iid))
+            if check == "break":
+                break
+            elif check == "continue":
                 continue
 
             action: act.Primitive | dict[str, t.Any] | None
             if mods.get("type"):
-                try:
-                    action = self.attribute_value_create_action(
-                        name, value, req_type_id
-                    )
-                    attributes_creations.append(action)
-                except act.InvalidFieldValue as error:
-                    self._handle_user_error(
-                        f"Invalid workitem '{iid}'. {error.args[0]}"
-                    )
+                self._try_create_attribute_value(
+                    (name, value), (req_type_id, iid), attributes_creations
+                )
             else:
                 try:
                     action = self.attribute_value_mod_action(
@@ -797,10 +802,9 @@ class TrackerChange:
 
                     attributes_modifications.append(action)
                 except KeyError:
-                    action = self.attribute_value_create_action(
-                        name, value, req_type_id
+                    self._try_create_attribute_value(
+                        (name, value), (req_type_id, iid), attributes_creations
                     )
-                    attributes_creations.append(action)
                 except act.InvalidFieldValue as error:
                     self._handle_user_error(
                         f"Invalid workitem '{iid}'. {error.args[0]}"
