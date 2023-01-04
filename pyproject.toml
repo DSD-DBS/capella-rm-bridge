@@ -34,7 +34,6 @@ dependencies = [
   "capellambse>=0.4.15",
   "docutils>=0.17.1",
   "lxml>=4.8.0",
-  "pandas>=1.4.2",
   "platformdirs>=2.5.2",
   "pydantic>=1.9.0",
   "python-datauri>=1.0.0",
@@ -87,7 +86,6 @@ allow_untyped_defs = true
 # Untyped third party libraries
 module = [
   "datauri",
-  "pandas",
 ]
 ignore_missing_imports = true
 
