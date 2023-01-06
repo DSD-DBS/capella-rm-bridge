@@ -232,7 +232,7 @@ class TestCreateActions(ActionsTest):
     ) -> None:
         """Test ``ChangeSet`` on clean model for first migration run."""
         change_set, errors = calculate_change_set(
-            clean_model, TEST_CONFIG, TEST_SNAPSHOT
+            clean_model, TEST_CONFIG["modules"][0], TEST_SNAPSHOT[0]
         )
 
         assert not errors
@@ -312,7 +312,7 @@ class TestModActions(ActionsTest):
     ) -> None:
         """Test ChangeSet on clean model for first migration run."""
         change_set, errors = calculate_change_set(
-            migration_model, TEST_CONFIG, TEST_SNAPSHOT_1
+            migration_model, TEST_CONFIG["modules"][0], TEST_SNAPSHOT_1[0]
         )
 
         assert not errors
@@ -417,7 +417,7 @@ class TestDeleteActions(ActionsTest):
         )
 
         change_set, errors = calculate_change_set(
-            deletion_model, TEST_CONFIG, TEST_SNAPSHOT_2
+            deletion_model, TEST_CONFIG["modules"][0], TEST_SNAPSHOT_2[0]
         )
 
         assert not errors
@@ -436,8 +436,8 @@ class TestCalculateChangeSet(ActionsTest):
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that an invalid config logs an error."""
-        config = copy.deepcopy(TEST_CONFIG)
-        del config["modules"][0]["capella-uuid"]  # type:ignore[misc]
+        config = copy.deepcopy(TEST_CONFIG["modules"][0])
+        del config["capella-uuid"]  # type:ignore[misc]
         message = (
             "The given module configuration is missing 'UUID' of the target "
             "RequirementsModule"
@@ -445,7 +445,7 @@ class TestCalculateChangeSet(ActionsTest):
 
         with caplog.at_level(logging.ERROR):
             calculate_change_set(
-                clean_model, config, TEST_SNAPSHOT, gather_logs=False
+                clean_model, config, TEST_SNAPSHOT[0], gather_logs=False
             )
 
         assert caplog.messages[0] == f"{self.SKIP_MESSAGE}. {message}"
@@ -456,6 +456,7 @@ class TestCalculateChangeSet(ActionsTest):
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test that a model w/o module raises MissingRequirementsModule."""
+        tconfig = TEST_CONFIG["modules"][0]
         del clean_model.la.requirement_modules[0]
         message = (
             f"No RequirementsModule with UUID '{TEST_REQ_MODULE_UUID}' found "
@@ -464,7 +465,7 @@ class TestCalculateChangeSet(ActionsTest):
 
         with caplog.at_level(logging.ERROR):
             calculate_change_set(
-                clean_model, TEST_CONFIG, TEST_SNAPSHOT, gather_logs=False
+                clean_model, tconfig, TEST_SNAPSHOT[0], gather_logs=False
             )
 
         assert caplog.messages[0] == f"{self.SKIP_MESSAGE}. {message}"
@@ -474,8 +475,9 @@ class TestCalculateChangeSet(ActionsTest):
         clean_model: capellambse.MelodyModel,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
-        snapshot = copy.deepcopy(TEST_SNAPSHOT)
-        del snapshot[0]["id"]  # type: ignore[misc]
+        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        del snapshot["id"]  # type: ignore[misc]
+        tconfig = TEST_CONFIG["modules"][0]
         message = (
             "Skipping module: MISSING ID. "
             "In the snapshot the module is missing an 'id' key"
@@ -483,7 +485,7 @@ class TestCalculateChangeSet(ActionsTest):
 
         with caplog.at_level(logging.ERROR):
             calculate_change_set(
-                clean_model, TEST_CONFIG, snapshot, gather_logs=False
+                clean_model, tconfig, snapshot, gather_logs=False
             )
 
         assert caplog.messages[0] == message
@@ -492,15 +494,15 @@ class TestCalculateChangeSet(ActionsTest):
         self, clean_model: capellambse.MelodyModel
     ) -> None:
         """Test that errors from an invalid config are gathered."""
-        config = copy.deepcopy(TEST_CONFIG)
-        del config["modules"][0]["capella-uuid"]  # type:ignore[misc]
+        config = copy.deepcopy(TEST_CONFIG["modules"][0])
+        del config["capella-uuid"]  # type:ignore[misc]
         message = (
             "The given module configuration is missing 'UUID' of the target "
             "RequirementsModule"
         )
 
         _, errors = calculate_change_set(
-            clean_model, config, TEST_SNAPSHOT, gather_logs=True
+            clean_model, config, TEST_SNAPSHOT[0], gather_logs=True
         )
 
         assert errors[0].startswith(self.SKIP_MESSAGE)
@@ -509,8 +511,8 @@ class TestCalculateChangeSet(ActionsTest):
     def test_snapshot_errors_from_ChangeSet_calculation_are_gathered(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
-        snapshot = copy.deepcopy(TEST_SNAPSHOT)
-        titem = snapshot[0]["items"][0]
+        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        titem = snapshot["items"][0]
         first_child = titem["children"][0]
         titem["attributes"]["Test"] = 1  # type: ignore[index]
         messages = [
@@ -527,12 +529,13 @@ class TestCalculateChangeSet(ActionsTest):
                 + f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
             )
         del titem["children"][1]["type"]
+        tconfig = TEST_CONFIG["modules"][0]
         messages.append(
             "Invalid workitem 'REQ-003'. Missing type but attributes found"
         )
 
         _, errors = calculate_change_set(
-            clean_model, TEST_CONFIG, snapshot, gather_logs=True
+            clean_model, tconfig, snapshot, gather_logs=True
         )
 
         assert errors[0].splitlines()[2:-1] == messages
