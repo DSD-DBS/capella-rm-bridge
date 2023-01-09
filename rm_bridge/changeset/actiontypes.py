@@ -22,12 +22,14 @@ TrackerConfig = te.TypedDict(
     {
         "capella-uuid": str,
         "workitem-types": cabc.Sequence[WorkitemTypeConfig],
+        "id": str,
     },
 )
 
 
 class Config(te.TypedDict):
     modules: cabc.Sequence[TrackerConfig]
+    trackers: cabc.Sequence[TrackerConfig]
 
 
 class InvalidTrackerConfig(Exception):

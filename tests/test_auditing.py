@@ -197,3 +197,18 @@ class TestChangeAuditor:
         auditor.detach()
 
         assert auditor.model is None
+
+
+@pytest.mark.parametrize(
+    ["iterable", "expected"],
+    [
+        ([("dogs", 2)], "Synchronized 2 dogs:"),
+        ([("dogs", 2), ("cats", 1)], "Synchronized 1 cats and 2 dogs:"),
+        (
+            [("dogs", 2), ("cats", 1), ("birds", 3)],
+            "Synchronized 3 birds, 1 cats and 2 dogs:",
+        ),
+    ],
+)
+def test_generate_main_message(iterable: list[tuple[str, int]], expected: str):
+    assert auditing.generate_main_message(iterable) == expected
