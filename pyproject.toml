@@ -35,11 +35,8 @@ dependencies = [
   "docutils>=0.17.1",
   "lxml>=4.8.0",
   "platformdirs>=2.5.2",
-  "pydantic>=1.9.0",
-  "python-datauri>=1.0.0",
   "pyyaml>=6.0",
-  "requests>=2.27.1",
-  "toml>=0.10.2",
+  "tomli>=2.0.1",
   "typing_extensions>=4.2.0",
 ]
 
@@ -58,12 +55,11 @@ docs = [
 test = [
   "pytest",
   "pytest-cov",
-  "requests-mock>=1.9.3",
 ]
 
 [tool.black]
 line-length = 79
-target-version = ["py39"]
+target-version = ["py310"]
 
 [tool.isort]
 profile = 'black'
@@ -75,7 +71,7 @@ no_implicit_optional = true
 show_error_codes = true
 warn_redundant_casts = true
 warn_unreachable = true
-python_version = "3.9"
+python_version = "3.10"
 
 [[tool.mypy.overrides]]
 module = ["tests.*"]
