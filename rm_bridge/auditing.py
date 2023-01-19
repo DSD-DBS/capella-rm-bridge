@@ -14,7 +14,7 @@ import typing as t
 from importlib import metadata as imm
 
 import capellambse
-from capellambse import helpers as cap_helpers
+from capellambse import helpers
 from capellambse.extensions import reqif
 from capellambse.model import common
 
@@ -80,13 +80,6 @@ class _SafeModification(_SafeChange):
 
     new: str | list[str] | dict[str, t.Any]
     old: str | list[str] | dict[str, t.Any]
-
-
-class _ChangeBuilder(t.NamedTuple):
-    uuid: str
-    attr_name: str
-    value: t.Any
-    element: str | None
 
 
 class ChangeAuditor:
@@ -202,7 +195,7 @@ class ChangeAuditor:
             context.
         """
         self.model: capellambse.MelodyModel | None = model
-        self.classes = classes or cap_helpers.EverythingContainer()
+        self.classes = classes or helpers.EverythingContainer()
         self.context = list[Change]()
 
         sys.addaudithook(self.__audit)
@@ -214,67 +207,67 @@ class ChangeAuditor:
         self.detach()
 
     def detach(self) -> None:
+        """Delete the reference to the model instance."""
         self.model = None
 
     def __audit(self, event: str, args: tuple[t.Any, ...]) -> None:
-        if event in {"capellambse.set_item", "capellambse.set_attribute"}:
-            if change := self._check_event(args):
-                new_value, old_value = change.value
-                uuid = new_value if change.attr_name == "uuid" else None
+        change_events: dict[str, type[Change]] = {
+            "capellambse.setattr": Modification,
+            "capellambse.setitem": Modification,
+            "capellambse.delete": Deletion,
+            "capellambse.create": Extension,
+            "capellambse.insert": Extension,
+        }
+        if EventType := change_events.get(event):
+            if args[0]._model is not self.model:
+                return
 
-                self.context.append(
-                    Modification(
-                        uuid or change.uuid,
-                        change.attr_name,
-                        new_value,
-                        old_value,
-                    ),
-                )
-        elif event == "capellambse.delete_item":
-            if change := self._check_event(args):
-                assert change.element is not None
-                self.context.append(
-                    Deletion(
-                        change.uuid,
-                        change.attr_name,
-                        change.element,
-                        change.value.uuid,
-                    )
-                )
-        elif event in {
-            "capellambse.create",
-            "capellambse.create_item",
-            "capellambse.insert_item",
-        }:
-            if change := self._check_event(args):
-                assert change.element is not None
-                self.context.append(
-                    Extension(
-                        change.uuid,
-                        change.attr_name,
-                        change.element,
-                        change.value.uuid,
-                    )
-                )
-        else:
-            return
+            if type(args[0]).__name__ not in self.classes:
+                return
 
-    def _check_event(self, args: tuple[t.Any, ...]) -> _ChangeBuilder | None:
-        if len(args) == 3:
-            obj, attr_name, value = args
-        else:
-            obj, attr_name, new, old = args
-            value = (new, old)
+            if event.endswith("setattr"):
+                assert len(args) == 3
+                obj, attr_name, value = args
+                oval = getattr(obj, attr_name)
+                nrepr = self._get_value_repr(value)
+                orepr = self._get_value_repr(oval)
+                params = (obj.uuid, attr_name, nrepr, orepr)
+            elif event.endswith("setitem"):
+                assert len(args) == 4
+                obj, attr_name, index, value = args
+                nrepr = self._get_value_repr(value)
+                oval = getattr(obj, attr_name)[index]
+                orepr = self._get_value_repr(oval)
+                params = (obj.uuid, attr_name, nrepr, orepr)
+            elif event.endswith("delete"):
+                assert len(args) == 3
+                obj, attr_name, index = args
+                assert isinstance(index, int) or index is None
+                oval = getattr(obj, attr_name)
+                if index is not None:
+                    oval = oval[index]
 
-        class_name, attr_name = attr_name.split(".")
-        if class_name in self.classes:
-            if isinstance(value, common.GenericElement):
-                element = value._short_repr_()
-            else:
-                element = None
+                assert isinstance(oval, common.GenericElement)
+                orepr = self._get_value_repr(oval)
+                params = (obj.uuid, attr_name, orepr, oval.uuid)
+            elif event.endswith("insert"):
+                assert len(args) == 4
+                obj, attr_name, _, value = args
+                nrepr = self._get_value_repr(value)
+                assert isinstance(value, common.GenericElement)
+                params = (obj.uuid, attr_name, nrepr, value.uuid)
+            elif event.endswith("create"):
+                assert len(args) == 3
+                obj, attr_name, value = args
+                repr = self._get_value_repr(value)
+                params = (obj.uuid, attr_name, repr, value.uuid)
 
-            return _ChangeBuilder(obj.uuid, attr_name, value, element)
-        return None
+            self.context.append(EventType(*params))
+
+    def _get_value_repr(self, value: t.Any) -> str | t.Any:
+        if hasattr(value, "_short_repr_"):
+            return value._short_repr_()
+        return value
 
 
 def dump(context: list[Change]) -> list[dict[str, t.Any]]:
@@ -322,6 +315,15 @@ UUID = str
 
 
 class RMReporter:
+    """Stores and reports on all changes that were made to a model."""
+
+    model: capellambse.MelodyModel
+    """The model instance that was changed."""
+    store: dict[LiveDocID | TrackerID, list[Change]]
+    """A change-store that maps identifiers to a sequence of changes."""
+    categories: dict[str, int]
+    """A dictionary that maps the category name to its counter."""
+
     def __init__(self, model: capellambse.MelodyModel) -> None:
         self.model = model
         self.store = dict[LiveDocID | TrackerID, list[Change]]()
@@ -334,7 +336,7 @@ class RMReporter:
         module_id: str,
         module_category: str,
     ) -> None:
-        """Assign the RequirementsModule to changes and store them."""
+        """Assigns the RequirementsModule to changes and stores them."""
         self.categories[module_category] += 1
 
         for change in changes:
@@ -354,21 +356,20 @@ class RMReporter:
 
             if parent_id not in self.store:
                 self.store[parent_id] = [change]
+            else:
+                self.store[parent_id].append(change)
 
-            self.store[parent_id].append(change)
-
-    def _assign_module(self, change: Change) -> LiveDocID | TrackerID:
+    def _assign_module(self, change: Change) -> LiveDocID | TrackerID | None:
         try:
             obj = self.model.by_uuid(change.parent)
             while not isinstance(obj, reqif.RequirementsModule):
                 obj = obj.parent
-        except KeyError:
-            ...
-
-        return obj.identifier
+            return obj.identifier
+        except (KeyError, AttributeError):
+            return None
 
     def create_commit_message(self, tool_metadata: dict[str, str]) -> str:
-        """Return a commit message for the RM Bridge Bot.
+        """Return a commit message for all changes in the store.
 
         Parameters
         ----------
@@ -420,12 +421,12 @@ class RMReporter:
         for change in changes:
             if self._is_reqtype_change(change):
                 type_count += 1
+            elif isinstance(change, Deletion):  # type: ignore[unreachable]
+                del_count += 1
             elif isinstance(change, Extension):
                 ext_count += 1
             elif isinstance(change, Modification):
                 mod_count += 1
-            elif isinstance(change, Deletion):  # type: ignore[unreachable]
-                del_count += 1
             else:
                 assert False
         return ext_count, mod_count, del_count, type_count
@@ -440,7 +441,7 @@ class RMReporter:
             "AttributeDefinition",
             "AttributeDefinitionEnumeration",
             "DataTypeDefinition",
-            "EnumerationDataTypeDefinition",
+            "EnumDataTypeDefinition",
             "EnumValue",
             "ModuleType",
             "RelationType",
@@ -449,6 +450,7 @@ class RMReporter:
         }
 
     def get_change_report(self) -> str:
+        """Return an audit report of all changes in the store."""
         report_store = self._store_group_by("parent")
         change_statements = list[str]()
         for identifier, changes in report_store.items():
@@ -488,10 +490,10 @@ class RMReporter:
         return grouped_store
 
 
-def generate_main_message(iterable: cabc.Iterable[tuple[str, int]]) -> str:
-    sorted_iterable = sorted(iterable, key=lambda x: x[0])
-    assert sorted_iterable
-    strings = [f"{x[1]} {x[0]}" for x in sorted_iterable]
+def generate_main_message(categories: cabc.Iterable[tuple[str, int]]) -> str:
+    """Return the main commit message corpus listing all categories."""
+    assert (sorted_categories := sorted(categories))
+    strings = [f"{x[1]} {x[0]}" for x in sorted_categories]
     if len(strings) == 1:
         result = strings[0]
     else:
@@ -502,6 +504,7 @@ def generate_main_message(iterable: cabc.Iterable[tuple[str, int]]) -> str:
 
 
 def get_dependencies() -> list[str]:
+    """Return all major dependencies with their current version."""
     py_version = sys.version.split(" ", maxsplit=1)[0]
     dependencies = [f"{dep} v{imm.version(dep)}" for dep in DEPENDENCIES]
     dependencies.insert(0, f"Python {py_version}")
@@ -509,15 +512,16 @@ def get_dependencies() -> list[str]:
 
 
 def formulate_statement(change: Change, obj: reqif.ReqIFElement) -> str:
+    """Return an audit statement about the given change."""
     source = obj._short_repr_()
     if isinstance(change, Deletion):
         target = change.element
-        return f"{source!r} deleted {target} from {change.attribute!r}."
+        return f"{source} deleted {target} from {change.attribute!r}."
     elif isinstance(change, Modification):
         return (
-            f"{source!r} modified {change.attribute!r} from "
+            f"{source} modified {change.attribute!r} from "
             f"{change.old!r} to {change.new!r}."
         )
     else:
         target = change.element
-        return f"{source!r} extended {change.attribute!r} by {target!r}."
+        return f"{source} extended {change.attribute!r} by {target}."

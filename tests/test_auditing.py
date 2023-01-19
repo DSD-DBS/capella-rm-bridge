@@ -3,20 +3,40 @@
 from __future__ import annotations
 
 import json
+import logging
 
 import capellambse
 import pytest
 import yaml
-from capellambse.model import common
 
-from rm_bridge import auditing
+from rm_bridge import __version__, auditing
+
+TEST_REQMODULE_UUID = "f8e2195d-b5f5-4452-a12b-79233d943d5e"
+TEST_REQMODULE_REPR = (
+    f"<RequirementsModule 'Test Module' ({TEST_REQMODULE_UUID})>"
+)
+TEST_REQFOLDER_UUID = "e16f5cc1-3299-43d0-b1a0-82d31a137111"
+TEST_REQFOLDER_REPR = f"<RequirementsFolder 'Folder' ({TEST_REQFOLDER_UUID})>"
+TEST_MODIFICATION = auditing.Modification(
+    TEST_REQFOLDER_UUID, attribute="long_name", new="New", old="1"
+)
+TEST_EXTENSION = auditing.Extension(
+    TEST_REQMODULE_UUID,
+    attribute="folders",
+    element=TEST_REQFOLDER_REPR,
+    uuid=TEST_REQFOLDER_UUID,
+)
+TEST_DELETION = auditing.Deletion(
+    TEST_REQMODULE_UUID,
+    attribute="folders",
+    element=TEST_REQFOLDER_REPR,
+    uuid=TEST_REQFOLDER_UUID,
+)
 
 
 class TestChangeAuditor:
-    TEST_UUID = "f8e2195d-b5f5-4452-a12b-79233d943d5e"
-
     def test_modification_tracking(self, clean_model: capellambse.MelodyModel):
-        obj = clean_model.by_uuid(self.TEST_UUID)
+        obj = clean_model.by_uuid(TEST_REQMODULE_UUID)
         new_name = "Not Test Module anymore"
 
         with auditing.ChangeAuditor(clean_model) as changes:
@@ -24,7 +44,7 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance((change := changes[0]), auditing.Modification)
-        assert change.parent == self.TEST_UUID
+        assert change.parent == TEST_REQMODULE_UUID
         assert change.attribute == "name"
         assert change.new == new_name
         assert change.old == "Test Module"
@@ -32,7 +52,7 @@ class TestChangeAuditor:
     def test_item_extension_tracking(
         self, clean_model: capellambse.MelodyModel
     ):
-        obj = clean_model.by_uuid(self.TEST_UUID)
+        obj = clean_model.by_uuid(TEST_REQMODULE_UUID)
         folder = obj.folders.pop()
 
         with auditing.ChangeAuditor(clean_model) as changes:
@@ -40,7 +60,7 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance((change := changes[0]), auditing.Extension)
-        assert change.parent == self.TEST_UUID
+        assert change.parent == TEST_REQMODULE_UUID
         assert change.attribute == "folders"
         assert (
             change.element == f"<RequirementsFolder 'Folder' ({folder.uuid})>"
@@ -50,7 +70,7 @@ class TestChangeAuditor:
     def test_create_extension_tracking(
         self, clean_model: capellambse.MelodyModel
     ):
-        obj = clean_model.by_uuid(self.TEST_UUID)
+        obj = clean_model.by_uuid(TEST_REQMODULE_UUID)
         long_name = "Test ChangeAudit Requirement"
 
         with pytest.raises(KeyError):
@@ -61,7 +81,7 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance((change := changes[0]), auditing.Extension)
-        assert change.parent == self.TEST_UUID
+        assert change.parent == TEST_REQMODULE_UUID
         assert change.attribute == "requirements"
         assert (
             change.element == f"<Requirement '{long_name}' ({new_req.uuid})>"
@@ -86,30 +106,25 @@ class TestChangeAuditor:
 
         ev = new_enum_data_def.values[0]
 
-        assert len(changes) == 3
-        assert isinstance(changes[0], auditing.Modification)
+        assert len(changes) == 2
+        assert isinstance(changes[0], auditing.Extension)
         assert changes[0].parent == new_enum_data_def.uuid
         assert changes[0].attribute == "values"
-        assert changes[0].new == common.ElementList(clean_model, [])
-        assert changes[0].old == common.ElementList(clean_model, [])
-        assert isinstance(changes[1], auditing.Extension)
-        assert changes[1].parent == new_enum_data_def.uuid
-        assert changes[1].attribute == "values"
         assert (
-            changes[1].element == f"<EnumValue '{name} enum_val' ({ev.uuid})>"
+            changes[0].element == f"<EnumValue '{name} enum_val' ({ev.uuid})>"
         )
-        assert changes[1].uuid == ev.uuid
-        assert isinstance(changes[2], auditing.Extension)
-        assert changes[2].parent == uuid
-        assert changes[2].attribute == "data_type_definitions"
+        assert changes[0].uuid == ev.uuid
+        assert isinstance(changes[1], auditing.Extension)
+        assert changes[1].parent == uuid
+        assert changes[1].attribute == "data_type_definitions"
         assert (
-            changes[2].element
+            changes[1].element
             == f"<EnumDataTypeDefinition {name!r} ({new_enum_data_def.uuid})>"
         )
-        assert changes[2].uuid == new_enum_data_def.uuid
+        assert changes[1].uuid == new_enum_data_def.uuid
 
     def test_deletion_tracking(self, clean_model: capellambse.MelodyModel):
-        obj = clean_model.by_uuid(self.TEST_UUID)
+        obj = clean_model.by_uuid(TEST_REQMODULE_UUID)
         folder = obj.folders[0]
 
         with auditing.ChangeAuditor(clean_model) as changes:
@@ -117,7 +132,7 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance(changes[0], auditing.Deletion)
-        assert changes[0].parent == self.TEST_UUID
+        assert changes[0].parent == TEST_REQMODULE_UUID
         assert changes[0].attribute == "folders"
         assert (
             changes[0].element
@@ -128,7 +143,7 @@ class TestChangeAuditor:
     def test_multiple_changes_are_tracked(
         self, clean_model: capellambse.MelodyModel
     ):
-        obj = clean_model.by_uuid(self.TEST_UUID)
+        obj = clean_model.by_uuid(TEST_REQMODULE_UUID)
         new_name = "Not Module anymore"
         req = clean_model.oa.all_requirements[0]
 
@@ -139,17 +154,17 @@ class TestChangeAuditor:
 
         assert len(changes) == 3
         assert isinstance(changes[0], auditing.Modification)
-        assert changes[0].parent == self.TEST_UUID
+        assert changes[0].parent == TEST_REQMODULE_UUID
         assert changes[0].attribute == "long_name"
         assert changes[0].new == new_name
         assert changes[0].old == "Module"
         assert isinstance(changes[1], auditing.Extension)
-        assert changes[1].parent == self.TEST_UUID
+        assert changes[1].parent == TEST_REQMODULE_UUID
         assert changes[1].attribute == "requirements"
         assert changes[1].element == f"<Requirement 'TestReq1' ({req.uuid})>"
         assert changes[1].uuid == req.uuid
         assert isinstance(changes[2], auditing.Deletion)
-        assert changes[1].parent == self.TEST_UUID
+        assert changes[1].parent == TEST_REQMODULE_UUID
         assert changes[1].attribute == "requirements"
         assert changes[1].element == f"<Requirement 'TestReq1' ({req.uuid})>"
         assert changes[1].uuid == req.uuid
@@ -157,14 +172,14 @@ class TestChangeAuditor:
     def test_filtering_changes_works(
         self, clean_model: capellambse.MelodyModel
     ):
-        obj = clean_model.by_uuid(self.TEST_UUID)
+        obj = clean_model.by_uuid(TEST_REQMODULE_UUID)
         new_name = "Not Module anymore"
         req = clean_model.oa.all_requirements[0]
 
         with auditing.ChangeAuditor(clean_model, {"Requirement"}) as changes:
             obj.long_name = new_name
-            obj.requirements.insert(0, req)
             del obj.requirements[0]
+            obj.requirements.insert(0, req)
 
             req.long_name = "2"
 
@@ -178,7 +193,7 @@ class TestChangeAuditor:
     def test_safe_dump_context_is_writable(
         self, clean_model: capellambse.MelodyModel
     ):
-        obj = clean_model.by_uuid(self.TEST_UUID)
+        obj = clean_model.by_uuid(TEST_REQMODULE_UUID)
 
         with auditing.ChangeAuditor(clean_model) as changes:
             obj.long_name = "Not Module anymore"
@@ -199,6 +214,54 @@ class TestChangeAuditor:
         assert auditor.model is None
 
 
+class TestRMReporter:
+    CHANGES: list[auditing.Change] = [
+        TEST_MODIFICATION,
+        TEST_EXTENSION,
+        TEST_DELETION,
+    ]
+
+    def test_store_change(self, clean_model: capellambse.MelodyModel):
+        reporter = auditing.RMReporter(clean_model)
+
+        reporter.store_change(self.CHANGES, "1", "category")
+
+        assert reporter.store == {"1": self.CHANGES}
+        assert reporter.categories["category"] == 1
+
+    def test_store_change_raises_ValueError_if_change_cant_be_assigned_to_module(
+        self, clean_model: capellambse.MelodyModel
+    ):
+        reporter = auditing.RMReporter(clean_model)
+        change = auditing.Modification(
+            "ddbef16d-ddb9-4162-934c-f1e40e6f8bed",
+            attribute="name",
+            new="New",
+            old="Operational Analysis",
+        )
+
+        with pytest.raises(ValueError):
+            reporter.store_change([change], "1", "category")
+
+    def test_store_change_warns_about_change_to_unexpected_module(
+        self,
+        clean_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ):
+        reporter = auditing.RMReporter(clean_model)
+        module_id = "different"
+
+        with caplog.at_level(logging.WARNING):
+            reporter.store_change(self.CHANGES, module_id, "category")
+
+        assert len(caplog.records) == 3
+        assert caplog.records[0].levelname == "WARNING"
+        assert (
+            f"Found changes to an unexpected RequirementsModule: "
+            f"{self.CHANGES[0]} to 1"
+        ) in caplog.text
+
+
 @pytest.mark.parametrize(
     ["iterable", "expected"],
     [
@@ -212,3 +275,104 @@ class TestChangeAuditor:
 )
 def test_generate_main_message(iterable: list[tuple[str, int]], expected: str):
     assert auditing.generate_main_message(iterable) == expected
+
+
+def test_get_dependencies():
+    dependencies = auditing.get_dependencies()
+
+    assert dependencies[0].startswith("Python")
+    assert dependencies[1].startswith("capellambse v")
+    assert dependencies[2].startswith("lxml v")
+    assert dependencies[3].startswith("pyYaml v")
+
+
+@pytest.mark.parametrize(
+    ["change", "uuid", "expected"],
+    (
+        pytest.param(
+            TEST_MODIFICATION,
+            TEST_REQFOLDER_UUID,
+            f"{TEST_REQFOLDER_REPR} modified 'long_name' from '1' to 'New'.",
+            id="Modification",
+        ),
+        pytest.param(
+            TEST_EXTENSION,
+            TEST_REQMODULE_UUID,
+            f"{TEST_REQMODULE_REPR} extended 'folders' by "
+            f"{TEST_REQFOLDER_REPR}.",
+            id="Extension",
+        ),
+        pytest.param(
+            TEST_DELETION,
+            TEST_REQMODULE_UUID,
+            f"{TEST_REQMODULE_REPR} deleted {TEST_REQFOLDER_REPR} from "
+            "'folders'.",
+            id="Deletion",
+        ),
+    ),
+)
+def test_formulate_statement(
+    clean_model: capellambse.MelodyModel,
+    change: auditing.Change,
+    uuid: str,
+    expected: str,
+):
+    obj = clean_model.by_uuid(uuid)
+
+    statement = auditing.formulate_statement(change, obj)
+
+    assert statement == expected
+
+
+@pytest.mark.integtest
+def test_create_commit_message(migration_model: capellambse.MelodyModel):
+    req_uuid = "163394f5-c1ba-4712-a238-b0b143c66aed"
+    reqtypesfolder_uuid = "a15e8b60-bf39-47ba-b7c7-74ceecb25c9c"
+    dtdef_uuid = "686e198b-8baf-49f9-9d85-24571bd05d93"
+    changes: list[auditing.Change] = [
+        auditing.Deletion(
+            parent="9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19",
+            attribute="requirements",
+            element=f"<Requirement 'Kind Requirement' ({req_uuid})>",
+            uuid=req_uuid,
+        ),
+        auditing.Modification(
+            parent=reqtypesfolder_uuid,
+            attribute="identifier",
+            new="Types",
+            old="-2",
+        ),
+        auditing.Extension(
+            parent=reqtypesfolder_uuid,
+            attribute="data_type_definitions",
+            element=f"<EnumerationDataTypeDefinition '' ({dtdef_uuid})>",
+            uuid=dtdef_uuid,
+        ),
+    ]
+    context = [
+        (TestRMReporter.CHANGES, "1", "category1"),
+        (changes, "project/space/example title", "category2"),
+    ]
+    tool_metadata = {
+        "revision": "123",
+        "tool": "tool version 1",
+        "connector": "connector v1",
+    }
+
+    reporter = auditing.RMReporter(migration_model)
+    for changes, module_id, module_category in context:
+        reporter.store_change(changes, module_id, module_category)
+    commit_message = reporter.create_commit_message(tool_metadata)
+
+    assert commit_message.startswith(
+        "Updated model with RM content from rev.123 [skip ci]\n"
+        "\n"
+        "Synchronized 1 category1 and 1 category2:\n"
+        "- 1: created: 1; updated: 1; deleted: 1; type-changes: 0\n"
+        "- project/space/example title: created: 0; updated: 0; deleted: 1; type-changes: 2\n"
+        "\n"
+        "This was done using:\n"
+        "- tool version 1\n"
+        "- connector v1\n"
+        f"- RM-Bridge v{__version__}\n"
+    )
