@@ -1077,11 +1077,15 @@ def _compare_simple_attributes(
         A dictionary of attribute name and value pairs found to differ
         on `req` and `item`.
     """
+    type_conversion = {"text": helpers.repair_html}
     mods: dict[str, t.Any] = {}
     for name, value in item.items():
         if name in filter:
             continue
-        if getattr(req, name, None) != value:
+
+        converter = type_conversion.get(name, lambda i: i)
+        converted_value = converter(value)
+        if getattr(req, name, None) != converted_value:
             mods[name] = value
     return mods
 

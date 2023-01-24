@@ -396,12 +396,18 @@ class RMReporter:
             )
             list_lines.append(f"- {module_id}: {'; '.join(counts)}")
 
-        summary = (
-            f"Updated model with RM content from rev."
-            f"{tool_metadata['revision']} [skip ci]\n"
-        )
-        main_message = generate_main_message(self.categories.items())
-        main = "\n".join((main_message, "\n".join(list_lines) + "\n"))
+        if not list_lines:
+            summary = "No changes identified"
+            main = (
+                "There were no modifications, extensions or deletions from "
+                "the previous revision of RM content.\n"
+            )
+        else:
+            summary = "Updated model with RM content"
+            main_message = generate_main_message(self.categories.items())
+            main = "\n".join((main_message, "\n".join(list_lines) + "\n"))
+
+        summary = f"{summary} from rev.{tool_metadata['revision']} [skip ci]\n"
         rm_bridge_dependencies = get_dependencies()
         dependencies = "\n".join(
             (

@@ -149,20 +149,23 @@ def main(
             gather_logs=gather_logs,
         )
 
-        change = decl.dump(change_set)
-        CHANGE_PATH.write_text(change, encoding="utf8")
-        with auditing.ChangeAuditor(model) as changed_objs:
-            decl.apply(model, CHANGE_PATH)
+        if change_set:
+            change = decl.dump(change_set)
+            CHANGE_PATH.write_text(change, encoding="utf8")
+            with auditing.ChangeAuditor(model) as changed_objs:
+                decl.apply(model, CHANGE_PATH)
 
-        reporter.store_change(changed_objs, module["id"], module["category"])
+            reporter.store_change(
+                changed_objs, module["id"], module["category"]
+            )
 
     commit_message = reporter.create_commit_message(snapshot["metadata"])
     print(commit_message)
-    if not dry_run:
+    if reporter.store and not dry_run:
         model.save(push=push, commit_msg=commit_message)
 
     report = reporter.get_change_report()
-    if save_change_history:
+    if report and save_change_history:
         CHANGE_HISTORY_PATH.write_text(report, encoding="utf8")
         LOGGER.info("Change-history file %s written.", CHANGE_HISTORY_PATH)
     else:
