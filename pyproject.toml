@@ -31,7 +31,7 @@ classifiers = [
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-  "capellambse>=0.4.15",
+  "capellambse>=0.5.11.dev12",
   "docutils>=0.17.1",
   "lxml>=4.8.0",
   "platformdirs>=2.5.2",
