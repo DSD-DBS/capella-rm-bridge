@@ -2,21 +2,21 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
+import io
 import json
 import logging
 
 import capellambse
 import pytest
 import yaml
+from capellambse import decl
 
 from rm_bridge import __version__, auditing
 
 TEST_REQMODULE_UUID = "f8e2195d-b5f5-4452-a12b-79233d943d5e"
-TEST_REQMODULE_REPR = (
-    f"<RequirementsModule 'Test Module' ({TEST_REQMODULE_UUID})>"
-)
+TEST_REQMODULE_REPR = f"<CapellaModule 'Test Module' ({TEST_REQMODULE_UUID})>"
 TEST_REQFOLDER_UUID = "e16f5cc1-3299-43d0-b1a0-82d31a137111"
-TEST_REQFOLDER_REPR = f"<RequirementsFolder 'Folder' ({TEST_REQFOLDER_UUID})>"
+TEST_REQFOLDER_REPR = f"<Folder 'Folder' ({TEST_REQFOLDER_UUID})>"
 TEST_MODIFICATION = auditing.Modification(
     TEST_REQFOLDER_UUID, attribute="long_name", new="New", old="1"
 )
@@ -62,9 +62,7 @@ class TestChangeAuditor:
         assert isinstance((change := changes[0]), auditing.Extension)
         assert change.parent == TEST_REQMODULE_UUID
         assert change.attribute == "folders"
-        assert (
-            change.element == f"<RequirementsFolder 'Folder' ({folder.uuid})>"
-        )
+        assert change.element == f"<Folder 'Folder' ({folder.uuid})>"
         assert change.uuid == folder.uuid
 
     def test_create_extension_tracking(
@@ -97,31 +95,43 @@ class TestChangeAuditor:
         name = "Test ChangeAudit"
         assert len(reqtypesfolder.data_type_definitions) == 2
         assert name not in reqtypesfolder.data_type_definitions.by_name
-        values = [f"{name} enum_val"]
+        declarative = [
+            {
+                "parent": decl.UUIDReference(reqtypesfolder.uuid),
+                "extend": {
+                    "data_type_definitions": [
+                        {
+                            "long_name": name,
+                            "values": [{"long_name": f"{name} enum_val"}],
+                            "_type": "EnumerationDataTypeDefinition",
+                        }
+                    ]
+                },
+            }
+        ]
 
         with auditing.ChangeAuditor(clean_model) as changes:
-            new_enum_data_def = reqtypesfolder.data_type_definitions.create(
-                "EnumerationDataTypeDefinition", long_name=name, values=values
-            )
+            decl.apply(clean_model, io.StringIO(decl.dump(declarative)))
 
+        new_enum_data_def = reqtypesfolder.data_type_definitions[-1]
         ev = new_enum_data_def.values[0]
 
         assert len(changes) == 2
         assert isinstance(changes[0], auditing.Extension)
-        assert changes[0].parent == new_enum_data_def.uuid
-        assert changes[0].attribute == "values"
+        assert changes[0].parent == uuid
+        assert changes[0].attribute == "data_type_definitions"
         assert (
-            changes[0].element == f"<EnumValue '{name} enum_val' ({ev.uuid})>"
+            changes[0].element
+            == f"<EnumerationDataTypeDefinition {name!r} ({new_enum_data_def.uuid})>"
         )
-        assert changes[0].uuid == ev.uuid
+        assert changes[0].uuid == new_enum_data_def.uuid
         assert isinstance(changes[1], auditing.Extension)
-        assert changes[1].parent == uuid
-        assert changes[1].attribute == "data_type_definitions"
+        assert changes[1].parent == new_enum_data_def.uuid
+        assert changes[1].attribute == "values"
         assert (
-            changes[1].element
-            == f"<EnumDataTypeDefinition {name!r} ({new_enum_data_def.uuid})>"
+            changes[1].element == f"<EnumValue '{name} enum_val' ({ev.uuid})>"
         )
-        assert changes[1].uuid == new_enum_data_def.uuid
+        assert changes[1].uuid == ev.uuid
 
     def test_deletion_tracking(self, clean_model: capellambse.MelodyModel):
         obj = clean_model.by_uuid(TEST_REQMODULE_UUID)
@@ -134,10 +144,7 @@ class TestChangeAuditor:
         assert isinstance(changes[0], auditing.Deletion)
         assert changes[0].parent == TEST_REQMODULE_UUID
         assert changes[0].attribute == "folders"
-        assert (
-            changes[0].element
-            == f"<RequirementsFolder 'Folder' ({folder.uuid})>"
-        )
+        assert changes[0].element == f"<Folder 'Folder' ({folder.uuid})>"
         assert changes[0].uuid == folder.uuid
 
     def test_multiple_changes_are_tracked(

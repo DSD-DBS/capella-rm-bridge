@@ -443,16 +443,16 @@ class RMReporter:
         else:
             obj = self.model.by_uuid(change.uuid)
 
-        return type(obj).__name__ in {
-            "AttributeDefinition",
-            "AttributeDefinitionEnumeration",
-            "DataTypeDefinition",
-            "EnumDataTypeDefinition",
-            "EnumValue",
-            "ModuleType",
-            "RelationType",
-            "RequirementsTypesFolder",
-            "RequirementType",
+        return type(obj) in {
+            reqif.AttributeDefinition,
+            reqif.AttributeDefinitionEnumeration,
+            reqif.DataTypeDefinition,
+            reqif.EnumDataTypeDefinition,
+            reqif.EnumValue,
+            reqif.ModuleType,
+            reqif.RelationType,
+            reqif.RequirementsTypesFolder,
+            reqif.RequirementType,
         }
 
     def get_change_report(self) -> str:
