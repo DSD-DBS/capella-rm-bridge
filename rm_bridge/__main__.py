@@ -140,7 +140,7 @@ def main(
 
     snapshot = yaml.safe_load(snapshotfile)
     reporter = auditing.RMReporter(model)
-    for module, tconfig in zip(snapshot["modules"], config["modules"]):
+    for module, tconfig in zip(snapshot["modules"], config["live-docs"]):
         change_set, errors = changeset.calculate_change_set(
             model,
             tconfig,
