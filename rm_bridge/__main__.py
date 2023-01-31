@@ -173,11 +173,10 @@ def main(
 
     if errors:
         error_statement = create_errors_statement(errors)
+        print(error_statement)
         if save_error_log:
             ERROR_PATH.write_text(error_statement, encoding="utf8")
             LOGGER.info("Change-errors file %s written.", ERROR_PATH)
-        else:
-            print(error_statement)
 
 
 if __name__ == "__main__":
