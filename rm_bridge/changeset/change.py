@@ -324,14 +324,24 @@ class TrackerChange:
             that enables AttributeDefinitions via the ``definition``
             attribute.
         """
+        attribute_definitions = list[dict[str, t.Any]]()
+        for name, adef in req_type.get("attributes", {}).items():
+            try:
+                attr_def = self.attribute_definition_create_action(
+                    name, adef, identifier
+                )
+                attribute_definitions.append(attr_def)
+            except act.InvalidAttributeDefinition as error:
+                self._handle_user_error(
+                    f"In RequirementType '{req_type['long_name']}': "
+                    + error.args[0]
+                )
+
         return {
             "identifier": identifier,
             "long_name": req_type["long_name"],
             "promise_id": f"RequirementType {identifier}",
-            "attribute_definitions": [
-                self.attribute_definition_create_action(name, adef, identifier)
-                for name, adef in req_type.get("attributes", {}).items()
-            ],
+            "attribute_definitions": attribute_definitions,
         }
 
     def attribute_definition_create_action(
@@ -360,6 +370,12 @@ class TrackerChange:
                 name, below=self.reqt_folder
             )
             if etdef is None:
+                if name not in self.data_type_definitions:
+                    raise act.InvalidAttributeDefinition(
+                        f"Invalid {cls.__name__} found: '{name}'. Missing its "
+                        "datatype definition in `data_types`."
+                    )
+
                 data_type_ref = decl.Promise(
                     f"EnumerationDataTypeDefinition {name}"
                 )

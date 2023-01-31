@@ -83,3 +83,7 @@ class InvalidWorkItem(Exception):
 
 class InvalidFieldValue(Exception):
     """Raised if a value isn't matching the defined type or options."""
+
+
+class InvalidAttributeDefinition(Exception):
+    """Raised if an AttributeDefinition's data-type isn't found."""
