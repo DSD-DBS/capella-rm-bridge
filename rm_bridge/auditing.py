@@ -326,7 +326,7 @@ class RMReporter:
 
     def __init__(self, model: capellambse.MelodyModel) -> None:
         self.model = model
-        self.store = dict[LiveDocID | TrackerID, list[Change]]()
+        self.store = dict[t.Union[LiveDocID, TrackerID], list[Change]]()
 
         self.categories: dict[str, int] = collections.defaultdict(lambda: 0)
 
