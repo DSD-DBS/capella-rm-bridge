@@ -159,10 +159,17 @@ def main(
                 changed_objs, module["id"], module["category"]
             )
 
-    commit_message = reporter.create_commit_message(snapshot["metadata"])
-    print(commit_message)
-    if reporter.store and not dry_run:
-        model.save(push=push, commit_msg=commit_message)
+    if errors:
+        error_statement = create_errors_statement(errors)
+        print(error_statement)
+        if save_error_log:
+            ERROR_PATH.write_text(error_statement, encoding="utf8")
+            LOGGER.info("Change-errors file %s written.", ERROR_PATH)
+    else:
+        commit_message = reporter.create_commit_message(snapshot["metadata"])
+        print(commit_message)
+        if reporter.store and not dry_run:
+            model.save(push=push, commit_msg=commit_message)
 
     report = reporter.get_change_report()
     if report and save_change_history:
@@ -170,13 +177,6 @@ def main(
         LOGGER.info("Change-history file %s written.", CHANGE_HISTORY_PATH)
     else:
         print(report)
-
-    if errors:
-        error_statement = create_errors_statement(errors)
-        print(error_statement)
-        if save_error_log:
-            ERROR_PATH.write_text(error_statement, encoding="utf8")
-            LOGGER.info("Change-errors file %s written.", ERROR_PATH)
 
 
 if __name__ == "__main__":

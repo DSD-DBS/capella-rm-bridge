@@ -217,7 +217,7 @@ class TestCreateActions(ActionsTest):
         titem = tracker["items"][0]
         first_child = titem["children"][0]
         messages = list[str]()
-        for (attr, faulty_value, key) in INVALID_FIELD_VALUES[1:]:
+        for attr, faulty_value, key in INVALID_FIELD_VALUES[1:]:
             first_child["attributes"][
                 attr
             ] = faulty_value  # type:ignore[index]
@@ -556,7 +556,7 @@ class TestCalculateChangeSet(ActionsTest):
             "Invalid field found: field name 'Test' not defined in "
             "attributes of requirement type 'system_requirement'"
         ]
-        for (attr, faulty_value, key) in INVALID_FIELD_VALUES[1:]:
+        for attr, faulty_value, key in INVALID_FIELD_VALUES[1:]:
             first_child["attributes"][
                 attr
             ] = faulty_value  # type:ignore[index]
