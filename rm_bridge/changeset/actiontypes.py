@@ -22,12 +22,14 @@ TrackerConfig = te.TypedDict(
     {
         "capella-uuid": str,
         "workitem-types": cabc.Sequence[WorkitemTypeConfig],
+        "id": str,
     },
 )
 
 
 class Config(te.TypedDict):
     modules: cabc.Sequence[TrackerConfig]
+    trackers: cabc.Sequence[TrackerConfig]
 
 
 class InvalidTrackerConfig(Exception):
@@ -75,5 +77,13 @@ class InvalidWorkItemType(Exception):
     """Raised if the type isn't matching any of the defined types."""
 
 
+class InvalidWorkItem(Exception):
+    """Raised if the work item is faulty, e.g. missing a work-item-type."""
+
+
 class InvalidFieldValue(Exception):
     """Raised if a value isn't matching the defined type or options."""
+
+
+class InvalidAttributeDefinition(Exception):
+    """Raised if an AttributeDefinition's data-type isn't found."""

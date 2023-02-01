@@ -243,22 +243,16 @@
             id="9f6a07ac-35cd-4c84-a271-bfd40a80f1d3" name="Root Logical Function">
           <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
               id="1b65446c-fdaa-4b7a-885b-3c804a7d32d4" name="provide tracker CRUD">
-            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
-                id="8d44272b-0f1d-42da-baa8-1bfe8d75bbd7" name="FIP 1"/>
             <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
                 id="dae9e41f-d5b7-4e7e-9819-bbe74a67e791" name="FOP 1"/>
           </ownedFunctions>
           <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
               id="daf14f25-eef7-49f2-96e1-b1fce9e69747" name="provide WorkItem CRUD">
-            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
-                id="6484178d-ca73-43c8-8f38-26c09276cd4d" name="FIP 1"/>
             <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
                 id="395e4d10-ef01-4be4-9fed-cf15b78d979f" name="FOP 1"/>
           </ownedFunctions>
           <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
               id="0470dfd1-5ed0-4d3b-aa20-a1a74f86ba84" name="provide attachment">
-            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
-                id="d5668b17-3b92-421a-b882-4f8639a44efb" name="FIP 1"/>
             <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
                 id="29a1eabf-7d9a-4c4f-8a34-cbef81e9464c" name="FOP 1"/>
           </ownedFunctions>
@@ -343,10 +337,6 @@
                 id="063865d4-22a2-4a74-afce-f4a9452657de" name="FIP 2"/>
             <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
                 id="cd7b61a9-2ac9-4aac-9efb-78097dd198da" name="FOP 1"/>
-            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
-                id="e7050308-46ba-40af-b090-78f9b25c2b48" name="FOP 2"/>
-            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
-                id="7daa75a5-d495-4a84-ace7-e3f47ca7c075" name="FOP 2"/>
           </ownedFunctions>
           <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
               id="68b57d2f-ef36-49fc-8f44-2b17fb35a2b9" name="merge model with team4capella model">
@@ -430,17 +420,11 @@
               id="3b6b570f-558e-484e-88d4-874506eb4381" name="FunctionalExchange 10"
               target="#cf425c50-596a-4e51-9304-50e3076040de" source="#a1a223de-fda2-4900-bd82-f7f4ceecef5c"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
-              id="eb4f777b-3a4f-40c3-a6fd-99d2e856ca3a" name="FunctionalExchange 11"
-              target="#8d44272b-0f1d-42da-baa8-1bfe8d75bbd7" source="#e7050308-46ba-40af-b090-78f9b25c2b48"/>
-          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="9a8227e9-a5e1-4570-84d3-b6f37a7349a1" name="FunctionalExchange 12"
               target="#77dd57b2-66eb-4bcf-ab45-cbe902352f0d" source="#dae9e41f-d5b7-4e7e-9819-bbe74a67e791"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="140a3ae2-18cb-44de-baa6-b29c3890dc0d" name="FunctionalExchange 13"
               target="#77dd57b2-66eb-4bcf-ab45-cbe902352f0d" source="#395e4d10-ef01-4be4-9fed-cf15b78d979f"/>
-          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
-              id="61efed81-ed43-455e-8ff5-d10c61fd77ae" name="tracker contents request"
-              target="#6484178d-ca73-43c8-8f38-26c09276cd4d" source="#e7050308-46ba-40af-b090-78f9b25c2b48"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="24377cf4-9388-4102-b18c-e95b1fefbad3" name="push to git status"
               target="#fb47a42c-5f37-484f-a431-1cb80ac81f3e" source="#6d547f3b-46f3-4a88-83e8-f6c1512fb9fb"/>
@@ -453,9 +437,6 @@
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="4b788388-1390-4854-8d05-9847aa35c3fc" name="RM Sync Config" target="#d23d353a-c0dd-4ffc-8c15-a41ff7461b34"
               source="#c36fd5a5-dc75-46ce-ac95-087b38bf1afc"/>
-          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
-              id="3e6344a8-62e9-4dc9-abcd-e40aa76a565d" name="attachments request"
-              target="#d5668b17-3b92-421a-b882-4f8639a44efb" source="#7daa75a5-d495-4a84-ace7-e3f47ca7c075"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="600f2316-7868-43ab-8ddc-ba7b0bd51c8f" name="FunctionalExchange 21"
               target="#063865d4-22a2-4a74-afce-f4a9452657de" source="#29a1eabf-7d9a-4c4f-8a34-cbef81e9464c"/>
@@ -472,33 +453,32 @@
               id="8903f59e-68fd-407e-9d18-959b136fc7ca" name="[ES] Sync reqs from RM tool to T4C"
               kind="DATA_FLOW">
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
-                id="6b5d5c53-44a3-4e34-9ccb-08c3c3c52b73" name="RM Bridge" representedInstance="#306a87b4-5d94-4193-8006-dd1889b689ec"/>
+                id="6b5d5c53-44a3-4e34-9ccb-08c3c3c52b73" name="RM Bridge Bot" representedInstance="#306a87b4-5d94-4193-8006-dd1889b689ec"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
-                id="82966ac3-3e0b-4bd3-b6e8-811eb55c256f" name="RM Importer" representedInstance="#42097e6e-2bb6-4429-9c2c-0e78e7a144b3"/>
+                id="82966ac3-3e0b-4bd3-b6e8-811eb55c256f" name="RM Tool Connector"
+                representedInstance="#42097e6e-2bb6-4429-9c2c-0e78e7a144b3"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
                 id="6465cf34-0146-43f6-bce4-ad90c3914df2" name="RM Tool" representedInstance="#f63774d7-09f6-44a4-8ec3-bfe8eb7719bb"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
                 id="57eb9c59-93a2-4fe9-baaf-737c57ae689d" name="t4c2git" representedInstance="#5b337aed-1399-46a9-a9f7-1cb73ad9681e"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
-                id="90339cc8-2fd0-4ced-967b-42a705583d06" name="ModelModifier" representedInstance="#24219932-4f47-4139-839c-f6132a0243f9"/>
+                id="90339cc8-2fd0-4ced-967b-42a705583d06" name="Polarion Bot"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
                 id="6e18b763-b2d5-480b-986d-bfe8faf7b5a2" name="git2t4c" representedInstance="#ee63f144-b54b-43bf-b1ba-35d0aef384f1"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
                 id="a1c2e010-6dc7-470a-8491-3cc6ac583305" name="Git " representedInstance="#231ce8eb-67a6-4ab6-9cca-dc0faacaf2e2"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
-                id="26543b60-c5d8-4206-9f89-4b4bd9f00654" name="tracker contents request"
-                kind="SYNCHRONOUS_CALL" sendingEnd="#5b8f608a-0c08-411f-b615-575a32290be4"
-                receivingEnd="#243b96ef-a597-42ac-bf64-b3dffca50a6f"/>
+                id="26543b60-c5d8-4206-9f89-4b4bd9f00654" name="" kind="SYNCHRONOUS_CALL"
+                sendingEnd="#5b8f608a-0c08-411f-b615-575a32290be4" receivingEnd="#243b96ef-a597-42ac-bf64-b3dffca50a6f"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
-                id="ca62f108-79ba-42d1-b81d-b5746256d8eb" name="tracker contents request"
-                kind="REPLY" sendingEnd="#f4ca03bc-fc7c-406c-ad74-a839681a6742" receivingEnd="#270d7824-250a-4910-a54f-72390b59a231"/>
+                id="ca62f108-79ba-42d1-b81d-b5746256d8eb" name="" kind="REPLY" sendingEnd="#f4ca03bc-fc7c-406c-ad74-a839681a6742"
+                receivingEnd="#270d7824-250a-4910-a54f-72390b59a231"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
-                id="a07f5b44-b7e4-47d0-adbb-e3cfdf5ac937" name="attachments request"
-                kind="SYNCHRONOUS_CALL" sendingEnd="#c09b6d71-271a-4c7b-bc25-5e030d6762a2"
-                receivingEnd="#4f0d1e9e-b94b-4b0b-9189-81471b4190f6"/>
+                id="a07f5b44-b7e4-47d0-adbb-e3cfdf5ac937" name="" kind="SYNCHRONOUS_CALL"
+                sendingEnd="#c09b6d71-271a-4c7b-bc25-5e030d6762a2" receivingEnd="#4f0d1e9e-b94b-4b0b-9189-81471b4190f6"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
-                id="58d9f559-eba8-46af-ae68-054460e6b4a5" name="attachments request"
-                kind="REPLY" sendingEnd="#e8603279-bce8-4235-9f24-954f96f3a2cc" receivingEnd="#28746fbc-33ed-4b06-9eb7-81d110ef8746"/>
+                id="58d9f559-eba8-46af-ae68-054460e6b4a5" name="" kind="REPLY" sendingEnd="#e8603279-bce8-4235-9f24-954f96f3a2cc"
+                receivingEnd="#28746fbc-33ed-4b06-9eb7-81d110ef8746"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
                 id="af14909d-5155-4690-a092-b26a2c59a03d" name="exec call" kind="ASYNCHRONOUS_CALL"
                 sendingEnd="#01212457-c68d-49a4-ae6d-4561e9e1a656" receivingEnd="#a4a5f8c5-d65e-47be-a6d3-cbf6c37ffc53"/>
@@ -753,21 +733,21 @@
                 id="6d70010a-50fb-4838-9076-4f686f1495fc" start="#2cc7884d-c75f-4f5f-9f5b-80218e029b09"
                 finish="#e3952971-5091-4188-9c32-1a0331cd0c38" relatedAbstractFunction="#0470dfd1-5ed0-4d3b-aa20-a1a74f86ba84"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
-                id="6e06e9e4-4867-4121-ba02-e65821dac0d9" operation="#61efed81-ed43-455e-8ff5-d10c61fd77ae"/>
+                id="6e06e9e4-4867-4121-ba02-e65821dac0d9"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
-                id="f9282c02-e29c-4e49-aa36-4afba6c86acc" operation="#61efed81-ed43-455e-8ff5-d10c61fd77ae"/>
+                id="f9282c02-e29c-4e49-aa36-4afba6c86acc"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
-                id="b0afd171-3c5b-4f3f-9e19-4084b2a9c812" operation="#61efed81-ed43-455e-8ff5-d10c61fd77ae"/>
+                id="b0afd171-3c5b-4f3f-9e19-4084b2a9c812"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
-                id="2819bc59-57e0-4a53-9298-b4ec3ebf4899" operation="#61efed81-ed43-455e-8ff5-d10c61fd77ae"/>
+                id="2819bc59-57e0-4a53-9298-b4ec3ebf4899"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
-                id="c99376b3-2629-4d27-8d63-a96a0812db2d" operation="#3e6344a8-62e9-4dc9-abcd-e40aa76a565d"/>
+                id="c99376b3-2629-4d27-8d63-a96a0812db2d"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
-                id="f37d6a47-0f38-4bcf-88a5-50d958c03844" operation="#3e6344a8-62e9-4dc9-abcd-e40aa76a565d"/>
+                id="f37d6a47-0f38-4bcf-88a5-50d958c03844"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
-                id="5a20d788-16b5-4c30-919c-f2eecc5b4e13" operation="#3e6344a8-62e9-4dc9-abcd-e40aa76a565d"/>
+                id="5a20d788-16b5-4c30-919c-f2eecc5b4e13"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
-                id="4bcba7aa-2f5a-44aa-b845-72f1949534c3" operation="#3e6344a8-62e9-4dc9-abcd-e40aa76a565d"/>
+                id="4bcba7aa-2f5a-44aa-b845-72f1949534c3"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
                 id="7824307f-8362-4f17-a04d-61c7a6711b2e" operation="#2da8fe6b-28d2-48e4-95b2-d1f1b6e69fef"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
@@ -825,8 +805,6 @@
               id="0fac5bdb-979a-4f2c-82d9-a41ea07ce31f" involved="#1bd4f57b-1028-456f-9faf-4fe72914a652"/>
           <ownedCapabilityRealizationInvolvements xsi:type="org.polarsys.capella.core.data.capellacommon:CapabilityRealizationInvolvement"
               id="48f7e43b-5a46-41dd-9b6e-d05b32da433b" involved="#de33768b-224a-40f9-b9da-1c11f41ae137"/>
-          <ownedCapabilityRealizationInvolvements xsi:type="org.polarsys.capella.core.data.capellacommon:CapabilityRealizationInvolvement"
-              id="864274ec-f730-4aca-b850-351cb48ac0f7" involved="#aa2e168b-1749-4fac-82d1-09ee21c8c4e9"/>
           <ownedCapabilityRealizationInvolvements xsi:type="org.polarsys.capella.core.data.capellacommon:CapabilityRealizationInvolvement"
               id="fe066fd4-b282-431a-86eb-aa841edcece9" involved="#0f47ba4c-782f-4386-9734-e02e331de2c4"/>
         </ownedCapabilityRealizations>
@@ -1009,7 +987,7 @@
         <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
             id="e72286c9-2fed-4faa-8d9d-0076140ec7eb" name="Logical System">
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="306a87b4-5d94-4193-8006-dd1889b689ec"
-              name="RM Bridge" abstractType="#de33768b-224a-40f9-b9da-1c11f41ae137"/>
+              name="RM Bridge Bot" abstractType="#de33768b-224a-40f9-b9da-1c11f41ae137"/>
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="2011bc28-a946-4041-b770-e494275b9564"
               name="TeamForCapella (Backend)" abstractType="#1a314641-56b4-419b-b4f6-cb00913f5966"/>
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="ee63f144-b54b-43bf-b1ba-35d0aef384f1"
@@ -1020,38 +998,37 @@
               name="Git " abstractType="#1bd4f57b-1028-456f-9faf-4fe72914a652"/>
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="57427d3e-911d-4932-9208-f82dca56ffb8"
               name="RM Bridge Config" abstractType="#365657eb-54bb-498e-8748-6fbee6df55a1"/>
+          <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="58c009a2-85f7-416e-9bb3-ed1785097181"
+              name="Application / User" abstractType="#4bf30991-1bb5-4b66-9c39-c5a3fbc2dbd9"/>
           <ownedComponentRealizations xsi:type="org.polarsys.capella.core.data.cs:ComponentRealization"
               id="cc63d8ec-e7d3-4d94-b4a1-962aa35decac" targetElement="#190f2b51-8e95-4ea0-9d36-5909302ca75c"
               sourceElement="#e72286c9-2fed-4faa-8d9d-0076140ec7eb"/>
           <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
-              id="de33768b-224a-40f9-b9da-1c11f41ae137" name="RM Bridge">
-            <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
-                id="4d3df399-9136-4bff-aa38-b0210177a658" targetElement="#e9a68b7d-ab1c-4224-9eb9-338e2de5bb37"
-                sourceElement="#de33768b-224a-40f9-b9da-1c11f41ae137"/>
-            <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
-                id="510ba2f9-dc39-4de2-a88f-90042fc24fc6" targetElement="#50f1dc7b-da41-4316-9e15-a8b2640aa5a8"
-                sourceElement="#de33768b-224a-40f9-b9da-1c11f41ae137"/>
-            <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="24219932-4f47-4139-839c-f6132a0243f9"
-                name="ModelModifier" abstractType="#aa2e168b-1749-4fac-82d1-09ee21c8c4e9"/>
+              id="de33768b-224a-40f9-b9da-1c11f41ae137" name="RM Bridge Bot">
             <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="42097e6e-2bb6-4429-9c2c-0e78e7a144b3"
-                name="RM Importer" abstractType="#0f47ba4c-782f-4386-9734-e02e331de2c4"/>
+                name="RM Tool Connector" abstractType="#0f47ba4c-782f-4386-9734-e02e331de2c4"/>
+            <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="f2b15f1b-45c2-477b-8c7b-ee123ac97487"
+                name="RM Bridge" abstractType="#eb0c8943-34ad-4bda-ae5a-d7d488de0005"/>
             <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
-                id="aa2e168b-1749-4fac-82d1-09ee21c8c4e9" name="ModelModifier">
-              <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
-                  id="05771e5f-d94d-47bb-bdc3-bd671563625d" targetElement="#38e799ed-cfb7-4181-bd35-f86fe5997867"
-                  sourceElement="#aa2e168b-1749-4fac-82d1-09ee21c8c4e9"/>
-              <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
-                  id="b73505b7-dfc3-4a35-8165-8c66355ed2cb" targetElement="#8bf65cc3-3266-4357-9c43-8d51068a95b0"
-                  sourceElement="#aa2e168b-1749-4fac-82d1-09ee21c8c4e9"/>
-              <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
-                  id="f81ad839-8318-4673-8d3b-04de88ae7f78" targetElement="#88bf4011-b4d3-4877-82b3-ba49faeedf4f"
-                  sourceElement="#aa2e168b-1749-4fac-82d1-09ee21c8c4e9"/>
-            </ownedLogicalComponents>
-            <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
-                id="0f47ba4c-782f-4386-9734-e02e331de2c4" name="RM Importer">
+                id="0f47ba4c-782f-4386-9734-e02e331de2c4" name="RM Tool Connector">
               <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
                   id="99142611-ebdb-46bc-aaa6-b54ee095f69d" targetElement="#92f4240e-cc43-49c6-a517-b900231fbb49"
                   sourceElement="#0f47ba4c-782f-4386-9734-e02e331de2c4"/>
+            </ownedLogicalComponents>
+            <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
+                id="eb0c8943-34ad-4bda-ae5a-d7d488de0005" name="RM Bridge">
+              <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+                  id="b73505b7-dfc3-4a35-8165-8c66355ed2cb" targetElement="#8bf65cc3-3266-4357-9c43-8d51068a95b0"
+                  sourceElement="#eb0c8943-34ad-4bda-ae5a-d7d488de0005"/>
+              <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+                  id="f81ad839-8318-4673-8d3b-04de88ae7f78" targetElement="#88bf4011-b4d3-4877-82b3-ba49faeedf4f"
+                  sourceElement="#eb0c8943-34ad-4bda-ae5a-d7d488de0005"/>
+              <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+                  id="510ba2f9-dc39-4de2-a88f-90042fc24fc6" targetElement="#50f1dc7b-da41-4316-9e15-a8b2640aa5a8"
+                  sourceElement="#eb0c8943-34ad-4bda-ae5a-d7d488de0005"/>
+              <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+                  id="05771e5f-d94d-47bb-bdc3-bd671563625d" targetElement="#38e799ed-cfb7-4181-bd35-f86fe5997867"
+                  sourceElement="#eb0c8943-34ad-4bda-ae5a-d7d488de0005"/>
             </ownedLogicalComponents>
           </ownedLogicalComponents>
           <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
@@ -1087,6 +1064,13 @@
             <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
                 id="d2dc8fcb-329b-46a6-ba92-740671a33216" targetElement="#5b22f42d-05ea-4ff5-96ec-abda09df5a2a"
                 sourceElement="#365657eb-54bb-498e-8748-6fbee6df55a1"/>
+          </ownedLogicalComponents>
+          <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
+              id="4bf30991-1bb5-4b66-9c39-c5a3fbc2dbd9" name="Application / User"
+              actor="true">
+            <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+                id="4d3df399-9136-4bff-aa38-b0210177a658" targetElement="#e9a68b7d-ab1c-4224-9eb9-338e2de5bb37"
+                sourceElement="#4bf30991-1bb5-4b66-9c39-c5a3fbc2dbd9"/>
           </ownedLogicalComponents>
         </ownedLogicalComponents>
         <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"

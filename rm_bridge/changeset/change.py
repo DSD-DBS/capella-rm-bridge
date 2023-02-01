@@ -55,6 +55,7 @@ class TrackerChange:
     _location_changed: set[RMIdentifier]
     _req_deletions: dict[helpers.UUIDString, dict[str, t.Any]]
     _reqtype_ids: set[RMIdentifier]
+    errors: list[str]
 
     tracker: cabc.Mapping[str, t.Any]
     """Snapshot of tracker, i.e. a `reqif.RequirementsModule`."""
@@ -62,6 +63,8 @@ class TrackerChange:
     """Model instance."""
     config: act.TrackerConfig
     """Config section for the tracker."""
+    gather_logs: bool
+    """Collect error messages in ``errors`` instead of immediate logging."""
     reqfinder: find.ReqFinder
     """Find ReqIF elements in the model."""
 
@@ -83,6 +86,7 @@ class TrackerChange:
         tracker: cabc.Mapping[str, t.Any],
         model: capellambse.MelodyModel,
         config: act.TrackerConfig,
+        gather_logs: bool = True,
     ) -> None:
         self.tracker = tracker
         self.data_type_definitions = self.tracker.get("data_types", {})
@@ -90,11 +94,13 @@ class TrackerChange:
 
         self.model = model
         self.config = config
+        self.gather_logs = gather_logs
         self.reqfinder = find.ReqFinder(model)
         self.actions = []
 
         self._location_changed = set[RMIdentifier]()
         self._req_deletions = {}
+        self.errors = []
 
         self.__reqtype_action: dict[str, t.Any] | None = None
 
@@ -132,7 +138,9 @@ class TrackerChange:
                         req, item
                     )
                 except act.InvalidWorkItemType as error:
-                    LOGGER.error("%s for workitem: %r", error.args[0], item)
+                    self._handle_user_error(
+                        f"Invalid workitem '{item['id']}'. " + error.args[0]
+                    )
                     continue
 
                 visited.add(req.identifier)
@@ -164,14 +172,14 @@ class TrackerChange:
             self.req_module = self.reqfinder.reqmodule(module_uuid)
         except KeyError as error:
             raise act.InvalidTrackerConfig(
-                "The given tracker configuration is missing 'UUID' of the "
+                "The given module configuration is missing 'UUID' of the "
                 "target RequirementsModule"
             ) from error
 
         if self.req_module is None:
             raise MissingRequirementsModule(
-                f"No RequirementsModule with UUID '{module_uuid}' "
-                f"in {self.model.info!r}"
+                f"No RequirementsModule with UUID '{module_uuid}' found in "
+                + repr(self.model.info)
             )
 
         try:
@@ -190,6 +198,13 @@ class TrackerChange:
             base.setdefault("modify", {})["long_name"] = long_name
 
         return base
+
+    def _handle_user_error(self, message: str) -> None:
+        if self.gather_logs:
+            self.errors.append(message)
+            return
+
+        LOGGER.error("Invalid module '%s'. %s", self.tracker["id"], message)
 
     def _invalidate_deletion(self, requirement: WorkItem) -> None:
         """Try to remove ``requirement`` from deletions.
@@ -259,7 +274,7 @@ class TrackerChange:
     def yield_data_type_definition_create_actions(
         self,
     ) -> cabc.Iterator[dict[str, t.Any]]:
-        r"""Yield actions for creating ``EnumDataTypeDefinition`` \s."""
+        r"""Yield actions for creating ``EnumDataTypeDefinition``\ s."""
         for name, values in self.data_type_definitions.items():
             yield self.data_type_create_action(name, values)
 
@@ -273,8 +288,8 @@ class TrackerChange:
         --------
         capellambse.extensions.reqif.EnumerationDataTypeDefinition :
             Definition for the ``data_type`` attribute of
-            :class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`
-            \s.
+            :class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`\
+            s.
         """
         type = "EnumerationDataTypeDefinition"
         enum_values = [
@@ -291,7 +306,7 @@ class TrackerChange:
     def yield_requirement_type_create_actions(
         self,
     ) -> cabc.Iterator[dict[str, t.Any]]:
-        r"""Yield actions for creating ``RequirementType`` \s."""
+        r"""Yield actions for creating ``RequirementType``\ s."""
         for identifier, req_type in self.requirement_types.items():
             yield self.requirement_type_create_action(identifier, req_type)
 
@@ -309,14 +324,24 @@ class TrackerChange:
             that enables AttributeDefinitions via the ``definition``
             attribute.
         """
+        attribute_definitions = list[dict[str, t.Any]]()
+        for name, adef in req_type.get("attributes", {}).items():
+            try:
+                attr_def = self.attribute_definition_create_action(
+                    name, adef, identifier
+                )
+                attribute_definitions.append(attr_def)
+            except act.InvalidAttributeDefinition as error:
+                self._handle_user_error(
+                    f"In RequirementType '{req_type['long_name']}': "
+                    + error.args[0]
+                )
+
         return {
             "identifier": identifier,
             "long_name": req_type["long_name"],
             "promise_id": f"RequirementType {identifier}",
-            "attribute_definitions": [
-                self.attribute_definition_create_action(name, adef, identifier)
-                for name, adef in req_type.get("attributes", {}).items()
-            ],
+            "attribute_definitions": attribute_definitions,
         }
 
     def attribute_definition_create_action(
@@ -345,6 +370,12 @@ class TrackerChange:
                 name, below=self.reqt_folder
             )
             if etdef is None:
+                if name not in self.data_type_definitions:
+                    raise act.InvalidAttributeDefinition(
+                        f"Invalid {cls.__name__} found: '{name}'. Missing its "
+                        "datatype definition in `data_types`."
+                    )
+
                 data_type_ref = decl.Promise(
                     f"EnumerationDataTypeDefinition {name}"
                 )
@@ -373,34 +404,19 @@ class TrackerChange:
         capellambse.extensions.reqif.Requirement
         capellambse.extensions.reqif.RequirementsFolder
         """
-        req_type_id = item.get("type")
-        attributes = []
-        folder_hint = False
+        iid = item["id"]
+        attributes = list[dict[str, t.Any]]()
+        req_type_id = RMIdentifier(item.get("type", ""))
         for name, value in item.get("attributes", {}).items():
-            if _blacklisted(name, value):
-                if name == "Type" and value == "Folder":
-                    folder_hint = True
+            check = self._check_attribute((name, value), (req_type_id, iid))
+            if check == "break":
+                break
+            elif check == "continue":
                 continue
 
-            if not req_type_id:
-                LOGGER.error(
-                    "Requirement without type but with attributes found: %r",
-                    item,
-                )
-                break
-
-            req_type_id = RMIdentifier(req_type_id)
-            req_type = self.requirement_types[req_type_id]
-            if name in req_type["attributes"]:
-                try:
-                    action = self.attribute_value_create_action(
-                        name, value, req_type_id
-                    )
-                    attributes.append(action)
-                except act.InvalidFieldValue as error:
-                    LOGGER.error(
-                        "Invalid workitem found: %r.\n%s", item, error.args[0]
-                    )
+            self._try_create_attribute_value(
+                (name, value), (req_type_id, iid), attributes
+            )
 
         identifier = RMIdentifier(str(item["id"]))
         base: dict[str, t.Any] = {
@@ -423,7 +439,7 @@ class TrackerChange:
                 base["type"] = decl.UUIDReference(reqtype.uuid)
 
         child_mods: list[dict[str, t.Any]] = []
-        if "children" in item or folder_hint:
+        if "children" in item:
             base["requirements"] = []
             base["folders"] = []
             child: act.WorkItem
@@ -450,6 +466,51 @@ class TrackerChange:
                 del base["requirements"]
         yield base
         yield from child_mods
+
+    def _check_attribute(
+        self,
+        attribute: tuple[t.Any, t.Any],
+        identifiers: tuple[RMIdentifier, t.Any],
+    ) -> str | None:
+        name, value = attribute
+        req_type_id, iitem_id = identifiers
+        if not req_type_id:
+            self._handle_user_error(
+                f"Invalid workitem '{iitem_id}'. "
+                "Missing type but attributes found"
+            )
+            return "break"
+
+        if _blacklisted(name, value):
+            return "continue"
+
+        reqtype_defs = self.requirement_types.get(req_type_id)
+        if reqtype_defs and name not in reqtype_defs["attributes"]:
+            self._handle_user_error(
+                f"Invalid workitem '{iitem_id}'. "
+                f"Invalid field found: field name '{name}' not defined in "
+                f"attributes of requirement type '{req_type_id}'"
+            )
+            return "continue"
+        return None
+
+    def _try_create_attribute_value(
+        self,
+        attribute: tuple[t.Any, t.Any],
+        identifiers: tuple[RMIdentifier, t.Any],
+        actions: list[dict[str, t.Any]],
+    ) -> None:
+        name, value = attribute
+        req_type_id, iitem_id = identifiers
+        try:
+            action = self.attribute_value_create_action(
+                name, value, req_type_id
+            )
+            actions.append(action)
+        except act.InvalidFieldValue as error:
+            self._handle_user_error(
+                f"Invalid workitem '{iitem_id}'. {error.args[0]}"
+            )
 
     def attribute_value_create_action(
         self, name: str, value: str | list[str], req_type_id: RMIdentifier
@@ -527,7 +588,7 @@ class TrackerChange:
 
         if is_faulty:
             raise act.InvalidFieldValue(
-                f"Invalid field found: {key} {value!r} for {name}"
+                f"Invalid field found: {key} '{value}' for '{name}'"
             )
 
         return _AttributeValueBuilder(deftype, key, value)
@@ -621,7 +682,7 @@ class TrackerChange:
             return self.data_type_create_action(name, values)
 
     def requirement_type_delete_actions(self) -> None:
-        r"""Populate actions for deleting ``RequirementType`` \s."""
+        r"""Populate actions for deleting ``RequirementType``\ s."""
         assert self.reqt_folder
         parent_ref = decl.UUIDReference(self.reqt_folder.uuid)
         dels = [
@@ -716,7 +777,7 @@ class TrackerChange:
             if req_type_id and req_type_id not in self.requirement_types:
                 raise act.InvalidWorkItemType(
                     "Faulty workitem in snapshot: "
-                    f"Unknown workitem-type {req_type_id}"
+                    f"Unknown workitem-type '{req_type_id}'"
                 )
 
             reqtype = self.reqfinder.reqtype_by_identifier(
@@ -731,35 +792,22 @@ class TrackerChange:
                 decl.UUIDReference(attr.uuid) for attr in req.attributes
             ]
 
+        iid = item["id"]
         item_attributes = item.get("attributes", {})
         attributes_creations = list[dict[str, t.Any]]()
         attributes_modifications = list[dict[str, t.Any]]()
         for name, value in item_attributes.items():
-            if not req_type_id:
-                LOGGER.error(
-                    "Requirement without type but with attributes found: %r",
-                    item,
-                )
+            check = self._check_attribute((name, value), (req_type_id, iid))
+            if check == "break":
                 break
-
-            reqtype_defs = self.requirement_types.get(req_type_id)
-            if reqtype_defs and name not in reqtype_defs["attributes"]:
-                continue
-
-            if _blacklisted(name, value):
+            elif check == "continue":
                 continue
 
             action: act.Primitive | dict[str, t.Any] | None
             if mods.get("type"):
-                try:
-                    action = self.attribute_value_create_action(
-                        name, value, req_type_id
-                    )
-                    attributes_creations.append(action)
-                except act.InvalidFieldValue as error:
-                    LOGGER.error(
-                        "Invalid workitem found: %r.\n%s", item, error.args[0]
-                    )
+                self._try_create_attribute_value(
+                    (name, value), (req_type_id, iid), attributes_creations
+                )
             else:
                 try:
                     action = self.attribute_value_mod_action(
@@ -770,13 +818,12 @@ class TrackerChange:
 
                     attributes_modifications.append(action)
                 except KeyError:
-                    action = self.attribute_value_create_action(
-                        name, value, req_type_id
+                    self._try_create_attribute_value(
+                        (name, value), (req_type_id, iid), attributes_creations
                     )
-                    attributes_creations.append(action)
                 except act.InvalidFieldValue as error:
-                    LOGGER.error(
-                        "Invalid workitem found: %r.\n%s", item, error.args[0]
+                    self._handle_user_error(
+                        f"Invalid workitem '{iid}'. {error.args[0]}"
                     )
 
         if not attributes_deletions:
@@ -831,8 +878,9 @@ class TrackerChange:
                             creq, child, req
                         )
                     except act.InvalidWorkItemType as error:
-                        LOGGER.error(
-                            "%s for workitem: %r", error.args[0], child
+                        self._handle_user_error(
+                            f"Invalid workitem '{child['id']}'. "
+                            + error.args[0]
                         )
 
                     if creq.parent != req:
@@ -1045,11 +1093,15 @@ def _compare_simple_attributes(
         A dictionary of attribute name and value pairs found to differ
         on `req` and `item`.
     """
+    type_conversion = {"text": helpers.repair_html}
     mods: dict[str, t.Any] = {}
     for name, value in item.items():
         if name in filter:
             continue
-        if getattr(req, name, None) != value:
+
+        converter = type_conversion.get(name, lambda i: i)
+        converted_value = converter(value)
+        if getattr(req, name, None) != converted_value:
             mods[name] = value
     return mods
 

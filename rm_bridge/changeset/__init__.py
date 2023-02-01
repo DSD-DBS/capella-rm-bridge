@@ -12,31 +12,77 @@ import capellambse
 from . import actiontypes, change
 
 LOGGER = logging.getLogger(__name__)
+ERROR_MESSAGE_PREFIX = "Skipping module: {module_id}"
+
+
+def _wrap_errors(module_id: int | str, errors: cabc.Sequence[str]) -> str:
+    start = ERROR_MESSAGE_PREFIX.format(module_id=module_id)
+    first_sep = len(start) * "="
+    last_sep = len(errors[-1]) * "="
+    return "\n".join((start, first_sep, *errors, last_sep))
 
 
 def calculate_change_set(
     model: capellambse.MelodyModel,
-    config: actiontypes.Config,
-    snapshot: cabc.Sequence[actiontypes.TrackerSnapshot],
-) -> list[dict[str, t.Any]]:
+    config: actiontypes.TrackerConfig,
+    snapshot: actiontypes.TrackerSnapshot,
+    safe_mode: bool = True,
+    gather_logs: bool = True,
+) -> tuple[list[dict[str, t.Any]], list[str]]:
     r"""Return a list of actions for a given ``model`` and ``snapshot``.
 
-    The ``ChangeSet`` stores the needed actions to synchronize the
-    ``model`` with the ``snapshot``. The ``snapshot`` stores modules
-    which correspond to ``reqif.RequirementsModule`` \s.
-    """
-    actions: list[dict[str, t.Any]] = []
-    for tracker, tconfig in zip(snapshot, config["modules"]):
-        try:
-            tchange = change.TrackerChange(tracker, model, tconfig)
-            actions.extend(tchange.actions)
-        except (
-            actiontypes.InvalidTrackerConfig,
-            actiontypes.InvalidSnapshotModule,
-            change.MissingRequirementsModule,
-        ) as error:
-            tid = tracker.get("id", "MISSING ID")
-            LOGGER.error("Skipping module: %s", f"'{tid}'\n{error.args[0]}")
-            continue
+    The returned list (``ChangeSet``) stores the needed actions to
+    synchronize the ``model`` with the content of the ``snapshot``. The
+    ``snapshot`` stores a tracker or live-document which correspond to a
+    ``reqif.RequirementsModule``.
 
-    return actions
+    Parameters
+    ----------
+    model
+        The Capella model to compare the snapshot against.
+    config
+        A configuration of the tracker or live-document for the
+        calculated ``ChangeSet``.
+    snapshot
+        A snapshot of a tracker or live-document from the external tool.
+    safe_mode
+        If ``True`` no ``ChangeSet`` will be rendered iff atleast one
+        error occurred during the change-calculation loop. If ``False``
+        all change-actions of modules where errors occurred are
+        dismissed.
+    gather_logs
+        If ``True`` all error messages are gathered in
+        :attribute:`~rm_bridge.changeset.change.TrackerChange.errors`
+        instead of being immediately logged.
+
+    Returns
+    -------
+    ChangeSet, errors
+    """
+    actions = list[dict[str, t.Any]]()
+    errors = list[str]()
+    module_id = snapshot.get("id", "MISSING ID")
+    try:
+        tchange = change.TrackerChange(
+            snapshot, model, config, gather_logs=gather_logs
+        )
+        if tchange.errors:
+            message = _wrap_errors(module_id, tchange.errors)
+            errors.append(message)
+        else:
+            actions.extend(tchange.actions)
+    except (
+        actiontypes.InvalidTrackerConfig,
+        actiontypes.InvalidSnapshotModule,
+        change.MissingRequirementsModule,
+    ) as error:
+        if gather_logs:
+            message = _wrap_errors(module_id, [error.args[0]])
+            errors.append(message)
+        else:
+            prefix = ERROR_MESSAGE_PREFIX.format(module_id=module_id)
+            LOGGER.error("%s. %s", prefix, error.args[0])
+
+    if safe_mode and any(errors):
+        actions = []
+    return actions, errors
