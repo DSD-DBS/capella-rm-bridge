@@ -1,0 +1,15 @@
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-License-Identifier: Apache-2.0
+
+rm-bridge:
+  image: python:3.11-bullseye
+  script:
+    - pip install rm-bridge
+    - python -m rm_bridge -c "${PATH_TO_CONFIG:-config.yaml}" -s "${PATH_TO_SNAPSHOT:-snapshot.yaml}" --gather-logs --save-change-history
+  artifacts:
+    paths:
+      - "**" # Includes modified model, change.history, change-set.yaml and change-errors.txt
+  needs:
+    - create-polarion-snapshot-for-rm-bridge
+  dependencies:
+    - create-polarion-snapshot-for-rm-bridge
