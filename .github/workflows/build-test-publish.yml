@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: CC0-1.0
 
 name: Build
@@ -70,7 +70,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Artifacts
-          path: 'dist/*'
+          path: "dist/*"
       - name: Publish to PyPI (release only)
         if: startsWith(github.ref, 'refs/tags/v')
         run: python -m twine upload -u __token__ -p ${{ secrets.PYPI_TOKEN }} --non-interactive dist/*

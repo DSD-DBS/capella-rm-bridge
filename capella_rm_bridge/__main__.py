@@ -1,7 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
-# SPDX-License-Identifier: Apache-2.0
-
-# SPDX-FileCopyrightText: Copyright DB Netz AG and contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Main entry point into the RM Bridge Bot."""
@@ -17,7 +14,7 @@ import click
 import yaml
 from capellambse import decl
 
-from rm_bridge import changeset
+from capella_rm_bridge import changeset
 
 from . import auditing
 

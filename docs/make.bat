@@ -1,5 +1,5 @@
 @ECHO OFF
-REM SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+REM SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 REM SPDX-License-Identifier: CC0-1.0
 
 pushd %~dp0

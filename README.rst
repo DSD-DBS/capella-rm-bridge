@@ -1,13 +1,15 @@
 ..
-   SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+   SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
    SPDX-License-Identifier: Apache-2.0
 
-Capella/RM-Bridge
-=================
+Capellambse RM-Bridge
+=====================
 
-.. image:: https://github.com/DSD-DBS/rm-bridge/actions/workflows/build-test-publish.yml/badge.svg
+.. image:: https://github.com/DSD-DBS/capella-rm-bridge/actions/workflows/build-test-publish.yml/badge.svg
+    :target: https://github.com/DSD-DBS/capella-rm-bridge/actions/workflows/build-test-publish.yml/badge.svg
 
-.. image:: https://github.com/DSD-DBS/rm-bridge/actions/workflows/lint.yml/badge.svg
+.. image:: https://github.com/DSD-DBS/capella-rm-bridge/actions/workflows/lint.yml/badge.svg
+    :target: https://github.com/DSD-DBS/capella-rm-bridge/actions/workflows/lint.yml/badge.svg
 
 Sync requirements from different ALM tools from and back to Capella
 
@@ -16,7 +18,7 @@ Documentation
 
 Read the `full documentation on Github pages`__.
 
-__ https://dsd-dbs.github.io/rm-bridge
+__ https://dsd-dbs.github.io/capellambse-rm-bridge
 
 Installation
 ------------
@@ -25,15 +27,15 @@ You can install the latest released version directly from PyPI.
 
 .. code::
 
-    pip install rm-bridge
+    pip install capellambse-rm-bridge
 
 To set up a development environment, clone the project and install it into a
 virtual environment.
 
 .. code::
 
-    git clone https://github.com/DSD-DBS/rm-bridge
-    cd rm-bridge
+    git clone https://github.com/DSD-DBS/capella-rm-bridge
+    cd capella-rm-bridge
     python -m venv .venv
 
     source .venv/bin/activate.sh  # for Linux / Mac

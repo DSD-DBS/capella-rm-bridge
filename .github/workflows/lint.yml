@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: CC0-1.0
 
 name: Lint
@@ -39,4 +39,4 @@ jobs:
           python -m pip install pylint
       - name: Run pylint
         run: |-
-          pylint -dfixme rm_bridge || exit $(($? & ~24))
+          pylint -dfixme capella_rm_bridge || exit $(($? & ~24))

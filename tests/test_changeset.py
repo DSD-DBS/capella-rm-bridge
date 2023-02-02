@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
 """Test functionality for the RM Bridge model-modifier.
@@ -20,7 +20,11 @@ import pytest
 import yaml
 from capellambse import decl
 
-from rm_bridge.changeset import actiontypes, calculate_change_set, change
+from capella_rm_bridge.changeset import (
+    actiontypes,
+    calculate_change_set,
+    change,
+)
 
 from .conftest import (
     TEST_CONFIG,

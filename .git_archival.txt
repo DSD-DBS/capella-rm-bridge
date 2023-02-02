@@ -1,4 +1,4 @@
-SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 SPDX-License-Identifier: CC0-1.0
 
 node: $Format:%H$
