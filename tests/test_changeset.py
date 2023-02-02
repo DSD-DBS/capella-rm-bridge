@@ -205,7 +205,7 @@ class TestCreateActions(ActionsTest):
         first_child = titem["children"][0]
         first_child["attributes"][attr] = faulty_value  # type:ignore[index]
         message_end = (
-            f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
+            f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
         )
 
         with caplog.at_level(logging.ERROR):
@@ -227,7 +227,7 @@ class TestCreateActions(ActionsTest):
             ] = faulty_value  # type:ignore[index]
             messages.append(
                 "Invalid workitem 'REQ-002'. "
-                f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
+                f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
             )
 
         change = self.tracker_change(clean_model, tracker, gather_logs=True)
@@ -338,7 +338,7 @@ class TestModActions(ActionsTest):
         first_child = titem["children"][0]
         first_child["attributes"][attr] = faulty_value
         message_end = (
-            f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
+            f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
         )
 
         with caplog.at_level(logging.ERROR):
@@ -479,7 +479,7 @@ class TestCalculateChangeSet(ActionsTest):
         config = copy.deepcopy(TEST_CONFIG["modules"][0])
         del config["capella-uuid"]  # type:ignore[misc]
         message = (
-            "The given module configuration is missing 'UUID' of the target "
+            "The given module configuration is missing UUID of the target "
             "RequirementsModule"
         )
 
@@ -520,7 +520,7 @@ class TestCalculateChangeSet(ActionsTest):
         tconfig = TEST_CONFIG["modules"][0]
         message = (
             "Skipping module: MISSING ID. "
-            "In the snapshot the module is missing an 'id' key"
+            "In the snapshot the module is missing an id key"
         )
 
         with caplog.at_level(logging.ERROR):
@@ -537,7 +537,7 @@ class TestCalculateChangeSet(ActionsTest):
         config = copy.deepcopy(TEST_CONFIG["modules"][0])
         del config["capella-uuid"]  # type:ignore[misc]
         message = (
-            "The given module configuration is missing 'UUID' of the target "
+            "The given module configuration is missing UUID of the target "
             "RequirementsModule"
         )
 
@@ -560,7 +560,7 @@ class TestCalculateChangeSet(ActionsTest):
             "In RequirementType 'System Requirement': Invalid "
             "AttributeDefinitionEnumeration found: 'Release'. Missing its "
             "datatype definition in `data_types`.\n"
-            "Invalid workitem 'REQ-002'. Invalid field found: Release. "
+            "Invalid workitem 'REQ-002'. Invalid field found: 'Release'. "
             "Missing its datatype definition in `data_types`."
         )
 
@@ -604,7 +604,7 @@ class TestCalculateChangeSet(ActionsTest):
             ] = faulty_value  # type:ignore[index]
             messages.append(
                 "Invalid workitem 'REQ-002'. "
-                + f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
+                + f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
             )
         del titem["children"][1]["type"]
         tconfig = TEST_CONFIG["modules"][0]

@@ -100,8 +100,10 @@ def calculate_change_set(
                 module_id, tchange.errors, include_start=not force
             )
             errors.append(message)
+        else:
+            actions.extend(tchange.actions)
 
-        if force:
+        if force and tchange.actions not in actions:
             actions.extend(tchange.actions)
     except (
         actiontypes.InvalidTrackerConfig,
