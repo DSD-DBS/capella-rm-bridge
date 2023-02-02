@@ -548,6 +548,44 @@ class TestCalculateChangeSet(ActionsTest):
         assert errors[0].startswith(self.SKIP_MESSAGE)
         assert message in errors[0]
 
+    def test_forced_calculation_produces_change_set_on_AttributeDefinition_error(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        """Test that an invalid AttributeDefinition will not prohibit."""
+        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        missing_enumdt = "Release"
+        del snapshot["data_types"][missing_enumdt]  # type: ignore[attr-defined]
+        tconfig = TEST_CONFIG["modules"][0]
+        message = (
+            "In RequirementType 'System Requirement': Invalid "
+            "AttributeDefinitionEnumeration found: 'Release'. Missing its "
+            "datatype definition in `data_types`.\n"
+            "Invalid workitem 'REQ-002'. Invalid field found: Release. "
+            "Missing its datatype definition in `data_types`."
+        )
+
+        change_sets, errors = calculate_change_set(
+            clean_model, tconfig, snapshot, gather_logs=True, force=True
+        )
+
+        assert (change_set := change_sets[0])
+        for rtfolder in change_set["extend"]["requirement_types_folders"]:
+            for req_type in rtfolder["requirement_types"]:
+                for attr_def in req_type["attribute_definitions"]:
+                    assert attr_def["long_name"] != missing_enumdt
+
+        folder = change_set["extend"]["folders"][0]
+        for req in folder["requirements"]:
+            for attr_value in req["attributes"]:
+                assert (
+                    missing_enumdt not in attr_value["definition"].identifier
+                )
+
+        assert errors[0].startswith(
+            "Encountered error(s) in 'project/space/example title'"
+        )
+        assert message in errors[0]
+
     def test_snapshot_errors_from_ChangeSet_calculation_are_gathered(
         self, clean_model: capellambse.MelodyModel
     ) -> None:

@@ -24,8 +24,16 @@ LOGGER = logging.getLogger(__name__)
 ERROR_MESSAGE_PREFIX = "Skipping module: {module_id}"
 
 
-def _wrap_errors(module_id: int | str, errors: cabc.Sequence[str]) -> str:
-    start = ERROR_MESSAGE_PREFIX.format(module_id=module_id)
+def _wrap_errors(
+    module_id: int | str,
+    errors: cabc.Sequence[str],
+    include_start: bool = True,
+) -> str:
+    if include_start:
+        start = ERROR_MESSAGE_PREFIX.format(module_id=module_id)
+    else:
+        start = f"Encountered error(s) in {module_id!r}"
+
     first_sep = len(start) * "="
     last_sep = len(errors[-1]) * "="
     return "\n".join((start, first_sep, *errors, last_sep))
@@ -35,6 +43,7 @@ def calculate_change_set(
     model: capellambse.MelodyModel,
     config: actiontypes.TrackerConfig,
     snapshot: actiontypes.TrackerSnapshot,
+    force: bool = False,
     safe_mode: bool = True,
     gather_logs: bool = True,
 ) -> tuple[list[dict[str, t.Any]], list[str]]:
@@ -54,6 +63,10 @@ def calculate_change_set(
         calculated ``ChangeSet``.
     snapshot
         A snapshot of a tracker or live-document from the external tool.
+    force
+        If ``True`` a ``ChangeSet`` will be rendered even if an error
+        occurred during the change-calculation loop. All related objects
+        will be skipped.
     safe_mode
         If ``True`` no ``ChangeSet`` will be rendered iff atleast one
         error occurred during the change-calculation loop. If ``False``
@@ -83,9 +96,12 @@ def calculate_change_set(
             snapshot, model, config, gather_logs=gather_logs
         )
         if tchange.errors:
-            message = _wrap_errors(module_id, tchange.errors)
+            message = _wrap_errors(
+                module_id, tchange.errors, include_start=not force
+            )
             errors.append(message)
-        else:
+
+        if force:
             actions.extend(tchange.actions)
     except (
         actiontypes.InvalidTrackerConfig,
@@ -99,6 +115,8 @@ def calculate_change_set(
             prefix = ERROR_MESSAGE_PREFIX.format(module_id=module_id)
             LOGGER.error("%s. %s", prefix, error.args[0])
 
+    if force:
+        safe_mode = False
     if safe_mode and any(errors):
         actions = []
     return actions, errors

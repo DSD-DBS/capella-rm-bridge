@@ -55,6 +55,7 @@ class TrackerChange:
     _location_changed: set[RMIdentifier]
     _req_deletions: dict[helpers.UUIDString, dict[str, t.Any]]
     _reqtype_ids: set[RMIdentifier]
+    _faulty_attribute_definitions: set[str]
     errors: list[str]
 
     tracker: cabc.Mapping[str, t.Any]
@@ -133,6 +134,7 @@ class TrackerChange:
 
         self._location_changed = set[RMIdentifier]()
         self._req_deletions = {}
+        self._faulty_attribute_definitions = set[str]()
         self.errors = []
 
         self.__reqtype_action: dict[str, t.Any] | None = None
@@ -209,13 +211,13 @@ class TrackerChange:
             self.req_module = self.reqfinder.reqmodule(module_uuid)
         except KeyError as error:
             raise act.InvalidTrackerConfig(
-                "The given module configuration is missing 'UUID' of the "
+                "The given module configuration is missing UUID of the "
                 "target RequirementsModule"
             ) from error
 
         if self.req_module is None:
             raise MissingRequirementsModule(
-                f"No RequirementsModule with UUID '{module_uuid}' found in "
+                f"No RequirementsModule with UUID {module_uuid!r} found in "
                 + repr(self.model.info)
             )
 
@@ -223,7 +225,7 @@ class TrackerChange:
             identifier = self.tracker["id"]
         except KeyError as error:
             raise act.InvalidSnapshotModule(
-                "In the snapshot the module is missing an 'id' key"
+                "In the snapshot the module is missing an id key"
             ) from error
 
         base = {"parent": decl.UUIDReference(self.req_module.uuid)}
@@ -407,15 +409,15 @@ class TrackerChange:
                 name, below=self.reqt_folder
             )
             if etdef is None:
+                promise_id = f"EnumerationDataTypeDefinition {name}"
                 if name not in self.data_type_definitions:
+                    self._faulty_attribute_definitions.add(promise_id)
                     raise act.InvalidAttributeDefinition(
-                        f"Invalid {cls.__name__} found: '{name}'. Missing its "
+                        f"Invalid {cls.__name__} found: {name!r}. Missing its "
                         "datatype definition in `data_types`."
                     )
 
-                data_type_ref = decl.Promise(
-                    f"EnumerationDataTypeDefinition {name}"
-                )
+                data_type_ref = decl.Promise(promise_id)
             else:
                 data_type_ref = decl.UUIDReference(etdef.uuid)
 
@@ -591,7 +593,14 @@ class TrackerChange:
             deftype, attr_def_id, below=self.reqt_folder
         )
         if definition is None:
-            definition_ref = decl.Promise(f"{deftype} {attr_def_id}")
+            promise_id = f"{deftype} {attr_def_id}"
+            if promise_id in self._faulty_attribute_definitions:
+                raise act.InvalidFieldValue(
+                    f"Invalid field found: No AttributeDefinition {name!r} "
+                    "promised."
+                )
+            else:
+                definition_ref = decl.Promise(promise_id)
         else:
             definition_ref = decl.UUIDReference(definition.uuid)
 
@@ -615,7 +624,13 @@ class TrackerChange:
                 "Unknown field type '%s' for %s: %r", deftype, name, value
             )
         if deftype == "Enum":
-            options = self.data_type_definitions[name]
+            options = self.data_type_definitions.get(name)
+            if options is None:
+                raise act.InvalidFieldValue(
+                    f"Invalid field found: {name!r}. Missing its "
+                    "datatype definition in `data_types`."
+                )
+
             is_faulty = not matches_type or not set(value) & set(options)
             key = "values"
         else:
@@ -624,7 +639,7 @@ class TrackerChange:
 
         if is_faulty:
             raise act.InvalidFieldValue(
-                f"Invalid field found: {key} '{value}' for '{name}'"
+                f"Invalid field found: {key} {value!r} for {name!r}"
             )
 
         return _AttributeValueBuilder(deftype, key, value)
@@ -813,7 +828,7 @@ class TrackerChange:
             if req_type_id and req_type_id not in self.requirement_types:
                 raise act.InvalidWorkItemType(
                     "Faulty workitem in snapshot: "
-                    f"Unknown workitem-type '{req_type_id}'"
+                    f"Unknown workitem-type {req_type_id!r}"
                 )
 
             reqtype = self.reqfinder.reqtype_by_identifier(

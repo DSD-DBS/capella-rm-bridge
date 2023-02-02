@@ -68,6 +68,14 @@ def create_errors_statement(errors: cabc.Iterable[str]) -> str:
     help="Pull the latest changes from remote.",
 )
 @click.option(
+    "--force",
+    is_flag=True,
+    default=False,
+    help="If a non RequirementModule-error was encountered only the object "
+    "and all related objects will be skipped. Intact objects will still be "
+    "synchronized",
+)
+@click.option(
     "--no-safe-mode",
     is_flag=True,
     default=False,
@@ -103,6 +111,7 @@ def main(
     dry_run: bool,
     push: bool,
     pull: bool,
+    force: bool,
     no_safe_mode: bool,
     gather_logs: bool,
     save_change_history: bool,
@@ -143,6 +152,7 @@ def main(
             model,
             tconfig,
             module,
+            force=force,
             safe_mode=not no_safe_mode,
             gather_logs=gather_logs,
         )
