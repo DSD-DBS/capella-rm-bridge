@@ -11,7 +11,7 @@ dynamic = ["version"]
 name = "RM-Bridge"
 description = "Sync requirements from different ALM tools from and back to Capella"
 readme = "README.rst"
-requires-python = ">=3.9, <3.11"
+requires-python = ">=3.9, <3.12"
 license = { text = "Apache-2.0" }
 authors = [
   { name = "DB Netz AG" },
@@ -26,6 +26,7 @@ classifiers = [
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
   "Topic :: Other/Nonlisted Topic",
   "Topic :: Scientific/Engineering",
   "Topic :: Software Development :: Libraries :: Python Modules",
@@ -49,7 +50,7 @@ docs = [
   "sphinx",
   "sphinx-autobuild",
   "sphinx-rtd-theme",
-  "tomli; python_version<'3.11'",
+  "tomli",
 ]
 
 test = [
