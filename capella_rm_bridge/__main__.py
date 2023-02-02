@@ -167,6 +167,12 @@ def main(
                 changed_objs, module["id"], module["category"]
             )
 
+    if force:
+        commit_message = reporter.create_commit_message(snapshot["metadata"])
+        print(commit_message)
+        if reporter.store and not dry_run:
+            model.save(push=push, commit_msg=commit_message)
+
     if errors:
         error_statement = create_errors_statement(errors)
         print(error_statement)
