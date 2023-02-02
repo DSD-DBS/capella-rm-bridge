@@ -76,13 +76,6 @@ def create_errors_statement(errors: cabc.Iterable[str]) -> str:
     "synchronized",
 )
 @click.option(
-    "--no-safe-mode",
-    is_flag=True,
-    default=False,
-    help="Modifications are still done to a RequirementModule if an error in "
-    "another, independent module in the snapshot was identified.",
-)
-@click.option(
     "--gather-logs/--no-gather-logs",
     is_flag=True,
     default=True,
@@ -112,7 +105,6 @@ def main(
     push: bool,
     pull: bool,
     force: bool,
-    no_safe_mode: bool,
     gather_logs: bool,
     save_change_history: bool,
     save_error_log: bool,
@@ -153,7 +145,6 @@ def main(
             tconfig,
             module,
             force=force,
-            safe_mode=not no_safe_mode,
             gather_logs=gather_logs,
         )
 
