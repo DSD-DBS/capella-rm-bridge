@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
 
@@ -13,7 +13,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
 
-import rm_bridge
+import capella_rm_bridge
 
 # -- Project information -----------------------------------------------------
 
@@ -24,7 +24,7 @@ except ImportError:
 with open("../../pyproject.toml", "rb") as f:
     _metadata = tomllib.load(f)["project"]
 
-project = "Capella/RM-Bridge"
+project = "Capella-RM-Bridge"
 author = _metadata["authors"][0]["name"]
 copyright = f"{author} and the {_metadata['name']} contributors"
 
@@ -54,7 +54,7 @@ templates_path = ["_templates"]
 # built documents.
 
 # The full version, including alpha/beta/rc tags.
-version = rm_bridge.__version__
+version = capella_rm_bridge.__version__
 rst_epilog = """
 .. |Project| replace:: {project}
 .. |Version| replace:: {version}

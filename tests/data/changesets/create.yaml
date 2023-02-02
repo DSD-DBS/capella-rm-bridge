@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
 - parent: !uuid 3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4

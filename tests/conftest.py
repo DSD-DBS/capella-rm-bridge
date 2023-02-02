@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
 import pathlib
@@ -7,8 +7,8 @@ import typing as t
 import pytest
 from capellambse import MelodyModel, decl
 
-from rm_bridge import load
-from rm_bridge.changeset import actiontypes as act
+from capella_rm_bridge import load
+from capella_rm_bridge.changeset import actiontypes as act
 
 TEST_DATA_PATH = pathlib.Path(__file__).parent / "data"
 TEST_CONFIG = t.cast(

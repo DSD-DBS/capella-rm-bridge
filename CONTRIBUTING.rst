@@ -1,5 +1,5 @@
 ..
-   SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+   SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
    SPDX-License-Identifier: Apache-2.0
 
 Contributing
@@ -15,8 +15,8 @@ issue`__. Or go ahead and `open a pull request`__ to contribute code. In order
 to reduce the burden on our maintainers, please make sure that your code
 follows our style guidelines outlined below.
 
-__ https://github.com/DSD-DBS/rm-bridge/issues
-__ https://github.com/DSD-DBS/rm-bridge/pulls
+__ https://github.com/DSD-DBS/capella-rm-bridge/issues
+__ https://github.com/DSD-DBS/capella-rm-bridge/pulls
 
 Developing
 ----------

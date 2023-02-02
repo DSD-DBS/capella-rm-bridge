@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+# SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -11,7 +11,7 @@ import pytest
 import yaml
 from capellambse import decl
 
-from rm_bridge import __version__, auditing
+from capella_rm_bridge import __version__, auditing
 
 TEST_REQMODULE_UUID = "f8e2195d-b5f5-4452-a12b-79233d943d5e"
 TEST_REQMODULE_REPR = f"<CapellaModule 'Test Module' ({TEST_REQMODULE_UUID})>"
