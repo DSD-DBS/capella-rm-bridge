@@ -1,5 +1,5 @@
 ..
-   SPDX-FileCopyrightText: Copyright DB Netz AG and the rm-bridge contributors
+   SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
    SPDX-License-Identifier: Apache-2.0
 
 .. _snapshot:
@@ -10,7 +10,7 @@ Snapshot
 
 The snapshot is the input needed for calculating the change set and is a list
 of modules. Each module will be compared against a matching
-:external:class:`~capellambse.extensions.reqif.elements.RequirementsModule`
+:external:class:`~capellambse.extensions.reqif.CapellaModule`
 from the given model. If no matching ``RequirementsModule`` was found this
 module will be skipped. Differences of the module snapshot and the model
 ``RequirementsModule`` will result in change actions according to the
@@ -35,17 +35,16 @@ As previously noted: A module (or tracker) in the given snapshot equals a
 
 - descriptionary part of the module,
 - **data_types**: For
-  :external:class:`~capellambse.extensions.reqif.elements.EnumDataTypeDefinition`\
+  :external:class:`~capellambse.extensions.reqif.EnumerationDataTypeDefinition`\
   s, all needed options/values for
-  :external:class:`~capellambse.extensions.reqif.elements.EnumerationValueAttribute`\
+  :external:class:`~capellambse.extensions.reqif.EnumerationValueAttribute`\
   s,
 - **requirement_types**: For
-  :external:class:`~capellambse.extensions.reqif.elements.RequirementType`\ s
+  :external:class:`~capellambse.extensions.reqif.RequirementType`\ s
   and finally
 - **items**: For the exported work items that will result into
-  :external:class:`~capellambse.extensions.reqif.elements.Requirement`\ s and
-  :external:class:`~capellambse.extensions.reqif.elements.RequirementsFolder`\
-  s.
+  :external:class:`~capellambse.extensions.reqif.Requirement`\ s and
+  :external:class:`~capellambse.extensions.reqif.Folder`\ s.
 
 The ``id`` is required and will be compared with the ``identifier`` of the
 matched ``RequirementsModule``. Other attributes like ``long_name`` or ``text``
@@ -74,7 +73,7 @@ from ``long_name`` to its values.
     ``EnumerationDataTypeDefinition``\ s such that
     ``EnumerationAttributeValue``\ s on separate ``RequirementType``\ s have
     different options available. For now there is only one shared DataType
-    exploiting the availability in the ``RequirementsModule``. This makes it
+    exploiting the availability in the ``CapellaModule``. This makes it
     possible to choose values which shouldn't be available on the respective
     ValueAttribute.
 
@@ -115,16 +114,16 @@ Requirement Types (``requirement_types``)
         Capella ID:
           type: String
 
-Polarion supports work item types as a special field. This section is therefore
-a mapping that describes ``RequirementType``\ s from a given ``identifier`` to
-its ``long_name`` and ``attribute_definitions`` (in short ``attributes``).
-Therein the keys are matched against the ``long_name`` of the
+Work item types are dealt by most RM tools as special fields. This section is
+therefore a mapping that describes ``RequirementType``\ s from a given
+``identifier`` to its ``long_name`` and ``attribute_definitions`` (in short
+``attributes``). Therein the keys are matched against the ``long_name`` of the
 ``EnumDataTypeDefinition`` defined in ``data_types`` if it is an
 ``AttributeDefinitionEnumeration``. Else an ``AttributeDefinition`` is meant
 and for these a type-hint via ``type`` is needed.
 
-``Requirement``\ s and ``RequirementFolder``\s (``items``)
-==========================================================
+``Requirement``\ s and ``RequirementFolder``\ s (``items``)
+===========================================================
 
 .. code-block:: yaml
 
@@ -135,20 +134,14 @@ and for these a type-hint via ``type`` is needed.
        type: system_requirement # WorkItemType ID
 
        attributes:
-         Type: [Folder] # artifact from CODEBEAMER and cleaned in RM Bridge
+         Type: [Unset] # Fields for a Folder
 
        children: # Folder b/c non-empty children
          - id: REQ-002
            long_name: Function Requirement
-           text: ...
-           type: system_requirement
-           attributes: # Fields
-             Capella ID: R-FNC-00001 # name, value pair
-             Type: [Functional] # values in a list for enum fields
-             Release:
-               - Feature Rel. 1
-               - Feature Rel. 2
-             Submitted at: 2022-06-30 17:07:18.664000+02:00 # datetime.datetime for dates
+           # [...]
+         - id: REQ-003
+           # [...]
 
 This section consists of all work items and folders that are exported from the
 RM tool. Important keys are the ``id`` (written to ``identifier``) and
@@ -162,19 +155,20 @@ The field data of work items is reflected by the ``attributes`` key. In general
 fields are ``ValueAttributes`` in Capella. For now only the basic primitives
 are supported:
 
-- ``IntegerValueAttribute``
-- ``StringValueAttribute``
-- ``RealValueAttribute``
-- ``DateValueAttribute``
-- ``BooleanValueAttribute``
-- ``EnumerationValueAttribute``
+- ``IntegerValueAttribute`` (required as an integer value in the snapshot)
+- ``StringValueAttribute`` (required as a string value in the snapshot)
+- ``RealValueAttribute`` (required as a float value in the snapshot)
+- ``DateValueAttribute`` (required as a !!timestamp value in the snapshot)
+- ``BooleanValueAttribute`` (required as a boolean value in the snapshot)
+- ``EnumerationValueAttribute`` (required as a sequence of strings value in the
+  snapshot)
 
 In order to have a nice display of these ``ValueAttribute``\ s in Capella and
 also functioning ``.values`` for
-:external:class:`~capellambse.extensions.reqif.elements.EnumerationValueAttribute`\
-s, :external:class:`~capellambse.extensions.reqif.elements.AttributeDefinition`
+:external:class:`~capellambse.extensions.reqif.EnumerationValueAttribute`\
+s, :external:class:`~capellambse.extensions.reqif.AttributeDefinition`
 and
-:external:class:`~capellambse.extensions.reqif.elements.AttributeDefinitionEnumeration`\
+:external:class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`\
 s are needed. This subsection is a ``long_name`` to value (values) mapping that
 are matched against the attribute-definitions (``attributes``) subsection in
 :ref:`requirement_types`.
@@ -182,7 +176,7 @@ are matched against the attribute-definitions (``attributes``) subsection in
 .. note::
 
   During execution of
-  :py:meth:`~rm_bridge.change_set.change.TrackerChange.calculate_change` the
+  :py:meth:`~capella_rm_bridge.change_set.change.TrackerChange.calculate_change` the
   integrity of the snapshot is checked. That means for example work items that
   have ``type`` identifiers which are not defined in the
   :ref:`requirement_types` section will be skipped. In general there needs to
@@ -207,7 +201,7 @@ Capella model state:
 .. note::
 
   The
-  :external:class:`~capellambse.extensions.reqif.elements.RequirementsTypesFolder`
+  :external:class:`~capellambse.extensions.reqif.CapellaTypesFolder`
   will be initially created in the ``RequirementsModule`` for compactness.
-  Every module has its own ``RequirementsTypesFolder`` named **Types** with all
+  Every module has its own ``CapellaTypesFolder`` named **Types** with all
   necessary definitions.

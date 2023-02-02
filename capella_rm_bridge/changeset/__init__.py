@@ -1,6 +1,15 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
+"""A ``ChangeSet`` is a sequence of actions to be applied to a model.
+
+The :py:func:`~capella_rm_bridge.changeset.calculate_change_set`
+function calculates these actions from a given snapshot of supported
+Requirement Management tools and config YAML file. With the
+:ref:`declarative modelling <declarative-modelling>` feature of
+capellambse a :external:class:`~capellambse.model.MelodyModel` can be
+altered with :external:func:`capellambse.decl.apply`.
+"""
 from __future__ import annotations
 
 import collections.abc as cabc
@@ -52,12 +61,19 @@ def calculate_change_set(
         dismissed.
     gather_logs
         If ``True`` all error messages are gathered in
-        :attribute:`~rm_bridge.changeset.change.TrackerChange.errors`
+        :attribute:`~capella_rm_bridge.changeset.change.TrackerChange.errors`
         instead of being immediately logged.
 
     Returns
     -------
     ChangeSet, errors
+
+    See Also
+    --------
+    capella_rm_bridge.changeset.actiontypes.TrackerConfig :
+        The expected keys and value types of a module.
+    capella_rm_bridge.changeset.actiontypes.TrackerSnapshot :
+        The expected keys and value types of a snapshot.
     """
     actions = list[dict[str, t.Any]]()
     errors = list[str]()

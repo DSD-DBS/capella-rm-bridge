@@ -243,7 +243,7 @@ class TrackerChange:
 
         LOGGER.error("Invalid module '%s'. %s", self.tracker["id"], message)
 
-    def _invalidate_deletion(self, requirement: WorkItem) -> None:
+    def invalidate_deletion(self, requirement: WorkItem) -> None:
         """Try to remove ``requirement`` from deletions.
 
         Remove empty dictionaries or even whole action if its only
