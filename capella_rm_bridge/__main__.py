@@ -7,6 +7,7 @@ from __future__ import annotations
 import collections.abc as cabc
 import logging
 import pathlib
+import sys
 import typing as t
 
 import capellambse
@@ -162,6 +163,8 @@ def main(
         if save_error_log:
             ERROR_PATH.write_text(error_statement, encoding="utf8")
             LOGGER.info("Change-errors file %s written.", ERROR_PATH)
+
+        sys.exit(1)
     else:
         commit_message = reporter.create_commit_message(snapshot["metadata"])
         print(commit_message)
