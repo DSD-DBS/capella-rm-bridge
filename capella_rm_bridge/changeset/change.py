@@ -35,7 +35,7 @@ _ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[str, type] = {
 }
 
 
-WorkItem = t.Union[reqif.Requirement, reqif.RequirementsFolder]
+WorkItem = t.Union[reqif.Requirement, reqif.Folder]
 RMIdentifier = t.NewType("RMIdentifier", str)
 
 
@@ -45,8 +45,8 @@ class _AttributeValueBuilder(t.NamedTuple):
     value: act.Primitive | None
 
 
-class MissingRequirementsModule(Exception):
-    """A ``RequirementsModule`` with matching UUID could not be found."""
+class MissingCapellaModule(Exception):
+    """A ``CapellaModule`` with matching UUID could not be found."""
 
 
 class TrackerChange:
@@ -216,7 +216,7 @@ class TrackerChange:
             ) from error
 
         if self.req_module is None:
-            raise MissingRequirementsModule(
+            raise MissingCapellaModule(
                 f"No RequirementsModule with UUID {module_uuid!r} found in "
                 + repr(self.model.info)
             )
@@ -252,7 +252,7 @@ class TrackerChange:
         delete action was removed.
         """
         key = "requirements"
-        if isinstance(requirement, reqif.RequirementsFolder):
+        if isinstance(requirement, reqif.Folder):
             key = "folders"
 
         try:
@@ -903,7 +903,7 @@ class TrackerChange:
         cf_creations: list[dict[str, t.Any] | decl.UUIDReference] = []
         containers = [cr_creations, cf_creations]
         child_mods: list[dict[str, t.Any]] = []
-        if isinstance(req, reqif.RequirementsFolder):
+        if isinstance(req, reqif.Folder):
             child_req_ids = set[RMIdentifier]()
             child_folder_ids = set[RMIdentifier]()
             for child in children:

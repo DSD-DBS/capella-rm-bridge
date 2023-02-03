@@ -108,7 +108,7 @@ def calculate_change_set(
     except (
         actiontypes.InvalidTrackerConfig,
         actiontypes.InvalidSnapshotModule,
-        change.MissingRequirementsModule,
+        change.MissingCapellaModule,
     ) as error:
         if gather_logs:
             message = _wrap_errors(module_id, [error.args[0]])

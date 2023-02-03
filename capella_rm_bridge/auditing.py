@@ -362,7 +362,7 @@ class RMReporter:
     def _assign_module(self, change: Change) -> LiveDocID | TrackerID | None:
         try:
             obj = self.model.by_uuid(change.parent)
-            while not isinstance(obj, reqif.RequirementsModule):
+            while not isinstance(obj, reqif.CapellaModule):
                 obj = obj.parent
             return obj.identifier
         except (KeyError, AttributeError):
@@ -447,11 +447,11 @@ class RMReporter:
             reqif.AttributeDefinition,
             reqif.AttributeDefinitionEnumeration,
             reqif.DataTypeDefinition,
-            reqif.EnumDataTypeDefinition,
+            reqif.EnumerationDataTypeDefinition,
             reqif.EnumValue,
             reqif.ModuleType,
             reqif.RelationType,
-            reqif.RequirementsTypesFolder,
+            reqif.CapellaTypesFolder,
             reqif.RequirementType,
         }
 

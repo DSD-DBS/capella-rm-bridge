@@ -35,25 +35,29 @@ class ReqFinder:
             LOGGER.info("No %s found with %s: %r", types, attr, value)
         return None
 
-    def reqmodule(self, uuid: str) -> reqif.RequirementsModule | None:
-        """Try to return the ``RequirementsModule``."""
-        return self._get(uuid, reqif.XT_MODULE, attr="uuid")
+    def reqmodule(self, uuid: str) -> reqif.CapellaModule | None:
+        """Try to return the ``CapellaModule``."""
+        return self._get(uuid, reqif.CapellaModule.__name__, attr="uuid")
 
     def reqtypesfolder_by_identifier(
         self,
         identifier: int | str,
         below: crosslayer.BaseArchitectureLayer
-        | reqif.RequirementsModule
+        | reqif.CapellaModule
         | None = None,
-    ) -> reqif.RequirementsTypesFolder | None:
+    ) -> reqif.CapellaTypesFolder | None:
         """Try to return the ``RequirementTypesFolder``."""
-        return self._get(str(identifier), reqif.XT_REQ_TYPES_F, below=below)
+        return self._get(
+            str(identifier), reqif.CapellaTypesFolder.__name__, below=below
+        )
 
     def reqtype_by_identifier(
         self, identifier: int | str, below: reqif.ReqIFElement | None = None
-    ) -> reqif.RequirementsType | None:
+    ) -> reqif.RequirementType | None:
         """Try to return a ``RequirementType``."""
-        return self._get(str(identifier), reqif.XT_REQ_TYPE, below=below)
+        return self._get(
+            str(identifier), reqif.RequirementType.__name__, below=below
+        )
 
     def attribute_definition_by_identifier(
         self, xtype: str, identifier: str, below: reqif.ReqIFElement | None
@@ -65,21 +69,27 @@ class ReqFinder:
         self,
         identifier: int | str,
         below: reqif.ReqIFElement | None = None,
-    ) -> reqif.Requirement | reqif.RequirementsFolder | None:
+    ) -> reqif.Requirement | reqif.Folder | None:
         """Try to return a ``Requirement``/``RequirementsFolder``."""
         return self._get(
-            str(identifier), reqif.XT_REQUIREMENT, reqif.XT_FOLDER, below=below
+            str(identifier),
+            reqif.Requirement.__name__,
+            reqif.Folder.__name__,
+            below=below,
         )
 
     def enum_data_type_definition_by_long_name(
         self, long_name: str, below: reqif.ReqIFElement | None
-    ) -> reqif.EnumDataTypeDefinition | None:
-        """Try to return an ``EnumDataTypeDefinition``.
+    ) -> reqif.EnumerationDataTypeDefinition | None:
+        """Try to return an ``EnumerationDataTypeDefinition``.
 
         The object is matched with given ``long_name``.
         """
         return self._get(
-            long_name, reqif.XT_REQ_TYPE_ENUM, attr="long_name", below=below
+            long_name,
+            reqif.EnumerationDataTypeDefinition.__name__,
+            attr="long_name",
+            below=below,
         )
 
     def enum_value_by_long_name(
@@ -89,5 +99,6 @@ class ReqFinder:
 
         The object is matched with given ``long_name``.
         """
-        xt = reqif.XT_REQ_TYPE_ATTR_ENUM
-        return self._get(long_name, xt, attr="long_name", below=below)
+        return self._get(
+            long_name, reqif.EnumValue.__name__, attr="long_name", below=below
+        )

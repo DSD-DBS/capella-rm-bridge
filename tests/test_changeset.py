@@ -113,7 +113,7 @@ class TestTrackerChangeInit(ActionsTest):
         """
         del clean_model.la.requirement_modules[0]
 
-        with pytest.raises(change.MissingRequirementsModule):
+        with pytest.raises(change.MissingCapellaModule):
             self.tracker_change(clean_model, TEST_SNAPSHOT[0])
 
     def test_init_on_missing_module_id_raises_InvalidSnapshotModule(
