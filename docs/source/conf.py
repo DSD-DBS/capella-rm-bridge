@@ -59,7 +59,7 @@ extensions = [
 
 # The full version, including alpha/beta/rc tags.
 version = capella_rm_bridge.__version__
-rst_epilog = """
+rst_epilog = f"""
 .. |Project| replace:: {project}
 .. |Version| replace:: {version}
 """

@@ -11,15 +11,15 @@ Snapshot
 The snapshot is the input needed for calculating the change set and is a list
 of modules. Each module will be compared against a matching
 :external:class:`~capellambse.extensions.reqif.CapellaModule`
-from the given model. If no matching ``RequirementsModule`` was found this
+from the given model. If no matching ``CapellaModule`` was found this
 module will be skipped. Differences of the module snapshot and the model
-``RequirementsModule`` will result in change actions according to the
+``CapellaModule`` will result in change actions according to the
 :ref:`declarative modelling<declarative-modelling>` syntax of capellambse.
 
 Module description
 ==================
 As previously noted: A module (or tracker) in the given snapshot equals a
-``RequirementsModule`` in Capella. Every module consists of 4 sections:
+``CapellaModule`` in Capella. Every module consists of 4 sections:
 
 .. code-block:: yaml
 
@@ -47,14 +47,14 @@ As previously noted: A module (or tracker) in the given snapshot equals a
   :external:class:`~capellambse.extensions.reqif.Folder`\ s.
 
 The ``id`` is required and will be compared with the ``identifier`` of the
-matched ``RequirementsModule``. Other attributes like ``long_name`` or ``text``
+matched ``CapellaModule``. Other attributes like ``long_name`` or ``text``
 can be declared optionally for comparison.
 
 Enumeration Data Types (``data_types``)
 =======================================
 
-This section describes ``EnumDataTypeDefinition``\ s: For now only as a mapping
-from ``long_name`` to its values.
+This section describes ``EnumerationDataTypeDefinition``\ s: For now only as a
+mapping from ``long_name`` to its values.
 
 .. code-block:: yaml
 
@@ -118,7 +118,7 @@ Work item types are dealt by most RM tools as special fields. This section is
 therefore a mapping that describes ``RequirementType``\ s from a given
 ``identifier`` to its ``long_name`` and ``attribute_definitions`` (in short
 ``attributes``). Therein the keys are matched against the ``long_name`` of the
-``EnumDataTypeDefinition`` defined in ``data_types`` if it is an
+``EnumerationDataTypeDefinition`` defined in ``data_types`` if it is an
 ``AttributeDefinitionEnumeration``. Else an ``AttributeDefinition`` is meant
 and for these a type-hint via ``type`` is needed.
 
@@ -188,7 +188,7 @@ are matched against the attribute-definitions (``attributes``) subsection in
 
 With the ``children`` key the hierarchical structure of the workitems is
 exported and empty children will result in a ``Requirement``. Conversely
-non-empty children will cause change action on a ``RequirementsFolder``.
+non-empty children will cause change action on a ``Folder``.
 
 Complete snapshot
 =================
@@ -202,6 +202,6 @@ Capella model state:
 
   The
   :external:class:`~capellambse.extensions.reqif.CapellaTypesFolder`
-  will be initially created in the ``RequirementsModule`` for compactness.
-  Every module has its own ``CapellaTypesFolder`` named **Types** with all
-  necessary definitions.
+  will be initially created in the ``EnumerationDataTypeDefinition`` for
+  compactness. Every module has its own ``CapellaTypesFolder`` named
+  **Types** with all necessary definitions.
