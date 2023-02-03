@@ -8,7 +8,7 @@
 ChangeSet
 *********
 
-The change set is the output of
+The ChangeSet is the output of
 :py:func:`~capella_rm_bridge.changeset.calculate_change_set` and uses the
 :ref:`declarative modelling <declarative-modelling>` syntax of capellambse. An
 example for the initial migration of the snapshot example:
@@ -17,7 +17,7 @@ example for the initial migration of the snapshot example:
    :language: yaml
    :lines: 4-
 
-The following change set shows modifications (i.e. synchronizations) after the
+The following ChangeSet shows modifications (i.e. synchronizations) after the
 initial migration:
 
 .. literalinclude:: ../../tests/data/changesets/mod.yaml

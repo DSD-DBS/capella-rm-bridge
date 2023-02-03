@@ -8,13 +8,14 @@
 Snapshot
 ********
 
-The snapshot is the input needed for calculating the change set and is a list
-of modules. Each module will be compared against a matching
-:external:class:`~capellambse.extensions.reqif.CapellaModule`
-from the given model. If no matching ``CapellaModule`` was found this
-module will be skipped. Differences of the module snapshot and the model
-``CapellaModule`` will result in change actions according to the
-:ref:`declarative modelling<declarative-modelling>` syntax of capellambse.
+The snapshot is the input needed for calculating the
+:ref:`ChangeSet<change-set>` and is a list of modules. Each module will be
+compared against a matching
+:external:class:`~capellambse.extensions.reqif.CapellaModule` from the given
+model. If no matching ``CapellaModule`` was found this module will be skipped.
+Differences of the module snapshot and the model ``CapellaModule`` will result
+in change actions according to the :ref:`declarative
+modelling<declarative-modelling>` syntax of capellambse.
 
 Module description
 ==================
@@ -66,6 +67,16 @@ mapping from ``long_name`` to its values.
      Release:
        - Feature Rel. 1
        - Feature Rel. 2
+
+In order to have a nice display of ``ValueAttribute``\ s for ``Requirement``\ s
+in Capella and also functioning ``.values`` for
+:external:class:`~capellambse.extensions.reqif.EnumerationValueAttribute`\
+s, :external:class:`~capellambse.extensions.reqif.AttributeDefinition`
+and
+:external:class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`\
+s are needed. The *data_types* subsection is a ``long_name`` to value (values)
+mapping that are matched against the attribute-definitions (``attributes``)
+subsection in :ref:`requirement_types`.
 
 .. warning::
 
@@ -133,8 +144,10 @@ and for these a type-hint via ``type`` is needed.
        text: <p>Test Description</p>
        type: system_requirement # WorkItemType ID
 
-       attributes:
-         Type: [Unset] # Fields for a Folder
+       attributes: # Fields for a Folder
+         Capella ID: R-FNC-00001 # String Attribute
+         Type: [Unset] # Enum Attribute
+         Submitted at: 2022-06-30 17:07:18.664000+02:00
 
        children: # Folder b/c non-empty children
          - id: REQ-002
@@ -162,16 +175,6 @@ are supported:
 - ``BooleanValueAttribute`` (required as a boolean value in the snapshot)
 - ``EnumerationValueAttribute`` (required as a sequence of strings value in the
   snapshot)
-
-In order to have a nice display of these ``ValueAttribute``\ s in Capella and
-also functioning ``.values`` for
-:external:class:`~capellambse.extensions.reqif.EnumerationValueAttribute`\
-s, :external:class:`~capellambse.extensions.reqif.AttributeDefinition`
-and
-:external:class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`\
-s are needed. This subsection is a ``long_name`` to value (values) mapping that
-are matched against the attribute-definitions (``attributes``) subsection in
-:ref:`requirement_types`.
 
 .. note::
 

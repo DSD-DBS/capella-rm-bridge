@@ -18,8 +18,8 @@ Capella-RM-Bridge
 This library was designed to enable and support outsourcing requirements
 management for Capella_ models via specific RM tools like `Codebeamer`_ or
 SIEMENS' `Polarion`_. So all this library does is, based on an exported
-:ref:`snapshot <snapshot>` from the RM software calculating a :ref:`change set
-<change-set>`. This change set can then be applied to a
+:ref:`snapshot <snapshot>` from the RM software calculating a :ref:`ChangeSet
+<change-set>`. This ChangeSet can then be applied to a
 :external:class:`~capellambse.model.MelodyModel` instance from the
 `capellambse`_ headless model API.
 
