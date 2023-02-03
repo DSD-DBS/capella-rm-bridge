@@ -346,6 +346,40 @@ class TestModActions(ActionsTest):
 
         assert caplog.messages[0].endswith(message_end)
 
+    def test_faulty_data_types_log_InvalidAttributeDefinition_as_error(
+        self,
+        migration_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        reqtype = tracker["requirement_types"]["system_requirement"]
+        reqtype["attributes"]["Not-Defined"] = {  # type: ignore[call-overload]
+            "type": "Enum",
+            "data_type": "Not-Defined",
+        }
+
+        with caplog.at_level(logging.ERROR):
+            self.tracker_change(migration_model, tracker, gather_logs=False)
+
+        assert caplog.messages[0].endswith(INVALID_ATTR_DEF_ERROR_MSG)
+
+    def test_InvalidAttributeDefinition_errors_are_gathered(
+        self, migration_model: capellambse.MelodyModel
+    ) -> None:
+        """Test faulty field data are gathered in errors."""
+        tracker = copy.deepcopy(self.tracker)
+        reqtype = tracker["requirement_types"]["system_requirement"]
+        reqtype["attributes"]["Not-Defined"] = {  # type: ignore[call-overload]
+            "type": "Enum",
+            "data_type": "Not-Defined",
+        }
+
+        change = self.tracker_change(
+            migration_model, tracker, gather_logs=True
+        )
+
+        assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
+
     @pytest.mark.integtest
     def test_calculate_change_sets(
         self, migration_model: capellambse.MelodyModel

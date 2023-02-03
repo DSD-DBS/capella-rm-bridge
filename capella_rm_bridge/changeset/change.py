@@ -1087,9 +1087,16 @@ class TrackerChange:
                 return None
             return {"parent": decl.UUIDReference(attrdef.uuid), "modify": mods}
         except KeyError:
-            return self.attribute_definition_create_action(
-                name, data, reqtype.identifier
-            )
+            try:
+                return self.attribute_definition_create_action(
+                    name, data, reqtype.identifier
+                )
+            except act.InvalidAttributeDefinition as error:
+                self._handle_user_error(
+                    f"In RequirementType {reqtype.long_name!r}: "
+                    + error.args[0]
+                )
+                return None
 
 
 def make_requirement_delete_actions(
