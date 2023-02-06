@@ -48,9 +48,12 @@ Documentation = "https://dsd-dbs.github.io/capella-rm-bridge"
 
 [project.optional-dependencies]
 docs = [
-  "sphinx",
+  "furo",
+  "nbsphinx",
+  "pyyaml",
+  "sphinx-argparse-cli",
   "sphinx-autobuild",
-  "sphinx-rtd-theme",
+  "sphinx",
   "tomli",
 ]
 

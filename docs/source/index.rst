@@ -26,6 +26,8 @@ SIEMENS' `Polarion`_. So all this library does is, based on an exported
 It is essential for a safe **synchronization process of ReqIFElements** from
 any RM tool to Capella via `capellambse`_.
 
+.. diagram:: [LAB] Just Architecture
+
 .. toctree::
    :hidden:
    :maxdepth: 2
