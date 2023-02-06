@@ -27,7 +27,9 @@ with open("../../pyproject.toml", "rb") as f:
 project = "Capella-RM-Bridge"
 author = _metadata["authors"][0]["name"]
 copyright = f"{author} and the {_metadata['name']} contributors"
-
+license = _metadata["license"]["text"]
+install_requirements = _metadata["dependencies"]
+python_requirement = _metadata["requires-python"]
 
 # -- General configuration ---------------------------------------------------
 
@@ -36,10 +38,13 @@ copyright = f"{author} and the {_metadata['name']} contributors"
 # ones.
 extensions = [
     "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
+    "capellambse.sphinx",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ["_templates"]
+# templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -55,15 +60,31 @@ templates_path = ["_templates"]
 
 # The full version, including alpha/beta/rc tags.
 version = capella_rm_bridge.__version__
-rst_epilog = """
+rst_epilog = f"""
 .. |Project| replace:: {project}
 .. |Version| replace:: {version}
-""".format(
-    project=project, version=version
-)
+"""
 
 # -- Options for auto-doc ----------------------------------------------------
-autoclass_content = "both"
+autoclass_content = "class"
+autodoc_class_signature = "separated"
+autodoc_typehints = "description"
+
+
+# -- Options for napoleon ----------------------------------------------------
+napoleon_google_docstring = False
+napoleon_include_init_with_doc = True
+
+
+# -- Options for Intersphinx output ------------------------------------------
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3", None),
+    "capellambse": ("https://dsd-dbs.github.io/py-capellambse/", None),
+}
+
+
+# -- Options for CapellaMBSE-Sphinx ------------------------------------------
+capellambse_model = "../api/rm-bridge.aird"
 
 
 # -- Options for HTML output -------------------------------------------------
@@ -71,7 +92,34 @@ autoclass_content = "both"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
+html_css_files = [
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css",
+    "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css",
+]
+html_theme_options = {
+    "footer_icons": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/DSD-DBS/rm-bridge",
+            "html": "",
+            "class": "fa-solid fa-brands fa-github fa-2x",
+        },
+    ],
+}
+html_short_title = "py-capellambse"
+html_show_sourcelink = False
+html_context = {
+    "dependencies": install_requirements,
+    "py_req": python_requirement,
+}
+
+# -- Extra options for Furo theme --------------------------------------------
+
+pygments_style = "tango"
+pygments_dark_style = "monokai"
+
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

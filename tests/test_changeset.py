@@ -106,7 +106,7 @@ class TestTrackerChangeInit(ActionsTest):
     ) -> None:
         """Test that a model w/o module raises MissingRequirementsModule.
 
-        A :ref:`capellambse.MelodyModel` without a
+        A :external:class:`~capellambse.model.MelodyModel` without a
         ``RequirementsModule`` with a matching UUID from the config will
         lead to a ``MissingRequirementsModule`` being raised during
         initialization of a ``TrackerChange`` object.

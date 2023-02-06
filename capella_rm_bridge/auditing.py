@@ -141,8 +141,8 @@ class ChangeAuditor:
         )
     ]
 
-    Securing writable context with the :func:`~rm_bridge.auditing.dump`
-    function:
+    Securing writable context with the
+    :func:`~capella_rm_bridge.auditing.dump` function:
 
     >>> with ChangeAuditor(model) as changes:
     ...     comp = model.la.all_components.by_name("Hogwarts")

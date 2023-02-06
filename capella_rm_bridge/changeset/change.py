@@ -88,6 +88,39 @@ class TrackerChange:
         config: act.TrackerConfig,
         gather_logs: bool = True,
     ) -> None:
+        """Construct a ``TrackerChange``.
+
+        Parameters
+        ----------
+        tracker
+            Is a mapping that has ``id``, ``data_types``,
+            ``requirement_types`` and ``items`` defined. Maybe called
+            module in different RM tools.
+        model
+            An instance of ``MelodyModel`` for comparison with the
+            snapshot.
+        config
+            A configuration for the module (tracker).
+
+        Raises
+        ------
+        InvalidTrackerConfig
+            If the given ``config`` is missing any of the mandatory
+            keys (uuid, project and/or title).
+        MissingRequirementsModule
+            If the model is missing a ``RequirementsModule`` from the
+            UUID declared in the ``config``.
+        InvalidWorkItemType
+            May be raised during
+            :meth:`TrackerChange.calculate_change` if an unknown ID of a
+            RequirementType is used (i.e. the integrity of the
+            ``requirement_types`` section in the snapshot is broken).
+        InvalidFieldValue
+            May be raised during
+            :meth:`TrackerChange.calculate_change` if it is tried to
+            set an unavailable field value (i.e. the integrity of the
+            ``attributes`` of a work item is broken).
+        """
         self.tracker = tracker
         self.data_type_definitions = self.tracker.get("data_types", {})
         self.requirement_types = self.tracker.get("requirement_types", {})
@@ -110,7 +143,11 @@ class TrackerChange:
         """Render actions for RequirementsModule synchronization.
 
         Handles synchronization of RequirementTypesFolder first and
-        Requirements and Folders afterwards.
+        Requirements and Folders afterwards. If no
+        RequirementTypesFolder was found an action for creation will be
+        added to the actions. Work items are searched by the
+        ``identifier``. Location changes of work items will invalidate
+        deletions.
         """
         base = self.check_requirements_module()
         self.reqt_folder = self.reqfinder.reqtypesfolder_by_identifier(
@@ -148,7 +185,7 @@ class TrackerChange:
                     item_action = decl.UUIDReference(req.uuid)
                     _add_action_safely(base, "extend", second_key, item_action)
                     self._location_changed.add(RMIdentifier(req.identifier))
-                    self._invalidate_deletion(req)
+                    self.invalidate_deletion(req)
 
             self.actions.extend(req_actions)
 
@@ -206,7 +243,7 @@ class TrackerChange:
 
         LOGGER.error("Invalid module '%s'. %s", self.tracker["id"], message)
 
-    def _invalidate_deletion(self, requirement: WorkItem) -> None:
+    def invalidate_deletion(self, requirement: WorkItem) -> None:
         """Try to remove ``requirement`` from deletions.
 
         Remove empty dictionaries or even whole action if its only
@@ -519,8 +556,7 @@ class TrackerChange:
 
         Requires ``name`` of possibly promised
         ``AttributeDefinition/AttributeDefinitionEnumeration`` and
-        patches given ``value`` from default value map
-        :ref:`ATTRIBUTE_VALUE_CLASS_MAP` on faultish types.
+        checks given ``value`` to be of the correct types.
 
         See Also
         --------
@@ -845,7 +881,7 @@ class TrackerChange:
 
         if req.parent != parent:
             self._location_changed.add(RMIdentifier(req.identifier))
-            self._invalidate_deletion(req)
+            self.invalidate_deletion(req)
 
         children = item.get("children", [])
         cr_creations: list[dict[str, t.Any] | decl.UUIDReference] = []
