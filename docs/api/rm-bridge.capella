@@ -264,6 +264,8 @@
                 id="f2ebb4f2-5a73-458d-b18a-0d5ed03c5071" name="FOP 1"/>
             <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
                 id="6d547f3b-46f3-4a88-83e8-f6c1512fb9fb" name="FOP 2"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="9c19d5ac-77ea-4fcb-ac88-49f6c6e1c832" name="FOP 3"/>
           </ownedFunctions>
           <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
               id="e9a68b7d-ab1c-4224-9eb9-338e2de5bb37" name="trigger model export">
@@ -351,8 +353,6 @@
               id="ea1027a2-8936-4f9f-88b6-d994490e9754" name="provide model">
             <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
                 id="aec48668-f7b1-434b-85f5-bd88e1c33620" name="FIP 1"/>
-            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
-                id="5a5ff105-3701-40c8-9227-c4890980dce0" name="FIP 1"/>
             <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
                 id="89f44b4e-1496-4672-a2e7-fbca41042bce" name="FOP 1"/>
             <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
@@ -389,6 +389,16 @@
             <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
                 id="a6185655-6583-4043-8a72-d15be29c3615" name="FOP 1"/>
           </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
+              id="da1b0eda-01c9-4f7a-b3bf-fc2094748aad" name="update model">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="5a5ff105-3701-40c8-9227-c4890980dce0" name="FIP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.la:LogicalFunction"
+              id="657d713a-085f-448b-9786-4540071031b4" name="collect logs">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="8c89e18c-3bb0-40a0-8c41-b2b793811dfb" name="FIP 1"/>
+          </ownedFunctions>
           <ownedFunctionRealizations xsi:type="org.polarsys.capella.core.data.fa:FunctionRealization"
               id="d3af7782-ac8a-4dd1-ab23-f579265ba083" targetElement="#a44daef8-da37-4e5f-996f-62dd5d98ca05"
               sourceElement="#9f6a07ac-35cd-4c84-a271-bfd40a80f1d3"/>
@@ -405,7 +415,7 @@
               id="766df0b4-1afb-4ff4-aae0-8b7cab614275" name="SyncActions" target="#c07b75ee-5e5e-427c-a787-ac95a1b105b6"
               source="#bf2a4fe6-312a-4dbb-8bbb-aa1e4e16d860"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
-              id="ce863020-fcc9-4cdb-ba24-7ff6e375b266" name="git commit" target="#5a5ff105-3701-40c8-9227-c4890980dce0"
+              id="ce863020-fcc9-4cdb-ba24-7ff6e375b266" name="updated model" target="#5a5ff105-3701-40c8-9227-c4890980dce0"
               source="#f2ebb4f2-5a73-458d-b18a-0d5ed03c5071"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="6822f50e-9b0b-4729-a546-ade178987532" name="model xml" target="#c6a76a8c-b98b-4454-9ac8-b2e095deddc4"
@@ -423,7 +433,7 @@
               id="9a8227e9-a5e1-4570-84d3-b6f37a7349a1" name="" target="#77dd57b2-66eb-4bcf-ab45-cbe902352f0d"
               source="#dae9e41f-d5b7-4e7e-9819-bbe74a67e791"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
-              id="140a3ae2-18cb-44de-baa6-b29c3890dc0d" name="" target="#77dd57b2-66eb-4bcf-ab45-cbe902352f0d"
+              id="140a3ae2-18cb-44de-baa6-b29c3890dc0d" name="workitem crud" target="#77dd57b2-66eb-4bcf-ab45-cbe902352f0d"
               source="#395e4d10-ef01-4be4-9fed-cf15b78d979f"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="24377cf4-9388-4102-b18c-e95b1fefbad3" name="push to git status"
@@ -438,11 +448,14 @@
               id="4b788388-1390-4854-8d05-9847aa35c3fc" name="RM Sync Config" target="#d23d353a-c0dd-4ffc-8c15-a41ff7461b34"
               source="#c36fd5a5-dc75-46ce-ac95-087b38bf1afc"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
-              id="600f2316-7868-43ab-8ddc-ba7b0bd51c8f" name="" target="#063865d4-22a2-4a74-afce-f4a9452657de"
+              id="600f2316-7868-43ab-8ddc-ba7b0bd51c8f" name="attachment" target="#063865d4-22a2-4a74-afce-f4a9452657de"
               source="#29a1eabf-7d9a-4c4f-8a34-cbef81e9464c"/>
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="2698a363-1729-4eaf-b55f-e2e7368d5444" name="MelodyModel" target="#fa528d5e-f66e-4fc8-a752-a181bfd4c9ac"
               source="#a6185655-6583-4043-8a72-d15be29c3615"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="b32ee2bd-e809-48e9-9121-1d83ae1f13f0" name="change report" target="#8c89e18c-3bb0-40a0-8c41-b2b793811dfb"
+              source="#9c19d5ac-77ea-4fcb-ac88-49f6c6e1c832"/>
         </ownedLogicalFunctions>
       </ownedFunctionPkg>
       <ownedAbstractCapabilityPkg xsi:type="org.polarsys.capella.core.data.la:CapabilityRealizationPkg"
@@ -466,7 +479,7 @@
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
                 id="6e18b763-b2d5-480b-986d-bfe8faf7b5a2" name="git2t4c" representedInstance="#ee63f144-b54b-43bf-b1ba-35d0aef384f1"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
-                id="a1c2e010-6dc7-470a-8491-3cc6ac583305" name="Git " representedInstance="#231ce8eb-67a6-4ab6-9cca-dc0faacaf2e2"/>
+                id="a1c2e010-6dc7-470a-8491-3cc6ac583305" name="Model Provider" representedInstance="#231ce8eb-67a6-4ab6-9cca-dc0faacaf2e2"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
                 id="26543b60-c5d8-4206-9f89-4b4bd9f00654" name="" kind="SYNCHRONOUS_CALL"
                 sendingEnd="#5b8f608a-0c08-411f-b615-575a32290be4" receivingEnd="#243b96ef-a597-42ac-bf64-b3dffca50a6f"/>
@@ -493,10 +506,10 @@
                 kind="ASYNCHRONOUS_CALL" sendingEnd="#dfa15410-b6bd-4ee9-810c-f413312d83a7"
                 receivingEnd="#35718ece-a514-4074-bc0b-e6d7a078669d"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
-                id="cab0615e-47cf-45ef-98c2-52dfad477e15" name="git commit" kind="SYNCHRONOUS_CALL"
+                id="cab0615e-47cf-45ef-98c2-52dfad477e15" name="updated model" kind="SYNCHRONOUS_CALL"
                 sendingEnd="#5ecb0c8a-7c72-41ef-b272-bc800abbfa7b" receivingEnd="#a358b401-dfa4-44e1-b23e-a744235911c5"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
-                id="239b7682-41d0-47cb-8934-be413b88ad78" name="git commit" kind="REPLY"
+                id="239b7682-41d0-47cb-8934-be413b88ad78" name="updated model" kind="REPLY"
                 sendingEnd="#40a592bb-5d32-4959-95aa-2b8423f95089" receivingEnd="#46587a49-7891-4c3b-aa73-5d95281c0f4c"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
                 id="b59880e6-f720-4fc4-a708-42aef8ec3278" name="model xml" kind="ASYNCHRONOUS_CALL"
@@ -984,6 +997,8 @@
             name="Logical System" abstractType="#e72286c9-2fed-4faa-8d9d-0076140ec7eb"/>
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="f63774d7-09f6-44a4-8ec3-bfe8eb7719bb"
             name="RM Tool" abstractType="#bfb8c9d2-9ee8-4361-9f61-4d21fd83e59b"/>
+        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="aedfa0d6-2bbf-46e0-9d6a-d2c80cf891a6"
+            name="Logtarget (e.g. GitLab CI)" abstractType="#c8f1eedf-0372-4bed-bb6e-ed4c07d1fccd"/>
         <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
             id="e72286c9-2fed-4faa-8d9d-0076140ec7eb" name="Logical System">
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="306a87b4-5d94-4193-8006-dd1889b689ec"
@@ -995,7 +1010,7 @@
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="5b337aed-1399-46a9-a9f7-1cb73ad9681e"
               name="t4c2git" abstractType="#0f76f39f-d787-4488-97c7-85f160ddd951"/>
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="231ce8eb-67a6-4ab6-9cca-dc0faacaf2e2"
-              name="Git " abstractType="#1bd4f57b-1028-456f-9faf-4fe72914a652"/>
+              name="Model Provider" abstractType="#1bd4f57b-1028-456f-9faf-4fe72914a652"/>
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="57427d3e-911d-4932-9208-f82dca56ffb8"
               name="RM Bridge Config" abstractType="#365657eb-54bb-498e-8748-6fbee6df55a1"/>
           <ownedFeatures xsi:type="org.polarsys.capella.core.data.cs:Part" id="58c009a2-85f7-416e-9bb3-ed1785097181"
@@ -1051,9 +1066,12 @@
                 sourceElement="#0f76f39f-d787-4488-97c7-85f160ddd951"/>
           </ownedLogicalComponents>
           <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
-              id="1bd4f57b-1028-456f-9faf-4fe72914a652" name="Git " actor="true">
+              id="1bd4f57b-1028-456f-9faf-4fe72914a652" name="Model Provider" actor="true">
             <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
                 id="89041a38-464d-4071-9955-3dc0277c7ccf" targetElement="#ea1027a2-8936-4f9f-88b6-d994490e9754"
+                sourceElement="#1bd4f57b-1028-456f-9faf-4fe72914a652"/>
+            <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+                id="4b7e860e-f6cf-4e0b-9606-b885cdaf5d1f" targetElement="#da1b0eda-01c9-4f7a-b3bf-fc2094748aad"
                 sourceElement="#1bd4f57b-1028-456f-9faf-4fe72914a652"/>
           </ownedLogicalComponents>
           <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
@@ -1084,6 +1102,13 @@
           <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
               id="c50fd1ee-d90d-4fd8-9a18-46cfdde84acd" targetElement="#0470dfd1-5ed0-4d3b-aa20-a1a74f86ba84"
               sourceElement="#bfb8c9d2-9ee8-4361-9f61-4d21fd83e59b"/>
+        </ownedLogicalComponents>
+        <ownedLogicalComponents xsi:type="org.polarsys.capella.core.data.la:LogicalComponent"
+            id="c8f1eedf-0372-4bed-bb6e-ed4c07d1fccd" name="Logtarget (e.g. GitLab CI)"
+            actor="true">
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="c09e5781-d074-42cd-987c-6c1c114eb2f8" targetElement="#657d713a-085f-448b-9786-4540071031b4"
+              sourceElement="#c8f1eedf-0372-4bed-bb6e-ed4c07d1fccd"/>
         </ownedLogicalComponents>
       </ownedLogicalComponentPkg>
       <ownedSystemAnalysisRealizations xsi:type="org.polarsys.capella.core.data.la:SystemAnalysisRealization"
