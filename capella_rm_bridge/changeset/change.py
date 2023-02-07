@@ -758,9 +758,14 @@ class TrackerChange:
             )
             assert isinstance(reqtype, reqif.RequirementType)
 
-            mods = _compare_simple_attributes(
-                reqtype, item, filter=("attributes",)
-            )
+            try:
+                mods = _compare_simple_attributes(
+                    reqtype, item, filter=("attributes",)
+                )
+            except AttributeError as error:
+                self._handle_user_error(
+                    f"Invalid workitem '{identifier}'. {error.args[0]}"
+                )
 
             attr_defs_deletions: list[decl.UUIDReference] = [
                 decl.UUIDReference(adef.uuid)
@@ -819,9 +824,16 @@ class TrackerChange:
         from it.
         """
         base = {"parent": decl.UUIDReference(req.uuid)}
-        mods = _compare_simple_attributes(
-            req, item, filter=("id", "type", "attributes", "children")
-        )
+        try:
+            mods = _compare_simple_attributes(
+                req, item, filter=("id", "type", "attributes", "children")
+            )
+        except AttributeError as error:
+            self._handle_user_error(
+                f"Invalid workitem '{item['id']}'. {error.args[0]}"
+            )
+            return
+
         req_type_id = RMIdentifier(item.get("type", ""))
         attributes_deletions = list[dict[str, t.Any]]()
         if req_type_id != req.type.identifier:
@@ -933,6 +945,7 @@ class TrackerChange:
                             f"Invalid workitem '{child['id']}'. "
                             + error.args[0]
                         )
+                        continue
 
                     if creq.parent != req:
                         container.append(decl.UUIDReference(creq.uuid))
@@ -1159,7 +1172,7 @@ def _compare_simple_attributes(
 
         converter = type_conversion.get(name, lambda i: i)
         converted_value = converter(value)
-        if getattr(req, name, None) != converted_value:
+        if getattr(req, name) != converted_value:
             mods[name] = value
     return mods
 
