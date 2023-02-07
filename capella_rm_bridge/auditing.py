@@ -438,9 +438,9 @@ class RMReporter:
         return ext_count, mod_count, del_count, type_count
 
     def _is_reqtype_change(self, change: Change) -> bool:
-        if isinstance(change, Modification):
+        if isinstance(change, (Modification, Deletion)):
             obj = self.model.by_uuid(change.parent)
-        else:
+        elif isinstance(change, Extension):
             obj = self.model.by_uuid(change.uuid)
 
         return type(obj) in {
