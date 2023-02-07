@@ -1,79 +1,81 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
-# yaml-language-server: $schema=../../rm_bridge/model_modifier/changeset/snapshot_input.schema.json
-- id: project/space/example title
-  long_name: example title
-  data_types:
-    Type:
-      - Unset
-      - Folder
-      - Functional
-      - Non-Functional
-    Release:
-      - Rel. 1
-  requirement_types:
-    system_requirement:
-      long_name: System Requirement
-      attributes:
-        Capella ID:
-          type: String
-        Type:
-          type: Enum
-          data_type: Type
-        Submitted at:
-          type: Date
-        Release:
-          type: Enum
-          data_type: Release
-          multi_values: true
-        Test after migration:
-          type: String
-    software_requirement:
-      long_name: Software Requirement
-      attributes:
-        Capella ID:
-          type: String
-        Type:
-          type: Enum
-          data_type: Type
-        Submitted at:
-          type: Date
-    stakeholder_requirement:
-      long_name: Stakeholders Requirement
-      attributes:
-        Capella ID:
-          type: String
-  items:
-    - id: REQ-001
-      long_name: Non-Functional Requirements
-      text: <p>Changed Test Description</p>
-      type: system_requirement
-      attributes:
-        Capella ID: RF-NFNC-00001
-        Type: [Non-Functional]
-        Release:
-          - Rel. 1
-      children:
-        - id: REQ-002
-          long_name: Non-Function Requirement
-          text: ...
-          type: system_requirement
-          attributes:
-            Capella ID: R-NFNC-00002
-            Type: [Non-Functional]
-            Submitted at: 2022-06-30 17:07:18.664000+02:00
-            Test after migration: New
-    - id: REQ-003
-      long_name: Functional Requirements
-      text: <p>Brand new</p>
-      type: software_requirement
-      attributes:
-        Type: [Folder]
-      children:
-        - id: REQ-004
-          long_name: Function Requirement
-          type: software_requirement
-          attributes:
-            Capella ID: R-FNC-00001
-            Type: [Unset]
+# yaml-language-server: $schema=../../../capella_rm_bridge/changeset/snapshot_input.schema.json
+metadata:
+  tool: RM Tool Version
+  revision: r1234
+  connector: RM-Bridge-Polarion vX.Y.Z
+modules:
+  - id: project/space/example title
+    long_name: example title
+    data_types:
+      Type:
+        - Unset
+        - Folder
+        - Functional
+        - Non-Functional
+      Release:
+        - Rel. 1
+    requirement_types:
+      system_requirement:
+        long_name: System Requirement
+        attributes:
+          Capella ID:
+            type: String
+          Type:
+            type: Enum
+          Submitted at:
+            type: Date
+          Release:
+            type: Enum
+            multi_values: true
+          Test after migration:
+            type: String
+      software_requirement:
+        long_name: Software Requirement
+        attributes:
+          Capella ID:
+            type: String
+          Type:
+            type: Enum
+          Submitted at:
+            type: Date
+      stakeholder_requirement:
+        long_name: Stakeholders Requirement
+        attributes:
+          Capella ID:
+            type: String
+    items:
+      - id: REQ-001
+        long_name: Non-Functional Requirements
+        text: <p>Changed Test Description</p>
+        type: system_requirement
+        attributes:
+          Capella ID: RF-NFNC-00001
+          Type: [Non-Functional]
+          Release:
+            - Rel. 1
+        children:
+          - id: REQ-002
+            long_name: Non-Function Requirement
+            text: ...
+            type: system_requirement
+            attributes:
+              Capella ID: R-NFNC-00002
+              Type: [Non-Functional]
+              Submitted at: 2022-06-30 17:07:18.664000+02:00
+              Test after migration: New
+      - id: REQ-003
+        long_name: Functional Requirements
+        text: <p>Brand new</p>
+        type: software_requirement
+        attributes:
+          Type: [Folder]
+        children:
+          - id: REQ-004
+            long_name: Function Requirement
+            type: software_requirement
+            attributes:
+              Capella ID: R-FNC-00001
+              Type: [Unset]

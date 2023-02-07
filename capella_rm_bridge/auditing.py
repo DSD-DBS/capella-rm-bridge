@@ -115,6 +115,7 @@ class ChangeAuditor:
             attribute="allocated_functions",
             element="<LogicalFunction 'Root Logical Function' (f2...)>",
             uuid="f28ec0f8-f3b3-43a0-8af7-79f194b29a2d",
+        ),
         Deletion(
             parent="0d2edb8f-fa34-4e73-89ec-fb9a63001440",
             attribute="components",
