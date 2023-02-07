@@ -103,8 +103,10 @@ def calculate_change_set(
         else:
             actions.extend(tchange.actions)
 
-        if force and tchange.actions not in actions:
-            actions.extend(tchange.actions)
+        if force and tchange.actions:
+            for action in tchange.actions:
+                if action not in actions:
+                    actions.append(action)
     except (
         actiontypes.InvalidTrackerConfig,
         actiontypes.InvalidSnapshotModule,
