@@ -363,6 +363,25 @@ class TestModActions(ActionsTest):
 
         assert caplog.messages[0].endswith(INVALID_ATTR_DEF_ERROR_MSG)
 
+    def test_faulty_simple_attributes_log_AttributeError(
+        self,
+        migration_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test logging ``AttributeError`` on faulty simple attributes."""
+        tracker = copy.deepcopy(self.tracker)
+        titem = tracker["items"][0]
+        titem["imagination"] = 1
+        message_end = (
+            "Invalid module 'project/space/example title'. Invalid "
+            "workitem 'REQ-001'. imagination isn't defined on Folder"
+        )
+
+        with caplog.at_level(logging.ERROR):
+            self.tracker_change(migration_model, tracker, gather_logs=False)
+
+        assert caplog.messages[0].endswith(message_end)
+
     def test_InvalidAttributeDefinition_errors_are_gathered(
         self, migration_model: capellambse.MelodyModel
     ) -> None:
