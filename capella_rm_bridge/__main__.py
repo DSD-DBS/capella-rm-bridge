@@ -19,7 +19,8 @@ from capella_rm_bridge import changeset
 
 from . import auditing
 
-CHANGE_PATH = pathlib.Path("change-set.yaml")
+CHANGE_FOLDER_PATH = pathlib.Path("change-sets")
+CHANGE_FILENAME = "change-set.yaml"
 CHANGE_HISTORY_PATH = pathlib.Path("change.history")
 ERROR_PATH = pathlib.Path("change-errors.txt")
 LOGGER = logging.getLogger(__name__)
@@ -28,6 +29,16 @@ LOGGER = logging.getLogger(__name__)
 def create_errors_statement(errors: cabc.Iterable[str]) -> str:
     """Return a commit message for errors from the ``ChangeSet`` calc."""
     return "\n".join(errors)
+
+
+def write_change_set(change: str, module: dict[str, t.Any]) -> pathlib.Path:
+    """Create a change-set.yaml underneath the change-sets folder."""
+    CHANGE_FOLDER_PATH.mkdir(parents=True, exist_ok=True)
+    mid = module["id"].replace("/", "~")
+    path = CHANGE_FOLDER_PATH / f"{mid}-{CHANGE_FILENAME}"
+    path.write_text(change, encoding="utf8")
+    LOGGER.info("Change-set file %s written.", str(path))
+    return path
 
 
 @click.command()
@@ -150,15 +161,15 @@ def main(
 
         if change_set:
             change = decl.dump(change_set)
-            CHANGE_PATH.write_text(change, encoding="utf8")
+            change_path = write_change_set(change, module)
             with auditing.ChangeAuditor(model) as changed_objs:
-                decl.apply(model, CHANGE_PATH)
+                decl.apply(model, change_path)
 
             reporter.store_change(
                 changed_objs, module["id"], module["category"]
             )
 
-    if force:
+    if force or not errors:
         commit_message = reporter.create_commit_message(snapshot["metadata"])
         print(commit_message)
         if reporter.store and not dry_run:
@@ -170,13 +181,7 @@ def main(
         if save_error_log:
             ERROR_PATH.write_text(error_statement, encoding="utf8")
             LOGGER.info("Change-errors file %s written.", ERROR_PATH)
-
         sys.exit(1)
-    else:
-        commit_message = reporter.create_commit_message(snapshot["metadata"])
-        print(commit_message)
-        if reporter.store and not dry_run:
-            model.save(push=push, commit_msg=commit_message)
 
     report = reporter.get_change_report()
     if report and save_change_history:
