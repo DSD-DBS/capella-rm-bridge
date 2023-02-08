@@ -21,6 +21,7 @@ from . import auditing
 
 CHANGE_PATH = pathlib.Path("change-set.yaml")
 CHANGE_HISTORY_PATH = pathlib.Path("change.history")
+COMMIT_MSG_PATH = pathlib.Path("commit-message.txt")
 ERROR_PATH = pathlib.Path("change-errors.txt")
 LOGGER = logging.getLogger(__name__)
 
@@ -167,6 +168,7 @@ def main(
         sys.exit(1)
     else:
         commit_message = reporter.create_commit_message(snapshot["metadata"])
+        COMMIT_MSG_PATH.write_text(commit_message, encoding="utf8")
         print(commit_message)
         if reporter.store and not dry_run:
             model.save(push=push, commit_msg=commit_message)
