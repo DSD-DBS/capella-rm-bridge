@@ -173,7 +173,9 @@ def main(
         commit_message = reporter.create_commit_message(snapshot["metadata"])
         print(commit_message)
         if reporter.store and not dry_run:
-            model.save(push=push, commit_msg=commit_message)
+            model.save(
+                push=push, commit_msg=commit_message, push_options=["skip.ci"]
+            )
 
     if errors:
         error_statement = create_errors_statement(errors)

@@ -374,7 +374,7 @@ def test_create_commit_message(migration_model: capellambse.MelodyModel):
     commit_message = reporter.create_commit_message(tool_metadata)
 
     assert commit_message.startswith(
-        "Updated model with RM content from rev.123 [skip ci]\n"
+        "Updated model with RM content from rev.123\n"
         "\n"
         "Synchronized 1 category1 and 1 category2:\n"
         "- 1: created: 1; updated: 1; deleted: 1; type-changes: 0\n"

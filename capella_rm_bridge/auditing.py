@@ -407,7 +407,7 @@ class RMReporter:
             main_message = generate_main_message(self.categories.items())
             main = "\n".join((main_message, "\n".join(list_lines) + "\n"))
 
-        summary = f"{summary} from rev.{tool_metadata['revision']} [skip ci]\n"
+        summary = f"{summary} from rev.{tool_metadata['revision']}\n"
         rm_bridge_dependencies = get_dependencies()
         dependencies = "\n".join(
             (
