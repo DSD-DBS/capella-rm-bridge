@@ -37,7 +37,7 @@ Documentation
 
 Read the `full documentation on Github pages`__.
 
-__ https://dsd-dbs.github.io/capellambse-rm-bridge
+__ https://dsd-dbs.github.io/capella-rm-bridge
 
 Installation
 ------------

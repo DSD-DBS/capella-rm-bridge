@@ -45,12 +45,23 @@ class WorkItem(te.TypedDict, total=False):
     children: cabc.Sequence[WorkItem]
 
 
+class MetaData(te.TypedDict):
+    tool: str
+    revision: str
+    connector: str
+
+
 class TrackerSnapshot(te.TypedDict):
     id: int
     version: int | float
     data_types: cabc.Mapping[str, cabc.Sequence[str]]
     requirement_types: cabc.Mapping[str, cabc.Sequence[cabc.Mapping[str, str]]]
     items: cabc.Sequence[WorkItem]
+
+
+class Snapshot(te.TypedDict):
+    metadata: MetaData
+    modules: cabc.Sequence[TrackerSnapshot]
 
 
 class AttributeDefinition(te.TypedDict):
