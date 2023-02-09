@@ -231,14 +231,14 @@ class ChangeAuditor:
                 oval = getattr(obj, attr_name)
                 nrepr = self._get_value_repr(value)
                 orepr = self._get_value_repr(oval)
-                params = (obj.uuid, attr_name, nrepr, orepr)
+                events = [EventType(obj.uuid, attr_name, nrepr, orepr)]
             elif event.endswith("setitem"):
                 assert len(args) == 4
                 obj, attr_name, index, value = args
                 nrepr = self._get_value_repr(value)
                 oval = getattr(obj, attr_name)[index]
                 orepr = self._get_value_repr(oval)
-                params = (obj.uuid, attr_name, nrepr, orepr)
+                events = [EventType(obj.uuid, attr_name, nrepr, orepr)]
             elif event.endswith("delete"):
                 assert len(args) == 3
                 obj, attr_name, index = args
@@ -247,22 +247,34 @@ class ChangeAuditor:
                 if index is not None:
                     oval = oval[index]
 
-                assert isinstance(oval, common.GenericElement)
-                orepr = self._get_value_repr(oval)
-                params = (obj.uuid, attr_name, orepr, oval.uuid)
+                if not isinstance(oval, common.GenericElement):
+                    assert isinstance(oval, common.ElementList)
+                    events = []
+                    assert EventType is Deletion
+                    for elt in oval:
+                        event_type = EventType(
+                            obj.uuid,
+                            attr_name,
+                            self._get_value_repr(elt),
+                            elt.uuid,
+                        )
+                        events.append(event_type)
+                else:
+                    orepr = self._get_value_repr(oval)
+                    events = [EventType(obj.uuid, attr_name, orepr, oval.uuid)]
             elif event.endswith("insert"):
                 assert len(args) == 4
                 obj, attr_name, _, value = args
                 nrepr = self._get_value_repr(value)
                 assert isinstance(value, common.GenericElement)
-                params = (obj.uuid, attr_name, nrepr, value.uuid)
+                events = [EventType(obj.uuid, attr_name, nrepr, value.uuid)]
             elif event.endswith("create"):
                 assert len(args) == 3
                 obj, attr_name, value = args
                 repr = self._get_value_repr(value)
-                params = (obj.uuid, attr_name, repr, value.uuid)
+                events = [EventType(obj.uuid, attr_name, repr, value.uuid)]
 
-            self.context.append(EventType(*params))
+            self.context.extend(events)
 
     def _get_value_repr(self, value: t.Any) -> str | t.Any:
         if hasattr(value, "_short_repr_"):
