@@ -36,6 +36,9 @@ def write_change_set(change: str, module: dict[str, t.Any]) -> pathlib.Path:
     CHANGE_FOLDER_PATH.mkdir(parents=True, exist_ok=True)
     mid = module["id"].replace("/", "~")
     path = CHANGE_FOLDER_PATH / f"{mid}-{CHANGE_FILENAME}"
+    if path.is_file():
+        path.unlink(missing_ok=True)
+
     path.write_text(change, encoding="utf8")
     LOGGER.info("Change-set file %s written.", str(path))
     return path
