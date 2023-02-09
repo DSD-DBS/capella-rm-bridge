@@ -1839,8 +1839,6 @@ The predator is far away</bodies>
               id="686e198b-8baf-49f9-9d85-24571bd05d93" ReqIFLongName="Type">
             <specifiedValues xsi:type="Requirements:EnumValue" id="61d37f6e-b821-49fa-b68d-c4ff48b8cbbf"
                 ReqIFLongName="Unset"/>
-            <specifiedValues xsi:type="Requirements:EnumValue" id="b8e062d5-1181-4a69-9b25-15fd738b15ed"
-                ReqIFLongName="Folder"/>
             <specifiedValues xsi:type="Requirements:EnumValue" id="5a03662a-d602-4524-8706-5bf83275ee2a"
                 ReqIFLongName="Functional"/>
           </ownedDefinitionTypes>

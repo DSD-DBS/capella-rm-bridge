@@ -483,7 +483,7 @@ class TrackerChange:
             base["folders"] = []
             child: act.WorkItem
             for child in item["children"]:
-                key = "folders" if child.get("children") else "requirements"
+                key = "folders" if "children" in child else "requirements"
                 creq = self.reqfinder.work_item_by_identifier(child["id"])
                 if creq is None:
                     child_actions = self.yield_requirements_create_actions(
@@ -920,7 +920,7 @@ class TrackerChange:
             child_folder_ids = set[RMIdentifier]()
             for child in children:
                 cid = RMIdentifier(str(child["id"]))
-                if child.get("children", []):
+                if "children" in child:
                     key = "folders"
                     child_folder_ids.add(cid)
                 else:

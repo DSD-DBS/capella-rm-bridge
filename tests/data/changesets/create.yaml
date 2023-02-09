@@ -14,8 +14,6 @@
             values:
               - long_name: Unset
                 promise_id: EnumValue Type Unset
-              - long_name: Folder
-                promise_id: EnumValue Type Folder
               - long_name: Functional
                 promise_id: EnumValue Type Functional
             promise_id: EnumerationDataTypeDefinition Type

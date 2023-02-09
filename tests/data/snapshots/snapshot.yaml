@@ -7,7 +7,6 @@
   data_types: # Enumeration Data Type Definitions
     Type:
       - Unset
-      - Folder
       - Functional
     Release:
       - Feature Rel. 1
@@ -47,9 +46,6 @@
       text: <p>Test Description</p>
       type: system_requirement # WorkItemType ID NOT name
 
-      attributes:
-        Type: [Folder] # artifact from CODEBEAMER and cleaned in RM Bridge
-
       children: # Folder b/c non-empty children
         - id: REQ-002
           long_name: Function Requirement
@@ -65,8 +61,6 @@
         - id: REQ-003
           long_name: Kinds
           type: software_requirement
-          attributes:
-            Type: [Folder]
           children:
             - id: REQ-004
               long_name: Kind Requirement

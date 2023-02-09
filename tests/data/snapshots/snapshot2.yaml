@@ -7,7 +7,6 @@
   data_types:
     Type:
       - Unset
-      - Folder
       - Non-Functional
   requirement_types:
     system_requirement:

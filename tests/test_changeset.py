@@ -266,6 +266,22 @@ class TestCreateActions(ActionsTest):
 
         assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
 
+    def test_requirements_with_empty_children_are_rendered_as_folders(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        tracker["items"][0]["children"][1]["children"][0]["children"] = []
+
+        change_set = self.tracker_change(
+            clean_model, tracker, gather_logs=True
+        )
+
+        assert change_set and (change := change_set.actions[0]["extend"])
+        assert (
+            change["folders"][0]["folders"][0]["folders"][0]["identifier"]
+            == "REQ-004"
+        )
+
     @pytest.mark.integtest
     def test_calculate_change_sets(
         self, clean_model: capellambse.MelodyModel
@@ -398,6 +414,19 @@ class TestModActions(ActionsTest):
         )
 
         assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
+
+    def test_requirements_with_empty_children_are_rendered_as_folders(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        tracker["items"][1]["children"][0]["children"] = []
+
+        change_set = self.tracker_change(
+            clean_model, tracker, gather_logs=True
+        )
+
+        assert change_set and (change := change_set.actions[0]["extend"])
+        assert change["folders"][1]["folders"][0]["identifier"] == "REQ-004"
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -628,8 +657,8 @@ class TestCalculateChangeSet(ActionsTest):
                     assert attr_def["long_name"] != missing_enumdt
 
         folder = change_set["extend"]["folders"][0]
-        for req in folder["requirements"]:
-            for attr_value in req["attributes"]:
+        for folder in folder["folders"]:
+            for attr_value in folder.get("attributes", []):
                 assert (
                     missing_enumdt not in attr_value["definition"].identifier
                 )
@@ -645,7 +674,7 @@ class TestCalculateChangeSet(ActionsTest):
         snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
         titem = snapshot["items"][0]
         first_child = titem["children"][0]
-        titem["attributes"]["Test"] = 1  # type: ignore[index]
+        titem["attributes"] = {"Test": 1}  # type: ignore[index]
         messages = [
             "Invalid workitem 'REQ-001'. "
             "Invalid field found: field name 'Test' not defined in "
@@ -660,6 +689,7 @@ class TestCalculateChangeSet(ActionsTest):
                 + f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
             )
         del titem["children"][1]["type"]
+        titem["children"][1]["attributes"] = {"Test": 1}
         tconfig = TEST_CONFIG["modules"][0]
         messages.append(
             "Invalid workitem 'REQ-003'. Missing type but attributes found"
