@@ -9,8 +9,10 @@ Snapshot
 ********
 
 The snapshot is the input needed for calculating the
-:ref:`ChangeSet<change-set>` and is a list of modules. Each module will be
-compared against a matching
+:ref:`ChangeSet<change-set>`. It consists of a metadata section and a list of
+modules. The metadata documents the versions of the used RM tool and its
+connector, the revision of the RM content and the  Each module will be compared
+against a matching
 :external:class:`~capellambse.extensions.reqif.CapellaModule` from the given
 model. If no matching ``CapellaModule`` was found this module will be skipped.
 Differences of the module snapshot and the model ``CapellaModule`` will result
@@ -24,6 +26,11 @@ As previously noted: A module (or tracker) in the given snapshot equals a
 
 .. code-block:: yaml
 
+  metadata:
+    tool: RM Tool Version
+    revision: r1234
+    connector: RM-Bridge-Polarion vX.Y.Z
+  modules:
    - id: MODULE-000 # mandatory
      long_name: Example # optional
 

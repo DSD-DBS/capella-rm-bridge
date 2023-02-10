@@ -34,7 +34,7 @@ from .conftest import (
 )
 
 TEST_SNAPSHOT_PATH = TEST_DATA_PATH / "snapshots"
-TEST_SNAPSHOT: list[actiontypes.TrackerSnapshot] = yaml.safe_load(
+TEST_SNAPSHOT: actiontypes.Snapshot = yaml.safe_load(
     (TEST_SNAPSHOT_PATH / "snapshot.yaml").read_text(encoding="utf-8")
 )
 TEST_SNAPSHOT_1 = yaml.safe_load(
@@ -99,7 +99,9 @@ class TestTrackerChangeInit(ActionsTest):
         del tconfig["capella-uuid"]  # type:ignore[misc]
 
         with pytest.raises(actiontypes.InvalidTrackerConfig):
-            self.tracker_change(clean_model, TEST_SNAPSHOT[0], tconfig)
+            self.tracker_change(
+                clean_model, TEST_SNAPSHOT["modules"][0], tconfig
+            )
 
     def test_init_on_missing_module_raises_MissingRequirementsModule(
         self, clean_model: capellambse.MelodyModel
@@ -114,12 +116,12 @@ class TestTrackerChangeInit(ActionsTest):
         del clean_model.la.requirement_modules[0]
 
         with pytest.raises(change.MissingCapellaModule):
-            self.tracker_change(clean_model, TEST_SNAPSHOT[0])
+            self.tracker_change(clean_model, TEST_SNAPSHOT["modules"][0])
 
     def test_init_on_missing_module_id_raises_InvalidSnapshotModule(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
-        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        snapshot = copy.deepcopy(TEST_SNAPSHOT["modules"][0])
         del snapshot["id"]  # type: ignore[misc]
 
         with pytest.raises(actiontypes.InvalidSnapshotModule):
@@ -129,7 +131,7 @@ class TestTrackerChangeInit(ActionsTest):
 class TestCreateActions(ActionsTest):
     """UnitTests for all methods requesting creations."""
 
-    tracker = TEST_SNAPSHOT[0]
+    tracker = TEST_SNAPSHOT["modules"][0]
     titem = tracker["items"][0]
     tracker_change_creations = TEST_MODULE_CHANGE[0]["extend"]
 
@@ -288,7 +290,7 @@ class TestCreateActions(ActionsTest):
     ) -> None:
         """Test ``ChangeSet`` on clean model for first migration run."""
         change_set, errors = calculate_change_set(
-            clean_model, TEST_CONFIG["modules"][0], TEST_SNAPSHOT[0]
+            clean_model, TEST_CONFIG["modules"][0], TEST_SNAPSHOT["modules"][0]
         )
 
         assert not errors
@@ -298,7 +300,7 @@ class TestCreateActions(ActionsTest):
 class TestModActions(ActionsTest):
     """Tests all methods that request modifications."""
 
-    tracker = TEST_SNAPSHOT_1[0]
+    tracker = TEST_SNAPSHOT_1["modules"][0]
     titem = tracker["items"][0]
 
     ENUM_DATA_TYPE_MODS = TEST_MODULE_CHANGE_1[:2]
@@ -311,7 +313,9 @@ class TestModActions(ActionsTest):
     ) -> None:
         r"""Test producing ``ModAction``\ s for EnumDataTypeDefinitions."""
         snapshot = copy.deepcopy(self.tracker)
-        snapshot["requirement_types"] = TEST_SNAPSHOT[0]["requirement_types"]
+        snapshot["requirement_types"] = TEST_SNAPSHOT["modules"][0][
+            "requirement_types"
+        ]
         snapshot["items"] = []
 
         tchange = self.tracker_change(migration_model, snapshot)
@@ -324,8 +328,8 @@ class TestModActions(ActionsTest):
     ) -> None:
         r"""Test producing ``ModAction``\ s for RequirementTypes."""
         snapshot = copy.deepcopy(self.tracker)
-        snapshot["data_types"] = TEST_SNAPSHOT[0]["data_types"]
-        snapshot["items"] = TEST_SNAPSHOT[0]["items"]
+        snapshot["data_types"] = TEST_SNAPSHOT["modules"][0]["data_types"]
+        snapshot["items"] = TEST_SNAPSHOT["modules"][0]["items"]
 
         tchange = self.tracker_change(migration_model, snapshot)
 
@@ -434,7 +438,9 @@ class TestModActions(ActionsTest):
     ) -> None:
         """Test ChangeSet on clean model for first migration run."""
         change_set, errors = calculate_change_set(
-            migration_model, TEST_CONFIG["modules"][0], TEST_SNAPSHOT_1[0]
+            migration_model,
+            TEST_CONFIG["modules"][0],
+            TEST_SNAPSHOT_1["modules"][0],
         )
 
         assert not errors
@@ -444,7 +450,7 @@ class TestModActions(ActionsTest):
 class TestDeleteActions(ActionsTest):
     """Test all methods that request deletions."""
 
-    tracker = TEST_SNAPSHOT_2[0]
+    tracker = TEST_SNAPSHOT_2["modules"][0]
     titem = tracker["items"][0]
 
     REQ_TYPE_FOLDER_DEL = TEST_MODULE_CHANGE_2[0]
@@ -484,7 +490,9 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test that EnumDataTypeDefinitions are deleted."""
         snapshot = copy.deepcopy(self.tracker)
-        snapshot["requirement_types"] = TEST_SNAPSHOT_1[0]["requirement_types"]
+        snapshot["requirement_types"] = TEST_SNAPSHOT_1["modules"][0][
+            "requirement_types"
+        ]
         snapshot["items"] = []
         data_type_del = copy.deepcopy(self.REQ_TYPE_FOLDER_DEL)
         del data_type_del["delete"]["requirement_types"]
@@ -501,7 +509,7 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test that RequirementTypes are deleted."""
         snapshot = copy.deepcopy(self.tracker)
-        snapshot["data_types"] = TEST_SNAPSHOT_1[0]["data_types"]
+        snapshot["data_types"] = TEST_SNAPSHOT_1["modules"][0]["data_types"]
         snapshot["items"] = []
         req_type_del = copy.deepcopy(self.REQ_TYPE_FOLDER_DEL)
         del req_type_del["delete"]["data_type_definitions"]
@@ -517,8 +525,10 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test that RequirementsModActions are produced."""
         snapshot = copy.deepcopy(self.tracker)
-        snapshot["data_types"] = TEST_SNAPSHOT_1[0]["data_types"]
-        snapshot["requirement_types"] = TEST_SNAPSHOT_1[0]["requirement_types"]
+        snapshot["data_types"] = TEST_SNAPSHOT_1["modules"][0]["data_types"]
+        snapshot["requirement_types"] = TEST_SNAPSHOT_1["modules"][0][
+            "requirement_types"
+        ]
         requirement_del = self.resolve_ChangeSet(deletion_model, self.REQ_DEL)
 
         tchange = self.tracker_change(deletion_model, snapshot)
@@ -539,7 +549,9 @@ class TestDeleteActions(ActionsTest):
         )
 
         change_set, errors = calculate_change_set(
-            deletion_model, TEST_CONFIG["modules"][0], TEST_SNAPSHOT_2[0]
+            deletion_model,
+            TEST_CONFIG["modules"][0],
+            TEST_SNAPSHOT_2["modules"][0],
         )
 
         assert not errors
@@ -567,7 +579,10 @@ class TestCalculateChangeSet(ActionsTest):
 
         with caplog.at_level(logging.ERROR):
             calculate_change_set(
-                clean_model, config, TEST_SNAPSHOT[0], gather_logs=False
+                clean_model,
+                config,
+                TEST_SNAPSHOT["modules"][0],
+                gather_logs=False,
             )
 
         assert caplog.messages[0] == f"{self.SKIP_MESSAGE}. {message}"
@@ -587,7 +602,10 @@ class TestCalculateChangeSet(ActionsTest):
 
         with caplog.at_level(logging.ERROR):
             calculate_change_set(
-                clean_model, tconfig, TEST_SNAPSHOT[0], gather_logs=False
+                clean_model,
+                tconfig,
+                TEST_SNAPSHOT["modules"][0],
+                gather_logs=False,
             )
 
         assert caplog.messages[0] == f"{self.SKIP_MESSAGE}. {message}"
@@ -597,7 +615,7 @@ class TestCalculateChangeSet(ActionsTest):
         clean_model: capellambse.MelodyModel,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
-        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        snapshot = copy.deepcopy(TEST_SNAPSHOT["modules"][0])
         del snapshot["id"]  # type: ignore[misc]
         tconfig = TEST_CONFIG["modules"][0]
         message = (
@@ -624,7 +642,7 @@ class TestCalculateChangeSet(ActionsTest):
         )
 
         _, errors = calculate_change_set(
-            clean_model, config, TEST_SNAPSHOT[0], gather_logs=True
+            clean_model, config, TEST_SNAPSHOT["modules"][0], gather_logs=True
         )
 
         assert errors[0].startswith(self.SKIP_MESSAGE)
@@ -634,7 +652,7 @@ class TestCalculateChangeSet(ActionsTest):
         self, clean_model: capellambse.MelodyModel
     ) -> None:
         """Test that an invalid AttributeDefinition will not prohibit."""
-        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        snapshot = copy.deepcopy(TEST_SNAPSHOT["modules"][0])
         missing_enumdt = "Release"
         del snapshot["data_types"][missing_enumdt]  # type: ignore[attr-defined]
         tconfig = TEST_CONFIG["modules"][0]
@@ -671,7 +689,7 @@ class TestCalculateChangeSet(ActionsTest):
     def test_snapshot_errors_from_ChangeSet_calculation_are_gathered(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
-        snapshot = copy.deepcopy(TEST_SNAPSHOT[0])
+        snapshot = copy.deepcopy(TEST_SNAPSHOT["modules"][0])
         titem = snapshot["items"][0]
         first_child = titem["children"][0]
         titem["attributes"] = {"Test": 1}  # type: ignore[index]
