@@ -35,7 +35,7 @@ _ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[str, type] = {
 }
 
 
-WorkItem = t.Union[reqif.Requirement, reqif.RequirementsFolder]
+WorkItem = t.Union[reqif.Requirement, reqif.Folder]
 RMIdentifier = t.NewType("RMIdentifier", str)
 
 
@@ -45,8 +45,8 @@ class _AttributeValueBuilder(t.NamedTuple):
     value: act.Primitive | None
 
 
-class MissingRequirementsModule(Exception):
-    """A ``RequirementsModule`` with matching UUID could not be found."""
+class MissingCapellaModule(Exception):
+    """A ``CapellaModule`` with matching UUID could not be found."""
 
 
 class TrackerChange:
@@ -55,6 +55,7 @@ class TrackerChange:
     _location_changed: set[RMIdentifier]
     _req_deletions: dict[helpers.UUIDString, dict[str, t.Any]]
     _reqtype_ids: set[RMIdentifier]
+    _faulty_attribute_definitions: set[str]
     errors: list[str]
 
     tracker: cabc.Mapping[str, t.Any]
@@ -133,6 +134,7 @@ class TrackerChange:
 
         self._location_changed = set[RMIdentifier]()
         self._req_deletions = {}
+        self._faulty_attribute_definitions = set[str]()
         self.errors = []
 
         self.__reqtype_action: dict[str, t.Any] | None = None
@@ -209,13 +211,13 @@ class TrackerChange:
             self.req_module = self.reqfinder.reqmodule(module_uuid)
         except KeyError as error:
             raise act.InvalidTrackerConfig(
-                "The given module configuration is missing 'UUID' of the "
+                "The given module configuration is missing UUID of the "
                 "target RequirementsModule"
             ) from error
 
         if self.req_module is None:
-            raise MissingRequirementsModule(
-                f"No RequirementsModule with UUID '{module_uuid}' found in "
+            raise MissingCapellaModule(
+                f"No RequirementsModule with UUID {module_uuid!r} found in "
                 + repr(self.model.info)
             )
 
@@ -223,7 +225,7 @@ class TrackerChange:
             identifier = self.tracker["id"]
         except KeyError as error:
             raise act.InvalidSnapshotModule(
-                "In the snapshot the module is missing an 'id' key"
+                "In the snapshot the module is missing an id key"
             ) from error
 
         base = {"parent": decl.UUIDReference(self.req_module.uuid)}
@@ -250,7 +252,7 @@ class TrackerChange:
         delete action was removed.
         """
         key = "requirements"
-        if isinstance(requirement, reqif.RequirementsFolder):
+        if isinstance(requirement, reqif.Folder):
             key = "folders"
 
         try:
@@ -407,15 +409,15 @@ class TrackerChange:
                 name, below=self.reqt_folder
             )
             if etdef is None:
+                promise_id = f"EnumerationDataTypeDefinition {name}"
                 if name not in self.data_type_definitions:
+                    self._faulty_attribute_definitions.add(promise_id)
                     raise act.InvalidAttributeDefinition(
-                        f"Invalid {cls.__name__} found: '{name}'. Missing its "
+                        f"Invalid {cls.__name__} found: {name!r}. Missing its "
                         "datatype definition in `data_types`."
                     )
 
-                data_type_ref = decl.Promise(
-                    f"EnumerationDataTypeDefinition {name}"
-                )
+                data_type_ref = decl.Promise(promise_id)
             else:
                 data_type_ref = decl.UUIDReference(etdef.uuid)
 
@@ -481,7 +483,7 @@ class TrackerChange:
             base["folders"] = []
             child: act.WorkItem
             for child in item["children"]:
-                key = "folders" if child.get("children") else "requirements"
+                key = "folders" if "children" in child else "requirements"
                 creq = self.reqfinder.work_item_by_identifier(child["id"])
                 if creq is None:
                     child_actions = self.yield_requirements_create_actions(
@@ -591,7 +593,14 @@ class TrackerChange:
             deftype, attr_def_id, below=self.reqt_folder
         )
         if definition is None:
-            definition_ref = decl.Promise(f"{deftype} {attr_def_id}")
+            promise_id = f"{deftype} {attr_def_id}"
+            if promise_id in self._faulty_attribute_definitions:
+                raise act.InvalidFieldValue(
+                    f"Invalid field found: No AttributeDefinition {name!r} "
+                    "promised."
+                )
+            else:
+                definition_ref = decl.Promise(promise_id)
         else:
             definition_ref = decl.UUIDReference(definition.uuid)
 
@@ -615,7 +624,13 @@ class TrackerChange:
                 "Unknown field type '%s' for %s: %r", deftype, name, value
             )
         if deftype == "Enum":
-            options = self.data_type_definitions[name]
+            options = self.data_type_definitions.get(name)
+            if options is None:
+                raise act.InvalidFieldValue(
+                    f"Invalid field found: {name!r}. Missing its "
+                    "datatype definition in `data_types`."
+                )
+
             is_faulty = not matches_type or not set(value) & set(options)
             key = "values"
         else:
@@ -624,7 +639,7 @@ class TrackerChange:
 
         if is_faulty:
             raise act.InvalidFieldValue(
-                f"Invalid field found: {key} '{value}' for '{name}'"
+                f"Invalid field found: {key} {value!r} for {name!r}"
             )
 
         return _AttributeValueBuilder(deftype, key, value)
@@ -743,9 +758,14 @@ class TrackerChange:
             )
             assert isinstance(reqtype, reqif.RequirementType)
 
-            mods = _compare_simple_attributes(
-                reqtype, item, filter=("attributes",)
-            )
+            try:
+                mods = _compare_simple_attributes(
+                    reqtype, item, filter=("attributes",)
+                )
+            except AttributeError as error:
+                self._handle_user_error(
+                    f"Invalid workitem '{identifier}'. {error.args[0]}"
+                )
 
             attr_defs_deletions: list[decl.UUIDReference] = [
                 decl.UUIDReference(adef.uuid)
@@ -804,16 +824,23 @@ class TrackerChange:
         from it.
         """
         base = {"parent": decl.UUIDReference(req.uuid)}
-        mods = _compare_simple_attributes(
-            req, item, filter=("id", "type", "attributes", "children")
-        )
+        try:
+            mods = _compare_simple_attributes(
+                req, item, filter=("id", "type", "attributes", "children")
+            )
+        except AttributeError as error:
+            self._handle_user_error(
+                f"Invalid workitem '{item['id']}'. {error.args[0]}"
+            )
+            return
+
         req_type_id = RMIdentifier(item.get("type", ""))
         attributes_deletions = list[dict[str, t.Any]]()
         if req_type_id != req.type.identifier:
             if req_type_id and req_type_id not in self.requirement_types:
                 raise act.InvalidWorkItemType(
                     "Faulty workitem in snapshot: "
-                    f"Unknown workitem-type '{req_type_id}'"
+                    f"Unknown workitem-type {req_type_id!r}"
                 )
 
             reqtype = self.reqfinder.reqtype_by_identifier(
@@ -888,12 +915,12 @@ class TrackerChange:
         cf_creations: list[dict[str, t.Any] | decl.UUIDReference] = []
         containers = [cr_creations, cf_creations]
         child_mods: list[dict[str, t.Any]] = []
-        if isinstance(req, reqif.RequirementsFolder):
+        if isinstance(req, reqif.Folder):
             child_req_ids = set[RMIdentifier]()
             child_folder_ids = set[RMIdentifier]()
             for child in children:
                 cid = RMIdentifier(str(child["id"]))
-                if child.get("children", []):
+                if "children" in child:
                     key = "folders"
                     child_folder_ids.add(cid)
                 else:
@@ -918,6 +945,7 @@ class TrackerChange:
                             f"Invalid workitem '{child['id']}'. "
                             + error.args[0]
                         )
+                        continue
 
                     if creq.parent != req:
                         container.append(decl.UUIDReference(creq.uuid))
@@ -1072,9 +1100,16 @@ class TrackerChange:
                 return None
             return {"parent": decl.UUIDReference(attrdef.uuid), "modify": mods}
         except KeyError:
-            return self.attribute_definition_create_action(
-                name, data, reqtype.identifier
-            )
+            try:
+                return self.attribute_definition_create_action(
+                    name, data, reqtype.identifier
+                )
+            except act.InvalidAttributeDefinition as error:
+                self._handle_user_error(
+                    f"In RequirementType {reqtype.long_name!r}: "
+                    + error.args[0]
+                )
+                return None
 
 
 def make_requirement_delete_actions(
@@ -1137,7 +1172,7 @@ def _compare_simple_attributes(
 
         converter = type_conversion.get(name, lambda i: i)
         converted_value = converter(value)
-        if getattr(req, name, None) != converted_value:
+        if getattr(req, name) != converted_value:
             mods[name] = value
     return mods
 

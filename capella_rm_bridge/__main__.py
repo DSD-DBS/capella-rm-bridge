@@ -19,7 +19,8 @@ from capella_rm_bridge import changeset
 
 from . import auditing
 
-CHANGE_PATH = pathlib.Path("change-set.yaml")
+CHANGE_FOLDER_PATH = pathlib.Path("change-sets")
+CHANGE_FILENAME = "change-set.yaml"
 CHANGE_HISTORY_PATH = pathlib.Path("change.history")
 COMMIT_MSG_PATH = pathlib.Path("commit-message.txt")
 ERROR_PATH = pathlib.Path("change-errors.txt")
@@ -29,6 +30,19 @@ LOGGER = logging.getLogger(__name__)
 def create_errors_statement(errors: cabc.Iterable[str]) -> str:
     """Return a commit message for errors from the ``ChangeSet`` calc."""
     return "\n".join(errors)
+
+
+def write_change_set(change: str, module: dict[str, t.Any]) -> pathlib.Path:
+    """Create a change-set.yaml underneath the change-sets folder."""
+    CHANGE_FOLDER_PATH.mkdir(parents=True, exist_ok=True)
+    mid = module["id"].replace("/", "~")
+    path = CHANGE_FOLDER_PATH / f"{mid}-{CHANGE_FILENAME}"
+    if path.is_file():
+        path.unlink(missing_ok=True)
+
+    path.write_text(change, encoding="utf8")
+    LOGGER.info("Change-set file %s written.", str(path))
+    return path
 
 
 @click.command()
@@ -69,11 +83,12 @@ def create_errors_statement(errors: cabc.Iterable[str]) -> str:
     help="Pull the latest changes from remote.",
 )
 @click.option(
-    "--no-safe-mode",
+    "--force",
     is_flag=True,
     default=False,
-    help="Modifications are still done to a RequirementModule if an error in "
-    "another, independent module in the snapshot was identified.",
+    help="If a non RequirementModule-error was encountered only the object "
+    "and all related objects will be skipped. Intact objects will still be "
+    "synchronized",
 )
 @click.option(
     "--gather-logs/--no-gather-logs",
@@ -104,7 +119,7 @@ def main(
     dry_run: bool,
     push: bool,
     pull: bool,
-    no_safe_mode: bool,
+    force: bool,
     gather_logs: bool,
     save_change_history: bool,
     save_error_log: bool,
@@ -144,18 +159,26 @@ def main(
             model,
             tconfig,
             module,
-            safe_mode=not no_safe_mode,
+            force=force,
             gather_logs=gather_logs,
         )
 
         if change_set:
             change = decl.dump(change_set)
-            CHANGE_PATH.write_text(change, encoding="utf8")
+            change_path = write_change_set(change, module)
             with auditing.ChangeAuditor(model) as changed_objs:
-                decl.apply(model, CHANGE_PATH)
+                decl.apply(model, change_path)
 
             reporter.store_change(
                 changed_objs, module["id"], module["category"]
+            )
+
+    if force or not errors:
+        commit_message = reporter.create_commit_message(snapshot["metadata"])
+        print(commit_message)
+        if reporter.store and not dry_run:
+            model.save(
+                push=push, commit_msg=commit_message, push_options=["skip.ci"]
             )
 
     if errors:
@@ -164,14 +187,7 @@ def main(
         if save_error_log:
             ERROR_PATH.write_text(error_statement, encoding="utf8")
             LOGGER.info("Change-errors file %s written.", ERROR_PATH)
-
         sys.exit(1)
-    else:
-        commit_message = reporter.create_commit_message(snapshot["metadata"])
-        COMMIT_MSG_PATH.write_text(commit_message, encoding="utf8")
-        print(commit_message)
-        if reporter.store and not dry_run:
-            model.save(push=push, commit_msg=commit_message)
 
     report = reporter.get_change_report()
     if report and save_change_history:

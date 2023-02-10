@@ -336,6 +336,8 @@ def test_create_commit_message(migration_model: capellambse.MelodyModel):
     req_uuid = "163394f5-c1ba-4712-a238-b0b143c66aed"
     reqtypesfolder_uuid = "a15e8b60-bf39-47ba-b7c7-74ceecb25c9c"
     dtdef_uuid = "686e198b-8baf-49f9-9d85-24571bd05d93"
+    req = migration_model.by_uuid(req_uuid)
+    req.parent.requirements.remove(req)
     changes: list[auditing.Change] = [
         auditing.Deletion(
             parent="9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19",
@@ -372,7 +374,7 @@ def test_create_commit_message(migration_model: capellambse.MelodyModel):
     commit_message = reporter.create_commit_message(tool_metadata)
 
     assert commit_message.startswith(
-        "Updated model with RM content from rev.123 [skip ci]\n"
+        "Updated model with RM content from rev.123\n"
         "\n"
         "Synchronized 1 category1 and 1 category2:\n"
         "- 1: created: 1; updated: 1; deleted: 1; type-changes: 0\n"

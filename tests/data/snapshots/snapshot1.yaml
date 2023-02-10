@@ -12,7 +12,6 @@ modules:
     data_types:
       Type:
         - Unset
-        - Folder
         - Functional
         - Non-Functional
       Release:
@@ -70,8 +69,6 @@ modules:
         long_name: Functional Requirements
         text: <p>Brand new</p>
         type: software_requirement
-        attributes:
-          Type: [Folder]
         children:
           - id: REQ-004
             long_name: Function Requirement

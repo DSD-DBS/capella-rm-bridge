@@ -115,7 +115,7 @@ class TestTrackerChangeInit(ActionsTest):
         """
         del clean_model.la.requirement_modules[0]
 
-        with pytest.raises(change.MissingRequirementsModule):
+        with pytest.raises(change.MissingCapellaModule):
             self.tracker_change(clean_model, TEST_SNAPSHOT["modules"][0])
 
     def test_init_on_missing_module_id_raises_InvalidSnapshotModule(
@@ -207,7 +207,7 @@ class TestCreateActions(ActionsTest):
         first_child = titem["children"][0]
         first_child["attributes"][attr] = faulty_value  # type:ignore[index]
         message_end = (
-            f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
+            f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
         )
 
         with caplog.at_level(logging.ERROR):
@@ -229,7 +229,7 @@ class TestCreateActions(ActionsTest):
             ] = faulty_value  # type:ignore[index]
             messages.append(
                 "Invalid workitem 'REQ-002'. "
-                f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
+                f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
             )
 
         change = self.tracker_change(clean_model, tracker, gather_logs=True)
@@ -267,6 +267,22 @@ class TestCreateActions(ActionsTest):
         change = self.tracker_change(clean_model, tracker, gather_logs=True)
 
         assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
+
+    def test_requirements_with_empty_children_are_rendered_as_folders(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        tracker["items"][0]["children"][1]["children"][0]["children"] = []
+
+        change_set = self.tracker_change(
+            clean_model, tracker, gather_logs=True
+        )
+
+        assert change_set and (change := change_set.actions[0]["extend"])
+        assert (
+            change["folders"][0]["folders"][0]["folders"][0]["identifier"]
+            == "REQ-004"
+        )
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -342,13 +358,79 @@ class TestModActions(ActionsTest):
         first_child = titem["children"][0]
         first_child["attributes"][attr] = faulty_value
         message_end = (
-            f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
+            f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
         )
 
         with caplog.at_level(logging.ERROR):
             self.tracker_change(migration_model, tracker, gather_logs=False)
 
         assert caplog.messages[0].endswith(message_end)
+
+    def test_faulty_data_types_log_InvalidAttributeDefinition_as_error(
+        self,
+        migration_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        reqtype = tracker["requirement_types"]["system_requirement"]
+        reqtype["attributes"]["Not-Defined"] = {  # type: ignore[call-overload]
+            "type": "Enum",
+            "data_type": "Not-Defined",
+        }
+
+        with caplog.at_level(logging.ERROR):
+            self.tracker_change(migration_model, tracker, gather_logs=False)
+
+        assert caplog.messages[0].endswith(INVALID_ATTR_DEF_ERROR_MSG)
+
+    def test_faulty_simple_attributes_log_AttributeError(
+        self,
+        migration_model: capellambse.MelodyModel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """Test logging ``AttributeError`` on faulty simple attributes."""
+        tracker = copy.deepcopy(self.tracker)
+        titem = tracker["items"][0]
+        titem["imagination"] = 1
+        message_end = (
+            "Invalid module 'project/space/example title'. Invalid "
+            "workitem 'REQ-001'. imagination isn't defined on Folder"
+        )
+
+        with caplog.at_level(logging.ERROR):
+            self.tracker_change(migration_model, tracker, gather_logs=False)
+
+        assert caplog.messages[0].endswith(message_end)
+
+    def test_InvalidAttributeDefinition_errors_are_gathered(
+        self, migration_model: capellambse.MelodyModel
+    ) -> None:
+        """Test faulty field data are gathered in errors."""
+        tracker = copy.deepcopy(self.tracker)
+        reqtype = tracker["requirement_types"]["system_requirement"]
+        reqtype["attributes"]["Not-Defined"] = {  # type: ignore[call-overload]
+            "type": "Enum",
+            "data_type": "Not-Defined",
+        }
+
+        change = self.tracker_change(
+            migration_model, tracker, gather_logs=True
+        )
+
+        assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
+
+    def test_requirements_with_empty_children_are_rendered_as_folders(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        tracker["items"][1]["children"][0]["children"] = []
+
+        change_set = self.tracker_change(
+            clean_model, tracker, gather_logs=True
+        )
+
+        assert change_set and (change := change_set.actions[0]["extend"])
+        assert change["folders"][1]["folders"][0]["identifier"] == "REQ-004"
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -491,7 +573,7 @@ class TestCalculateChangeSet(ActionsTest):
         config = copy.deepcopy(TEST_CONFIG["modules"][0])
         del config["capella-uuid"]  # type:ignore[misc]
         message = (
-            "The given module configuration is missing 'UUID' of the target "
+            "The given module configuration is missing UUID of the target "
             "RequirementsModule"
         )
 
@@ -538,7 +620,7 @@ class TestCalculateChangeSet(ActionsTest):
         tconfig = TEST_CONFIG["modules"][0]
         message = (
             "Skipping module: MISSING ID. "
-            "In the snapshot the module is missing an 'id' key"
+            "In the snapshot the module is missing an id key"
         )
 
         with caplog.at_level(logging.ERROR):
@@ -555,7 +637,7 @@ class TestCalculateChangeSet(ActionsTest):
         config = copy.deepcopy(TEST_CONFIG["modules"][0])
         del config["capella-uuid"]  # type:ignore[misc]
         message = (
-            "The given module configuration is missing 'UUID' of the target "
+            "The given module configuration is missing UUID of the target "
             "RequirementsModule"
         )
 
@@ -566,13 +648,51 @@ class TestCalculateChangeSet(ActionsTest):
         assert errors[0].startswith(self.SKIP_MESSAGE)
         assert message in errors[0]
 
+    def test_forced_calculation_produces_change_set_on_AttributeDefinition_error(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        """Test that an invalid AttributeDefinition will not prohibit."""
+        snapshot = copy.deepcopy(TEST_SNAPSHOT["modules"][0])
+        missing_enumdt = "Release"
+        del snapshot["data_types"][missing_enumdt]  # type: ignore[attr-defined]
+        tconfig = TEST_CONFIG["modules"][0]
+        message = (
+            "In RequirementType 'System Requirement': Invalid "
+            "AttributeDefinitionEnumeration found: 'Release'. Missing its "
+            "datatype definition in `data_types`.\n"
+            "Invalid workitem 'REQ-002'. Invalid field found: 'Release'. "
+            "Missing its datatype definition in `data_types`."
+        )
+
+        change_sets, errors = calculate_change_set(
+            clean_model, tconfig, snapshot, gather_logs=True, force=True
+        )
+
+        assert (change_set := change_sets[0])
+        for rtfolder in change_set["extend"]["requirement_types_folders"]:
+            for req_type in rtfolder["requirement_types"]:
+                for attr_def in req_type["attribute_definitions"]:
+                    assert attr_def["long_name"] != missing_enumdt
+
+        folder = change_set["extend"]["folders"][0]
+        for folder in folder["folders"]:
+            for attr_value in folder.get("attributes", []):
+                assert (
+                    missing_enumdt not in attr_value["definition"].identifier
+                )
+
+        assert errors[0].startswith(
+            "Encountered error(s) in 'project/space/example title'"
+        )
+        assert message in errors[0]
+
     def test_snapshot_errors_from_ChangeSet_calculation_are_gathered(
         self, clean_model: capellambse.MelodyModel
     ) -> None:
         snapshot = copy.deepcopy(TEST_SNAPSHOT["modules"][0])
         titem = snapshot["items"][0]
         first_child = titem["children"][0]
-        titem["attributes"]["Test"] = 1  # type: ignore[index]
+        titem["attributes"] = {"Test": 1}  # type: ignore[index]
         messages = [
             "Invalid workitem 'REQ-001'. "
             "Invalid field found: field name 'Test' not defined in "
@@ -584,9 +704,10 @@ class TestCalculateChangeSet(ActionsTest):
             ] = faulty_value  # type:ignore[index]
             messages.append(
                 "Invalid workitem 'REQ-002'. "
-                + f"Invalid field found: {key} '{faulty_value}' for '{attr}'"
+                + f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
             )
         del titem["children"][1]["type"]
+        titem["children"][1]["attributes"] = {"Test": 1}
         tconfig = TEST_CONFIG["modules"][0]
         messages.append(
             "Invalid workitem 'REQ-003'. Missing type but attributes found"
