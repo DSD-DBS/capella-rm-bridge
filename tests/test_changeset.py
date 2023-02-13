@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import collections.abc as cabc
 import copy
+import io
 import logging
 import operator
 import typing as t
@@ -232,9 +233,9 @@ class TestCreateActions(ActionsTest):
                 f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
             )
 
-        change = self.tracker_change(clean_model, tracker, gather_logs=True)
+        tchange = self.tracker_change(clean_model, tracker, gather_logs=True)
 
-        assert change.errors == messages
+        assert tchange.errors == messages
 
     def test_faulty_data_types_log_InvalidAttributeDefinition_as_error(
         self,
@@ -264,9 +265,9 @@ class TestCreateActions(ActionsTest):
             "data_type": "Not-Defined",
         }
 
-        change = self.tracker_change(clean_model, tracker, gather_logs=True)
+        tchange = self.tracker_change(clean_model, tracker, gather_logs=True)
 
-        assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
+        assert tchange.errors == [INVALID_ATTR_DEF_ERROR_MSG]
 
     def test_requirements_with_empty_children_are_rendered_as_folders(
         self, clean_model: capellambse.MelodyModel
@@ -283,6 +284,26 @@ class TestCreateActions(ActionsTest):
             tchange["folders"][0]["folders"][0]["folders"][0]["identifier"]
             == "REQ-004"
         )
+
+    def test_enum_value_long_name_collision_produces_no_Unfulffilled_Promises(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        tracker["data_types"]["new"] = tracker[  # type: ignore[index]
+            "data_types"
+        ]["Type"]
+        tracker["requirement_types"]["system_requirement"][  # type: ignore
+            "attributes"
+        ]["new"] = {"type": "Enum"}
+        req_item = tracker["items"][0]["children"][0]
+        req_item["attributes"]["new"] = ["Functional"]  # type: ignore[index]
+
+        change_set = self.tracker_change(
+            clean_model, tracker, gather_logs=True
+        )
+
+        yml = decl.dump(change_set.actions)
+        decl.apply(clean_model, io.StringIO(yml))
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -413,11 +434,11 @@ class TestModActions(ActionsTest):
             "data_type": "Not-Defined",
         }
 
-        change = self.tracker_change(
+        tchange = self.tracker_change(
             migration_model, tracker, gather_logs=True
         )
 
-        assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
+        assert tchange.errors == [INVALID_ATTR_DEF_ERROR_MSG]
 
     def test_requirements_with_empty_children_are_rendered_as_folders(
         self, migration_model: capellambse.MelodyModel

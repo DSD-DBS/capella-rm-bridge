@@ -588,9 +588,13 @@ class TrackerChange:
         if builder.deftype == "Enum":
             deftype += "Enumeration"
             assert isinstance(builder.value, list)
+            edtdef = self.reqfinder.enum_data_type_definition_by_long_name(
+                name, below=self.reqt_folder
+            )
+
             for enum_name in builder.value:
                 enumvalue = self.reqfinder.enum_value_by_long_name(
-                    enum_name, below=self.req_module
+                    enum_name, below=edtdef or self.reqt_folder
                 )
                 if enumvalue is None:
                     ev_ref = decl.Promise(f"EnumValue {name} {enum_name}")
