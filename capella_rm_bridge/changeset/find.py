@@ -65,17 +65,18 @@ class ReqFinder:
         """Try to return an ``AttributeDefinition``-/``Enumeration``."""
         return self._get(identifier, xtype, below=below)
 
-    def work_item_by_identifier(
-        self,
-        identifier: int | str,
-        below: reqif.ReqIFElement | None = None,
-    ) -> reqif.Requirement | reqif.Folder | None:
-        """Try to return a ``Requirement``/``RequirementsFolder``."""
+    def folder_by_identifier(
+        self, identifier: int | str, below: reqif.ReqIFElement | None = None
+    ) -> reqif.Folder | None:
+        """Try to return a ``Folder``."""
+        return self._get(str(identifier), reqif.Folder.__name__, below=below)
+
+    def requirement_by_identifier(
+        self, identifier: int | str, below: reqif.ReqIFElement | None = None
+    ) -> reqif.Requirement | None:
+        """Try to return a ``Requirement``."""
         return self._get(
-            str(identifier),
-            reqif.Requirement.__name__,
-            reqif.Folder.__name__,
-            below=below,
+            str(identifier), reqif.Requirement.__name__, below=below
         )
 
     def enum_data_type_definition_by_long_name(

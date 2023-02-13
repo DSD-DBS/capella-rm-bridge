@@ -165,8 +165,13 @@ class TrackerChange:
 
         visited = set[str]()
         for item in self.tracker["items"]:
-            second_key = "folders" if "children" in item else "requirements"
-            req = self.reqfinder.work_item_by_identifier(item["id"])
+            if "children" in item:
+                second_key = "folders"
+                req = self.reqfinder.folder_by_identifier(item["id"])
+            else:
+                second_key = "requirements"
+                req = self.reqfinder.requirement_by_identifier(item["id"])
+
             if req is None:
                 req_actions = self.yield_requirements_create_actions(item)
                 item_action = next(req_actions)
@@ -483,8 +488,15 @@ class TrackerChange:
             base["folders"] = []
             child: act.WorkItem
             for child in item["children"]:
-                key = "folders" if "children" in child else "requirements"
-                creq = self.reqfinder.work_item_by_identifier(child["id"])
+                if "children" in child:
+                    key = "folders"
+                    creq = self.reqfinder.folder_by_identifier(child["id"])
+                else:
+                    key = "requirements"
+                    creq = self.reqfinder.requirement_by_identifier(
+                        child["id"]
+                    )
+
                 if creq is None:
                     child_actions = self.yield_requirements_create_actions(
                         child
@@ -576,9 +588,13 @@ class TrackerChange:
         if builder.deftype == "Enum":
             deftype += "Enumeration"
             assert isinstance(builder.value, list)
+            edtdef = self.reqfinder.enum_data_type_definition_by_long_name(
+                name, below=self.reqt_folder
+            )
+
             for enum_name in builder.value:
                 enumvalue = self.reqfinder.enum_value_by_long_name(
-                    enum_name, below=self.req_module
+                    enum_name, below=edtdef or self.reqt_folder
                 )
                 if enumvalue is None:
                     ev_ref = decl.Promise(f"EnumValue {name} {enum_name}")
@@ -923,12 +939,13 @@ class TrackerChange:
                 if "children" in child:
                     key = "folders"
                     child_folder_ids.add(cid)
+                    creq = self.reqfinder.folder_by_identifier(cid)
                 else:
                     key = "requirements"
                     child_req_ids.add(cid)
+                    creq = self.reqfinder.requirement_by_identifier(cid)
 
                 container = containers[key == "folders"]
-                creq = self.reqfinder.work_item_by_identifier(cid)
                 if creq is None:
                     child_actions = self.yield_requirements_create_actions(
                         child

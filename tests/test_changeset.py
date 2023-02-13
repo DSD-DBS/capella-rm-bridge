@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import collections.abc as cabc
 import copy
+import io
 import logging
 import operator
 import typing as t
@@ -232,9 +233,9 @@ class TestCreateActions(ActionsTest):
                 f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
             )
 
-        change = self.tracker_change(clean_model, tracker, gather_logs=True)
+        tchange = self.tracker_change(clean_model, tracker, gather_logs=True)
 
-        assert change.errors == messages
+        assert tchange.errors == messages
 
     def test_faulty_data_types_log_InvalidAttributeDefinition_as_error(
         self,
@@ -264,9 +265,9 @@ class TestCreateActions(ActionsTest):
             "data_type": "Not-Defined",
         }
 
-        change = self.tracker_change(clean_model, tracker, gather_logs=True)
+        tchange = self.tracker_change(clean_model, tracker, gather_logs=True)
 
-        assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
+        assert tchange.errors == [INVALID_ATTR_DEF_ERROR_MSG]
 
     def test_requirements_with_empty_children_are_rendered_as_folders(
         self, clean_model: capellambse.MelodyModel
@@ -278,11 +279,31 @@ class TestCreateActions(ActionsTest):
             clean_model, tracker, gather_logs=True
         )
 
-        assert change_set and (change := change_set.actions[0]["extend"])
+        assert change_set and (tchange := change_set.actions[0]["extend"])
         assert (
-            change["folders"][0]["folders"][0]["folders"][0]["identifier"]
+            tchange["folders"][0]["folders"][0]["folders"][0]["identifier"]
             == "REQ-004"
         )
+
+    def test_enum_value_long_name_collision_produces_no_Unfulffilled_Promises(
+        self, clean_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        tracker["data_types"]["new"] = tracker[  # type: ignore[index]
+            "data_types"
+        ]["Type"]
+        tracker["requirement_types"]["system_requirement"][  # type: ignore
+            "attributes"
+        ]["new"] = {"type": "Enum"}
+        req_item = tracker["items"][0]["children"][0]
+        req_item["attributes"]["new"] = ["Functional"]  # type: ignore[index]
+
+        change_set = self.tracker_change(
+            clean_model, tracker, gather_logs=True
+        )
+
+        yml = decl.dump(change_set.actions)
+        decl.apply(clean_model, io.StringIO(yml))
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -413,24 +434,56 @@ class TestModActions(ActionsTest):
             "data_type": "Not-Defined",
         }
 
-        change = self.tracker_change(
+        tchange = self.tracker_change(
             migration_model, tracker, gather_logs=True
         )
 
-        assert change.errors == [INVALID_ATTR_DEF_ERROR_MSG]
+        assert tchange.errors == [INVALID_ATTR_DEF_ERROR_MSG]
 
     def test_requirements_with_empty_children_are_rendered_as_folders(
-        self, clean_model: capellambse.MelodyModel
+        self, migration_model: capellambse.MelodyModel
     ) -> None:
+        parent_uuid = "9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19"
+        req_uuid = "163394f5-c1ba-4712-a238-b0b143c66aed"
         tracker = copy.deepcopy(self.tracker)
         tracker["items"][1]["children"][0]["children"] = []
 
         change_set = self.tracker_change(
-            clean_model, tracker, gather_logs=True
+            migration_model, tracker, gather_logs=True
         )
 
-        assert change_set and (change := change_set.actions[0]["extend"])
-        assert change["folders"][1]["folders"][0]["identifier"] == "REQ-004"
+        assert change_set and change_set.actions
+        for action in change_set.actions:
+            if action["parent"].uuid == parent_uuid:
+                tchange = action
+                break
+        else:
+            assert False, "Did not find any action"
+
+        folder_extensions = tchange["extend"]["folders"]
+        requirement_deletions = tchange["delete"]["requirements"]
+        assert len(folder_extensions) == 1
+        assert folder_extensions[0]["identifier"] == "REQ-004"
+        assert len(requirement_deletions) == 1
+        assert requirement_deletions[0].uuid == req_uuid
+
+    def test_enum_value_long_name_collision_produces_no_Unfulffilled_Promises(
+        self, migration_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        tracker["data_types"]["new"] = tracker["data_types"]["Type"]
+        tracker["requirement_types"]["system_requirement"]["attributes"][
+            "new"
+        ] = {"type": "Enum"}
+        req_item = tracker["items"][0]["children"][0]
+        req_item["attributes"]["new"] = ["Functional"]
+
+        change_set = self.tracker_change(
+            migration_model, tracker, gather_logs=True
+        )
+
+        yml = decl.dump(change_set.actions)
+        decl.apply(migration_model, io.StringIO(yml))
 
     @pytest.mark.integtest
     def test_calculate_change_sets(

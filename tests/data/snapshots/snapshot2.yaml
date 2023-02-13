@@ -40,3 +40,4 @@ modules:
         attributes:
           Capella ID: RF-NFNC-00001
           Type: [Non-Functional]
+        children: []
