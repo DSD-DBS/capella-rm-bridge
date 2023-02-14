@@ -175,6 +175,7 @@ def main(
 
     if force or not errors:
         commit_message = reporter.create_commit_message(snapshot["metadata"])
+        COMMIT_MSG_PATH.write_text(commit_message, encoding="utf8")
         print(commit_message)
         if reporter.store and not dry_run:
             model.save(
@@ -187,6 +188,7 @@ def main(
         if save_error_log:
             ERROR_PATH.write_text(error_statement, encoding="utf8")
             LOGGER.info("Change-errors file %s written.", ERROR_PATH)
+
         sys.exit(1)
 
     report = reporter.get_change_report()
