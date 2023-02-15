@@ -21,7 +21,7 @@ from . import auditing
 
 CHANGE_FOLDER_PATH = pathlib.Path("change-sets")
 CHANGE_FILENAME = "change-set.yaml"
-CHANGE_HISTORY_PATH = pathlib.Path("change.history")
+CHANGE_HISTORY_PATH = pathlib.Path("change-history.txt")
 COMMIT_MSG_PATH = pathlib.Path("commit-message.txt")
 ERROR_PATH = pathlib.Path("change-errors.txt")
 LOGGER = logging.getLogger(__name__)
