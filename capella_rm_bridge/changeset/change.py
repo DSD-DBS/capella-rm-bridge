@@ -66,8 +66,6 @@ class TrackerChange:
     """Config section for the tracker."""
     gather_logs: bool
     """Collect error messages in ``errors`` instead of immediate logging."""
-    reqfinder: find.ReqFinder
-    """Find ReqIF elements in the model."""
 
     req_module: reqif.RequirementsModule
     """The corresponding ``reqif.RequirementsModule`` for the tracker."""
@@ -129,7 +127,6 @@ class TrackerChange:
         self.model = model
         self.config = config
         self.gather_logs = gather_logs
-        self.reqfinder = find.ReqFinder(model)
         self.actions = []
 
         self._location_changed = set[RMIdentifier]()
@@ -152,8 +149,11 @@ class TrackerChange:
         deletions.
         """
         base = self.check_requirements_module()
-        self.reqt_folder = self.reqfinder.reqtypesfolder_by_identifier(
-            CACHEKEY_TYPES_FOLDER_IDENTIFIER, below=self.req_module
+        self.reqt_folder = find.find_by_identifier(
+            self.model,
+            CACHEKEY_TYPES_FOLDER_IDENTIFIER,
+            reqif.CapellaTypesFolder.__name__,
+            below=self.req_module,
         )
         if self.reqt_folder is None:
             base = self.requirement_types_folder_create_action(base)
@@ -167,10 +167,12 @@ class TrackerChange:
         for item in self.tracker["items"]:
             if "children" in item:
                 second_key = "folders"
-                req = self.reqfinder.folder_by_identifier(item["id"])
+                req = find.find_by_identifier(self.model, item["id"], "Folder")
             else:
                 second_key = "requirements"
-                req = self.reqfinder.requirement_by_identifier(item["id"])
+                req = find.find_by_identifier(
+                    self.model, item["id"], "Requirement"
+                )
 
             if req is None:
                 req_actions = self.yield_requirements_create_actions(item)
@@ -213,7 +215,9 @@ class TrackerChange:
         """
         try:
             module_uuid = self.config["capella-uuid"]
-            self.req_module = self.reqfinder.reqmodule(module_uuid)
+            self.req_module = find.find_by(
+                self.model, module_uuid, "CapellaModule", attr="uuid"
+            )
         except KeyError as error:
             raise act.InvalidTrackerConfig(
                 "The given module configuration is missing UUID of the "
@@ -418,8 +422,11 @@ class TrackerChange:
         cls = reqif.AttributeDefinition
         if item["type"] == "Enum":
             cls = reqif.AttributeDefinitionEnumeration
-            etdef = self.reqfinder.enum_data_type_definition_by_identifier(
-                id, below=self.reqt_folder
+            etdef = find.find_by_identifier(
+                self.model,
+                id,
+                "EnumerationDataTypeDefinition",
+                below=self.reqt_folder,
             )
             if etdef is None:
                 promise_id = f"EnumerationDataTypeDefinition {id}"
@@ -482,8 +489,11 @@ class TrackerChange:
             base["attributes"] = attributes
 
         if req_type_id:
-            reqtype = self.reqfinder.reqtype_by_identifier(
-                req_type_id, below=self.reqt_folder
+            reqtype = find.find_by_identifier(
+                self.model,
+                req_type_id,
+                "RequirementType",
+                below=self.reqt_folder,
             )
             if reqtype is None:
                 base["type"] = decl.Promise(f"RequirementType {req_type_id}")
@@ -498,11 +508,13 @@ class TrackerChange:
             for child in item["children"]:
                 if "children" in child:
                     key = "folders"
-                    creq = self.reqfinder.folder_by_identifier(child["id"])
+                    creq = find.find_by_identifier(
+                        self.model, str(child["id"]), "Folder"
+                    )
                 else:
                     key = "requirements"
-                    creq = self.reqfinder.requirement_by_identifier(
-                        child["id"]
+                    creq = find.find_by_identifier(
+                        self.model, str(child["id"]), "Requirement"
                     )
 
                 if creq is None:
@@ -596,13 +608,19 @@ class TrackerChange:
         if builder.deftype == "Enum":
             deftype += "Enumeration"
             assert isinstance(builder.value, list)
-            edtdef = self.reqfinder.enum_data_type_definition_by_identifier(
-                id, below=self.reqt_folder
+            edtdef = find.find_by_identifier(
+                self.model,
+                id,
+                "EnumerationDataTypeDefinition",
+                below=self.reqt_folder,
             )
 
             for evid in builder.value:
-                enumvalue = self.reqfinder.enum_value_by_identifier(
-                    evid, below=edtdef or self.reqt_folder
+                enumvalue = find.find_by_identifier(
+                    self.model,
+                    evid,
+                    "EnumValue",
+                    below=edtdef or self.reqt_folder,
                 )
                 if enumvalue is None:
                     ev_ref = decl.Promise(f"EnumValue {id} {evid}")
@@ -613,8 +631,8 @@ class TrackerChange:
                 values.append(ev_ref)
 
         attr_def_id = f"{id} {req_type_id}"
-        definition = self.reqfinder.attribute_definition_by_identifier(
-            deftype, attr_def_id, below=self.reqt_folder
+        definition = find.find_by_identifier(
+            self.model, attr_def_id, deftype, below=self.reqt_folder
         )
         if definition is None:
             promise_id = f"{deftype} {attr_def_id}"
@@ -903,8 +921,11 @@ class TrackerChange:
                     f"Unknown workitem-type {req_type_id!r}"
                 )
 
-            reqtype = self.reqfinder.reqtype_by_identifier(
-                req_type_id, below=self.reqt_folder
+            reqtype = find.find_by_identifier(
+                self.model,
+                req_type_id,
+                "RequirementType",
+                below=self.reqt_folder,
             )
             if reqtype is None:
                 mods["type"] = decl.Promise(req_type_id)
@@ -986,11 +1007,13 @@ class TrackerChange:
                 if "children" in child:
                     key = "folders"
                     child_folder_ids.add(cid)
-                    creq = self.reqfinder.folder_by_identifier(cid)
+                    creq = find.find_by_identifier(self.model, cid, "Folder")
                 else:
                     key = "requirements"
                     child_req_ids.add(cid)
-                    creq = self.reqfinder.requirement_by_identifier(cid)
+                    creq = find.find_by_identifier(
+                        self.model, cid, "Requirement"
+                    )
 
                 container = containers[key == "folders"]
                 if creq is None:
@@ -1092,8 +1115,8 @@ class TrackerChange:
         if builder.deftype == "Enum":
             deftype += "Enumeration"
 
-        attrdef = self.reqfinder.attribute_definition_by_identifier(
-            deftype, f"{id} {req_type_id}", self.reqt_folder
+        attrdef = find.find_by_identifier(
+            self.model, f"{id} {req_type_id}", deftype, below=self.reqt_folder
         )
         attr = req.attributes.by_definition(attrdef, single=True)
         if isinstance(attr, reqif.EnumerationValueAttribute):
