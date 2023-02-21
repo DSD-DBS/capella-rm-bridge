@@ -10,27 +10,37 @@ modules:
   - id: project/space/example title
     long_name: example title
     data_types:
-      Type:
-        - Unset
-        - Non-Functional
+      type:
+        long_name: Type
+        values:
+          - id: unset
+            long_name: Unset
+          - id: nonFunctional
+            long_name: Non-Functional
     requirement_types:
       system_requirement:
         long_name: System Requirement
         attributes:
-          Capella ID:
+          capellaID:
+            long_name: Capella ID
             type: String
-          Type:
+          type:
+            long_name: Type
             type: Enum
-          Submitted at:
+          submittedAt:
+            long_name: Submitted at
             type: Date
       software_requirement:
         long_name: Software Requirement
         attributes:
-          Capella ID:
+          capellaID:
+            long_name: Capella ID
             type: String
-          Type:
+          type:
+            long_name: Type
             type: Enum
-          Submitted at:
+          submittedAt:
+            long_name: Submitted at
             type: Date
     items:
       - id: REQ-001
@@ -38,6 +48,6 @@ modules:
         text: <p>Changed Test Description</p>
         type: system_requirement
         attributes:
-          Capella ID: RF-NFNC-00001
-          Type: [Non-Functional]
+          capellaID: RF-NFNC-00001
+          type: [nonFunctional]
         children: []

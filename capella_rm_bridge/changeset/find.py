@@ -79,27 +79,22 @@ class ReqFinder:
             str(identifier), reqif.Requirement.__name__, below=below
         )
 
-    def enum_data_type_definition_by_long_name(
-        self, long_name: str, below: reqif.ReqIFElement | None
+    def enum_data_type_definition_by_identifier(
+        self, id: str, below: reqif.ReqIFElement | None
     ) -> reqif.EnumerationDataTypeDefinition | None:
         """Try to return an ``EnumerationDataTypeDefinition``.
 
         The object is matched with given ``long_name``.
         """
         return self._get(
-            long_name,
-            reqif.EnumerationDataTypeDefinition.__name__,
-            attr="long_name",
-            below=below,
+            id, reqif.EnumerationDataTypeDefinition.__name__, below=below
         )
 
-    def enum_value_by_long_name(
-        self, long_name: str, below: reqif.ReqIFElement | None = None
+    def enum_value_by_identifier(
+        self, id: str, below: reqif.ReqIFElement | None = None
     ) -> reqif.EnumValue | None:
         """Try to return an ``EnumValue``.
 
         The object is matched with given ``long_name``.
         """
-        return self._get(
-            long_name, reqif.EnumValue.__name__, attr="long_name", below=below
-        )
+        return self._get(id, reqif.EnumValue.__name__, below=below)
