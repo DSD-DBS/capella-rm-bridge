@@ -74,8 +74,7 @@ def calculate_change_set(
         dismissed.
     gather_logs
         If ``True`` all error messages are gathered in
-        :attribute:`~capella_rm_bridge.changeset.change.TrackerChange.errors`
-        instead of being immediately logged.
+        `TrackerChange.errors` instead of being immediately logged.
 
     Returns
     -------

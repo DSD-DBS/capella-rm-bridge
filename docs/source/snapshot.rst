@@ -67,13 +67,22 @@ mapping from ``long_name`` to its values.
 .. code-block:: yaml
 
    data_types: # Enumeration Data Type Definitions
-     Type:
-       - Unset
-       - Folder
-       - Functional
-     Release:
-       - Feature Rel. 1
-       - Feature Rel. 2
+     type:
+      long_name: Type
+      values:
+       - id: unset
+         long_name: Unset
+       - id: folder
+         long_name: Folder
+       - id: functional
+         long_name: Functional
+     release:
+      long_name: Release
+      values:
+       - id: featureRel.1
+         long_name: Feature Rel. 1
+       - id: feature_rel.1
+         long_name: Feature Rel. 2
 
 In order to have a nice display of ``ValueAttribute``\ s for ``Requirement``\ s
 in Capella and also functioning ``.values`` for
@@ -81,19 +90,10 @@ in Capella and also functioning ``.values`` for
 s, :external:class:`~capellambse.extensions.reqif.AttributeDefinition`
 and
 :external:class:`~capellambse.extensions.reqif.AttributeDefinitionEnumeration`\
-s are needed. The *data_types* subsection is a ``long_name`` to value (values)
+s are needed. The *data_types* subsection maps ``identifier``\ s to a
+:class:`~capella_rm_bridge.changeset.actiontypes.DataType`. These share the same
 mapping that are matched against the attribute-definitions (``attributes``)
 subsection in :ref:`requirement_types`.
-
-.. warning::
-
-    The current format does not allow for equally named
-    ``EnumerationDataTypeDefinition``\ s such that
-    ``EnumerationAttributeValue``\ s on separate ``RequirementType``\ s have
-    different options available. For now there is only one shared DataType
-    exploiting the availability in the ``CapellaModule``. This makes it
-    possible to choose values which shouldn't be available on the respective
-    ValueAttribute.
 
 .. _requirement_types:
 
@@ -106,39 +106,44 @@ Requirement Types (``requirement_types``)
     system_requirement:
       long_name: System Requirement
       attributes: # Field Definitions, we don't need the IDs
-        Capella ID: # Field name
+        capellaID: # Field identifier
+          long_name: Capella ID # Field name
           type: String # -> AttributeDefinition
-        Type:
-          type: Enum
-        Submitted at:
+        type: # type should also be declared under data_types!
+          long_name: Type
+          type: Enum # -> EnumerationAttributeDefinition
+        submitted_at:
+          long_name: Submitted At
           type: Date # -> AttributeDefinition
-        Release:
+        release:
+          long_name: Release
           type: Enum
           multi_values: true
 
     software_requirement:
       long_name: Software Requirement
       attributes:
-        Capella ID:
+        capellaID:
+          long_name: Capella ID
           type: String
-        Type:
+        type:
+          long_name: Type
           type: Enum
-        Submitted at:
+        submitted_at:
+          long_name: Submitted At
           type: Date
 
     stakeholder_requirement:
       long_name: Stakeholder Requirement
       attributes:
-        Capella ID:
+        capellaID:
+          long_name: Capella ID
           type: String
 
 Work item types are dealt by most RM tools as special fields. This section is
 therefore a mapping that describes ``RequirementType``\ s from a given
-``identifier`` to its ``long_name`` and ``attribute_definitions`` (in short
-``attributes``). Therein the keys are matched against the ``long_name`` of the
-``EnumerationDataTypeDefinition`` defined in ``data_types`` if it is an
-``AttributeDefinitionEnumeration``. Else an ``AttributeDefinition`` is meant
-and for these a type-hint via ``type`` is needed.
+``identifier`` to its
+:class:`~capella_rm_bridge.changeset.actiontypes.RequirementType`.
 
 ``Requirement``\ s and ``RequirementFolder``\ s (``items``)
 ===========================================================
@@ -152,13 +157,17 @@ and for these a type-hint via ``type`` is needed.
        type: system_requirement # WorkItemType ID
 
        attributes: # Fields for a Folder
-         Capella ID: R-FNC-00001 # String Attribute
-         Type: [Unset] # Enum Attribute
-         Submitted at: 2022-06-30 17:07:18.664000+02:00
+         capellaID: R-FNC-00001 # String Attribute
+         type: [unset] # Enum Attribute value identifier
+         submitted_at: 2022-06-30 17:07:18.664000+02:00
 
-       children: # Folder b/c non-empty children
+       children: # Folder b/c children key exists
          - id: REQ-002
            long_name: Function Requirement
+           attributes: # Fields for a WorkItem
+            capellaID: R-FNC-00002 # String Attribute
+            type: [functional] # Enum Attribute value identifier
+            submitted_at: 2022-06-30 17:07:18.664000+02:00
            # [...]
          - id: REQ-003
            # [...]
@@ -186,15 +195,17 @@ are supported:
 .. note::
 
   During execution of
-  :py:meth:`~capella_rm_bridge.change_set.change.TrackerChange.calculate_change` the
-  integrity of the snapshot is checked. That means for example work items that
-  have ``type`` identifiers which are not defined in the
+  :py:meth:`~capella_rm_bridge.change_set.change.TrackerChange.calculate_change`
+  the integrity of the snapshot is checked. That means for example work items
+  that have ``type`` identifiers which are not defined in the
   :ref:`requirement_types` section will be skipped. In general there needs to
   be a ``type`` identifier exported in order to have fields maintained.
 
   Another example: If there are any options/values exported on an enum-field
   which are not defined in the respective enum definition under ``data_types``,
-  the field will be skipped.
+  the field will be skipped if the force mode is enabled. If force mode is
+  disabled (default) any error will result into cancelation of the ChangeSet
+  calculation.
 
 With the ``children`` key the hierarchical structure of the workitems is
 exported and empty children will result in a ``Requirement``. Conversely

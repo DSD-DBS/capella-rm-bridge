@@ -641,7 +641,7 @@ class TrackerChange:
 
         Raises
         ------
-        capella_rm_bridge.actiontypes.InvalidFieldValue
+        capella_rm_bridge.changeset.actiontypes.InvalidFieldValue
             If the types are not matching, if the used data_type
             definition is missing in the snapshot or the used options
             on an `EnumerationAttributeValue` are missing in the
