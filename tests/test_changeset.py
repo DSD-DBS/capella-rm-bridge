@@ -492,13 +492,46 @@ class TestModActions(ActionsTest):
     def test_enum_value_long_name_collision_produces_no_Unfulffilled_Promises(
         self, migration_model: capellambse.MelodyModel
     ) -> None:
-        tracker = copy.deepcopy(self.tracker)
-        tracker["data_types"]["new"] = tracker["data_types"]["type"]
-        tracker["requirement_types"]["system_requirement"]["attributes"][
-            "new"
-        ] = {"long_name": "New", "type": "Enum"}
-        req_item = tracker["items"][0]["children"][0]
-        req_item["attributes"]["new"] = ["functional"]
+        tracker_yaml = """\
+        id: project/space/example title
+        long_name: example title
+        data_types:
+          new:
+            long_name: Type
+            values:
+              - id: unset
+                long_name: Unset
+              - id: functional
+                long_name: Functional
+              - id: nonFunctional
+                long_name: Non-Functional
+          release:
+            long_name: Release
+            values:
+              - id: rel.1
+                long_name: Rel. 1
+          type:
+            long_name: Type
+            values:
+              - id: unset
+                long_name: Unset
+              - id: functional
+                long_name: Functional
+              - id: nonFunctional
+                long_name: Non-Functional
+        requirement_types:
+          system_requirement:
+            long_name: System Requirement
+            attributes:
+              new:
+                long_name: New
+                type: Enum
+              type:
+                long_name: Type
+                type: Enum
+        items: []"""
+
+        tracker = yaml.safe_load(tracker_yaml)
 
         change_set = self.tracker_change(
             migration_model, tracker, gather_logs=True
@@ -528,9 +561,9 @@ class TestDeleteActions(ActionsTest):
     tracker = TEST_SNAPSHOT_2["modules"][0]
     titem = tracker["items"][0]
 
-    REQ_TYPE_FOLDER_DEL = TEST_MODULE_CHANGE_2[0]
-    ENUM_DATA_TYPE_DEL = TEST_MODULE_CHANGE_2[1]
-    ATTR_DEF_DEL = TEST_MODULE_CHANGE_2[2]
+    ENUM_DATA_TYPE_DEL = TEST_MODULE_CHANGE_2[0]
+    ATTR_DEF_DEL = TEST_MODULE_CHANGE_2[1]
+    REQ_TYPE_FOLDER_DEL = TEST_MODULE_CHANGE_2[2]
     REQ_DEL, FOLDER_DEL = TEST_MODULE_CHANGE_2[-2:]
 
     def resolve_ChangeSet(
@@ -572,7 +605,7 @@ class TestDeleteActions(ActionsTest):
         data_type_del = copy.deepcopy(self.REQ_TYPE_FOLDER_DEL)
         del data_type_del["delete"]["requirement_types"]
         data_type_del = self.resolve_ChangeSet(deletion_model, data_type_del)
-        expected_actions = [data_type_del, self.ENUM_DATA_TYPE_DEL]
+        expected_actions = [self.ENUM_DATA_TYPE_DEL, data_type_del]
 
         tchange = self.tracker_change(deletion_model, snapshot)
         enum_data_type_actions = tchange.actions[:2]
@@ -593,7 +626,7 @@ class TestDeleteActions(ActionsTest):
 
         tchange = self.tracker_change(deletion_model, snapshot)
 
-        assert tchange.actions[:2] == [req_type_del, attr_def_del]
+        assert tchange.actions[:2] == [attr_def_del, req_type_del]
 
     def test_delete_requirements_actions(
         self, deletion_model: capellambse.MelodyModel
@@ -616,8 +649,8 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test ChangeSet on clean model for first migration run."""
         expected_change_set = copy.deepcopy(TEST_MODULE_CHANGE_2)
-        expected_change_set[2] = self.resolve_ChangeSet(
-            deletion_model, TEST_MODULE_CHANGE_2[2]
+        expected_change_set[1] = self.resolve_ChangeSet(
+            deletion_model, TEST_MODULE_CHANGE_2[1]
         )
         expected_change_set[3] = self.resolve_ChangeSet(
             deletion_model, TEST_MODULE_CHANGE_2[3]

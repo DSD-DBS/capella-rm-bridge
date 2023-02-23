@@ -1,12 +1,6 @@
 # SPDX-FileCopyrightText: Copyright DB Netz AG and the capella-rm-bridge contributors
 # SPDX-License-Identifier: Apache-2.0
 
-- parent: !uuid a15e8b60-bf39-47ba-b7c7-74ceecb25c9c
-  delete:
-    data_type_definitions:
-      - !uuid 98aaca05-d47f-4916-a9f9-770dc60aa04f
-    requirement_types:
-      - !uuid cbc96c24-58c9-4292-9dfa-1ecb5ee16a82
 - parent: !uuid 686e198b-8baf-49f9-9d85-24571bd05d93
   delete:
     values:
@@ -16,6 +10,12 @@
     attribute_definitions:
       - !uuid e46d4629-da10-4f7f-954e-146bd2697638
       - long_name Test after migration # dynamically generated object
+- parent: !uuid a15e8b60-bf39-47ba-b7c7-74ceecb25c9c
+  delete:
+    data_type_definitions:
+      - !uuid 98aaca05-d47f-4916-a9f9-770dc60aa04f
+    requirement_types:
+      - !uuid cbc96c24-58c9-4292-9dfa-1ecb5ee16a82
 - parent: !uuid b2c39449-ebbe-43cb-a712-22c740707a8b
   delete:
     attributes:

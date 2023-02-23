@@ -18,9 +18,7 @@ from . import find
 
 LOGGER = logging.getLogger(__name__)
 REQ_TYPES_FOLDER_NAME = "Types"
-CACHEKEY_MODULE_IDENTIFIER = "-1"
-CACHEKEY_TYPES_FOLDER_IDENTIFIER = "-2"
-CACHEKEY_REQTYPE_IDENTIFIER = "-3"
+TYPES_FOLDER_IDENTIFIER = "-2"
 
 REQ_TYPE_NAME = "Requirement"
 _ATTR_BLACKLIST = frozenset({("Type", "Folder")})
@@ -134,8 +132,6 @@ class TrackerChange:
         self._faulty_attribute_definitions = set[str]()
         self.errors = []
 
-        self.__reqtype_action: dict[str, t.Any] | None = None
-
         self.calculate_change()
 
     def calculate_change(self) -> None:
@@ -151,29 +147,41 @@ class TrackerChange:
         base = self.check_requirements_module()
         self.reqt_folder = find.find_by_identifier(
             self.model,
-            CACHEKEY_TYPES_FOLDER_IDENTIFIER,
+            TYPES_FOLDER_IDENTIFIER,
             reqif.CapellaTypesFolder.__name__,
             below=self.req_module,
         )
         if self.reqt_folder is None:
             base = self.requirement_types_folder_create_action(base)
         else:
-            self.data_type_definition_mod_actions()
-            self.requirement_type_delete_actions()
+            reqt_folder_action = self.data_type_definition_mod_actions()
+            if reqtype_deletions := self.requirement_type_delete_actions():
+                dels = {"delete": {"requirement_types": reqtype_deletions}}
+                _deep_update(reqt_folder_action, dels)
+
+            reqtype_creations = list[dict[str, t.Any]]()
             for id, reqtype in self.requirement_types.items():
-                self.requirement_type_mod_action(RMIdentifier(id), reqtype)
+                id = RMIdentifier(id)
+                if new_rtype := self.requirement_type_mod_action(id, reqtype):
+                    reqtype_creations.append(new_rtype)
+
+            if reqtype_creations:
+                exts = {"extend": {"requirement_types": reqtype_creations}}
+                _deep_update(reqt_folder_action, exts)
+
+            if set(reqt_folder_action) != {"parent"}:
+                self.actions.append(reqt_folder_action)
 
         visited = set[str]()
         for item in self.tracker["items"]:
             if "children" in item:
+                type = "Folder"
                 second_key = "folders"
-                req = find.find_by_identifier(self.model, item["id"], "Folder")
             else:
+                type = "Requirement"
                 second_key = "requirements"
-                req = find.find_by_identifier(
-                    self.model, item["id"], "Requirement"
-                )
 
+            req = find.find_by_identifier(self.model, item["id"], type)
             if req is None:
                 req_actions = self.yield_requirements_create_actions(item)
                 item_action = next(req_actions)
@@ -312,7 +320,7 @@ class TrackerChange:
         req_types = self.yield_requirement_type_create_actions()
         reqt_folder = {
             "long_name": REQ_TYPES_FOLDER_NAME,
-            "identifier": CACHEKEY_TYPES_FOLDER_IDENTIFIER,
+            "identifier": TYPES_FOLDER_IDENTIFIER,
             "data_type_definitions": list(data_type_defs),
             "requirement_types": list(req_types),
         }
@@ -709,7 +717,7 @@ class TrackerChange:
 
         return _AttributeValueBuilder(deftype, key, value)
 
-    def data_type_definition_mod_actions(self) -> None:
+    def data_type_definition_mod_actions(self) -> dict[str, t.Any]:
         r"""Populate with ModActions for the RequirementTypesFolder.
 
         The data type definitions and requirement type are checked via
@@ -743,11 +751,8 @@ class TrackerChange:
         if dt_defs_deletions:
             base["delete"] = {"data_type_definitions": dt_defs_deletions}
 
-        if base.get("extend", {}) or base.get("delete", {}):
-            self.__reqtype_action = base
-            self.actions.append(base)
-
         self.actions.extend(dt_defs_modifications)
+        return base
 
     def data_type_mod_action(
         self, id: str, ddef: act.DataType
@@ -807,25 +812,19 @@ class TrackerChange:
         except KeyError:
             return self.data_type_create_action(id, ddef)
 
-    def requirement_type_delete_actions(self) -> None:
+    def requirement_type_delete_actions(self) -> list[decl.UUIDReference]:
         r"""Populate actions for deleting ``RequirementType``\ s."""
         assert self.reqt_folder
-        parent_ref = decl.UUIDReference(self.reqt_folder.uuid)
         dels = [
             decl.UUIDReference(reqtype.uuid)
             for reqtype in self.reqt_folder.requirement_types
             if RMIdentifier(reqtype.identifier) not in self.requirement_types
         ]
-        if dels:
-            delete = {"requirement_types": dels}
-            if self.__reqtype_action is None:
-                self.actions.append({"parent": parent_ref, "delete": delete})
-            else:
-                _deep_update(self.__reqtype_action, {"delete": delete})
+        return dels
 
     def requirement_type_mod_action(
         self, identifier: RMIdentifier, item: act.RequirementType
-    ) -> None:
+    ) -> None | dict[str, t.Any]:
         assert self.reqt_folder
         try:
             reqtype = self.reqt_folder.requirement_types.by_identifier(
@@ -878,10 +877,9 @@ class TrackerChange:
                 self.actions.append(base)
 
             self.actions.extend(attr_defs_modifications)
+            return None
         except KeyError:
-            self.actions.append(
-                self.requirement_type_create_action(identifier, item)
-            )
+            return self.requirement_type_create_action(identifier, item)
 
     def yield_requirements_mod_actions(
         self,
