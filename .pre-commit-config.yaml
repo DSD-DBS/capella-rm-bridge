@@ -37,10 +37,14 @@ repos:
     rev: v0.991
     hooks:
       - id: mypy
+        args: []
         additional_dependencies:
+          - capellambse
+          - click
+          - pytest
           - types-docutils==0.17.0
-          - types-requests==2.25.11
           - types-PyYAML==6.0.7
+          - types-requests==2.25.11
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.4.2
     hooks:

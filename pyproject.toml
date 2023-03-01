@@ -87,6 +87,7 @@ allow_untyped_defs = true
 # Untyped third party libraries
 module = [
   "datauri",
+  "tomllib",
 ]
 ignore_missing_imports = true
 
