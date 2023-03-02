@@ -83,15 +83,40 @@
       <ownedAbstractCapabilityPkg xsi:type="org.polarsys.capella.core.data.ctx:CapabilityPkg"
           id="19d51c2a-4831-4ca2-8f18-2a799bbc0154" name="Capabilities">
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
-            id="7f251b5f-414b-42a3-975d-59a8ab78ec75" name="copy requirements and attribs from RM tool to Arch tool">
+            id="d26f45c7-b3a2-4084-a8b2-79f3f4c27144" name="analyse requirements in MBSE environment"
+            description="&lt;p>As a Systems Engineer I manage requirements (such as customer, stakeholder, system, etc.) in an RM tool but also need those to be available in the MBSE tool so that I could analyse those and derive system model elements, such as actors, system and actor functions, interfaces and constraints.&lt;/p>&#xA;&#xA;&lt;p>I will link every derived model element to the requirement(s) that I derived it from and will need that linkage information to be available in the RM tool so that the project stakeholders with no MBSE tool access could evaluate and review analysis progress and coverage.&lt;/p>&#xA;&#xA;&lt;p>I may also need other objects and object attributes from the RM tool to be available in the model so that I could use those as design rationales for modeling artifacts&lt;/p>&#xA;&#xA;&lt;p>In ideal case the head revision of the requirements of in&lt;/p>&#xA;">
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="28cf9318-b1c8-48c7-b358-867abe23aff4" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+              id="06d52d58-28f2-4659-9062-0a489a703ad5" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="a1dc8bfd-2447-4d2b-9bb1-586c27eff2e3" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+              id="462dd377-ff55-46f3-b9fe-ae0af65b70aa" involved="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="96aab0a5-274b-4fab-a6f0-d24fcf8e43cd" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+              id="42d9d31f-966c-4d92-adc2-cde6a10e13e9" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="04e214d9-e46a-4e15-b967-1ec050068688" involved="#a57fd145-0c47-47e1-8e1d-46ac53f95e4c"/>
+              id="8969f544-a58a-449a-80f3-69743a35085a" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+        </ownedCapabilities>
+        <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
+            id="5bceb885-fc35-4530-84e9-399e3cba9145" name="discover requirements through MBSE process"
+            description="&lt;p>As a Systems Engineer I may discover new requirements while using the MBSE tool and will need those available in the RM tool so that the lifecycle of the discovered requirements could be managed (review, release / approval).&lt;/p>&#xA;&#xA;&lt;p>Upon transfer the authority over requirements may be shared between the MBSE tool and the RM tool: as requirement originated in the MBSE tool, the context of requirement may change and so requirement may change as well so the change should be reflected in the RM tool. However a reason for change may also originate from the RM tool and may not require change of larger requirement context in the MBSE tool. In that case it might be acceptable to modify such requirement from the RM tool and hence have a mixed authority.&lt;/p>&#xA;&#xA;&lt;p>In case of concurrent change - if a requirement was modified in both tools and if requirement&amp;#39;s origin is in the MBSE model then change to the requirement from the MBSE tool shall prevail over a change from the RM tool and the representation of such requirement in the RM tool shall be updated.&lt;/p>&#xA;">
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="4763493e-98c1-4a1b-889e-df375a848b1a" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="594caf64-6aa7-43c9-a126-d1480f905640" involved="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="c382675b-4a4b-4a5d-bc7a-7908e0a42571" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="dd92d99c-c968-499b-9bb0-2063947b0f27" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+        </ownedCapabilities>
+        <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
+            id="8d3e6091-b56e-4eb9-99de-93de1e934356" name="author documents with references to model elements"
+            description="&lt;p>As a Project Stakeholder I may perform a document authoring activity in the RM tool and so I need to reference some model elements with objects I create in the RM tool so that the traceability is established and I could be notified if a model element change results in need for change to the linked RM tool objects.&lt;/p>&#xA;&#xA;&lt;p>As a part of this activity I may need to explore relationships of the model elements and so I need to see the model element context (linked model elements) from the RM tool.&lt;/p>&#xA;&#xA;&lt;p>Depending on a project configuration, I may also be able to edit descriptions of model elements from the document context if I find this helpful for overall content improvement. This however should require project level acceptance.&lt;/p>&#xA;">
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="6c8772d3-b886-4305-bdb6-4a1b1326b846" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="b229bcd6-ef1c-4a83-9938-37672bd55530" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="ad8a9953-ad06-4492-9ed9-d40acf15f0e9" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="9e7d3034-c3e3-4835-8833-a376d3c478d5" involved="#0792c506-f216-4e21-b06b-316aedafba16"/>
         </ownedCapabilities>
       </ownedAbstractCapabilityPkg>
       <ownedInterfacePkg xsi:type="org.polarsys.capella.core.data.cs:InterfacePkg"
@@ -198,9 +223,11 @@
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="0eca71b9-1f56-4101-8e17-d89ec89d5d42"
             name="RM Tool" abstractType="#54ebf659-7ecd-4565-b346-aa886da48225"/>
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="228b70f0-2e87-4b40-af38-4dd17fc02b4c"
-            name="Arch tool" abstractType="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
-        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="0a825d10-f60f-4429-81c3-64c6a06db4a0"
-            name="User" abstractType="#a57fd145-0c47-47e1-8e1d-46ac53f95e4c"/>
+            name="MBSE Tool" abstractType="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="c2c2e4fb-ea84-47f5-802c-806296733be4"
+            name="Systems Engineer" abstractType="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="0370eeb3-f90b-4614-b68b-60e1bc61a809"
+            name="Project Stakeholder" abstractType="#0792c506-f216-4e21-b06b-316aedafba16"/>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
             id="190f2b51-8e95-4ea0-9d36-5909302ca75c" name="RM Bridge">
           <ownedStateMachines xsi:type="org.polarsys.capella.core.data.capellacommon:StateMachine"
@@ -210,27 +237,24 @@
           </ownedStateMachines>
         </ownedSystemComponents>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="54ebf659-7ecd-4565-b346-aa886da48225" name="RM Tool" actor="true"/>
+            id="54ebf659-7ecd-4565-b346-aa886da48225" name="RM Tool" description="&lt;p>A requirements management tool may be used by a project team to formally manage all requirements across the project starting with customer / stakeholder requirements and going down to component requirements. We assume that an RM tool is also used for activites such as review, approval and release of requirement specifications (versioning / baselining).&lt;/p>&#xA;"
+            actor="true"/>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="4cee2194-06ff-4a53-a99f-0d30a708b69d" name="Arch tool" actor="true"/>
+            id="4cee2194-06ff-4a53-a99f-0d30a708b69d" name="MBSE Tool" description="&lt;p>Model Based Systems Engineering (MBSE) tool may be used by a project team to analyse the operational needs, define and specify the system under consideration as well as perform design activities such as logical and phisical architecting. New requirements are usually discovered during the system analysis / definition activities, however in most cases MBSE tools are not made for formal requirements management.&lt;/p>&#xA;"
+            actor="true"/>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="a57fd145-0c47-47e1-8e1d-46ac53f95e4c" name="User" actor="true" human="true"/>
+            id="1f0de6c4-af52-4977-9c92-3dfeff5fe446" name="Systems Engineer" description="&lt;p>Systems Engineer is a generic project team member who may have roles within Requirements Engineering, System Analysis and Design disciplines. Systems Engineer may use both RM tool and MBSE tool.&lt;/p>&#xA;"
+            actor="true" human="true">
+          <ownedGeneralizations xsi:type="org.polarsys.capella.core.data.capellacore:Generalization"
+              id="6b0e8232-6d2b-44dd-ad92-5b30690ec725" super="#0792c506-f216-4e21-b06b-316aedafba16"
+              sub="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+        </ownedSystemComponents>
+        <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
+            id="0792c506-f216-4e21-b06b-316aedafba16" name="Project Stakeholder" actor="true"
+            human="true"/>
       </ownedSystemComponentPkg>
       <ownedMissionPkg xsi:type="org.polarsys.capella.core.data.ctx:MissionPkg" id="62e24571-2094-48e5-8afc-bc2e1d12cbf3"
-          name="Missions">
-        <ownedMissions xsi:type="org.polarsys.capella.core.data.ctx:Mission" id="3b9010a4-45bd-44c1-a4a9-5f640ec76143"
-            name="Mission 1">
-          <ownedMissionInvolvements xsi:type="org.polarsys.capella.core.data.ctx:MissionInvolvement"
-              id="cac626f0-df83-4890-96b3-95a0b5d80646" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
-        </ownedMissions>
-        <ownedMissions xsi:type="org.polarsys.capella.core.data.ctx:Mission" id="c7bc9cd3-b562-4f03-9058-4f9221b9f1a9"
-            name="Ensure requirements consistency across tools">
-          <ownedMissionInvolvements xsi:type="org.polarsys.capella.core.data.ctx:MissionInvolvement"
-              id="2271963e-b904-44d9-ac87-e9a4f2855f40" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
-          <ownedCapabilityExploitations xsi:type="org.polarsys.capella.core.data.ctx:CapabilityExploitation"
-              id="e4443858-7aaa-4618-ad8f-46e35325568b" capability="#7f251b5f-414b-42a3-975d-59a8ab78ec75"/>
-        </ownedMissions>
-      </ownedMissionPkg>
+          name="Missions"/>
       <ownedOperationalAnalysisRealizations xsi:type="org.polarsys.capella.core.data.ctx:OperationalAnalysisRealization"
           id="7c3fbb83-a1ad-4eba-baa6-0f14faca0431" targetElement="#f2813194-54e6-407c-9296-3db6cccd66a6"
           sourceElement="#98083cbe-d604-4a50-8fc4-116e60e1a043"/>
