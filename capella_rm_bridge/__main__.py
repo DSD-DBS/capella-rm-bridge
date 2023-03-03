@@ -79,7 +79,7 @@ def write_change_set(change: str, module: dict[str, t.Any]) -> pathlib.Path:
 @click.option(
     "--pull/--no-pull",
     is_flag=True,
-    default=True,
+    default=None,
     help="Pull the latest changes from remote.",
 )
 @click.option(
@@ -118,7 +118,7 @@ def main(
     snapshotfile: t.TextIO,
     dry_run: bool,
     push: bool,
-    pull: bool,
+    pull: bool | None,
     force: bool,
     gather_logs: bool,
     save_change_history: bool,
@@ -147,7 +147,7 @@ def main(
 
     config = yaml.safe_load(conffile)
     params = config["model"]
-    if "git" in config["model"]["path"]:
+    if pull is not None:
         params["update_cache"] = pull
 
     model = capellambse.MelodyModel(**params)

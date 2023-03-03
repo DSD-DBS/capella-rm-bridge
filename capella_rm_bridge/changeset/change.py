@@ -457,7 +457,7 @@ class TrackerChange:
         return base
 
     def yield_requirements_create_actions(
-        self, item: dict[str, t.Any] | act.WorkItem
+        self, item: act.WorkItem
     ) -> cabc.Iterator[dict[str, t.Any]]:
         """Yield actions for creating Requirements or Folders.
 
@@ -517,12 +517,12 @@ class TrackerChange:
                 if "children" in child:
                     key = "folders"
                     creq = find.find_by_identifier(
-                        self.model, str(child["id"]), "Folder"
+                        self.model, child["id"], "Folder"
                     )
                 else:
                     key = "requirements"
                     creq = find.find_by_identifier(
-                        self.model, str(child["id"]), "Requirement"
+                        self.model, child["id"], "Requirement"
                     )
 
                 if creq is None:

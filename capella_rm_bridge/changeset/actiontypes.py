@@ -45,7 +45,7 @@ class InvalidTrackerConfig(Exception):
 class WorkItem(te.TypedDict, total=False):
     """A workitem from the snapshot."""
 
-    id: te.Required[int]
+    id: te.Required[str]
     long_name: str
     text: str
     type: str
