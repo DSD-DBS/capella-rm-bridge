@@ -34,7 +34,7 @@
         <description xmi:type="description_2:SequenceDiagramDescription" href="platform:/plugin/org.polarsys.capella.core.sirius.analysis/description/common.odesign#//@ownedViewpoints[name='Common']/@ownedRepresentations[name='Component%20Exchanges%20Scenario']"/>
         <target xmi:type="org.polarsys.capella.core.data.interaction:Scenario" href="rm-bridge.capella#8903f59e-68fd-407e-9d18-959b136fc7ca"/>
       </ownedRepresentationDescriptors>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_eeNwMLmuEe27nfW_ShLRQA" name="[ES] analyse requirements in MBSE environment" repPath="#_eeI3sLmuEe27nfW_ShLRQA" changeId="23b1a488-43ac-4e01-aa6b-978521ad172e">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_eeNwMLmuEe27nfW_ShLRQA" name="[ES] analyse requirements in MBSE environment" repPath="#_eeI3sLmuEe27nfW_ShLRQA" changeId="6edc8a9e-3d37-4072-be45-3b0e597f962a">
         <description xmi:type="description_2:SequenceDiagramDescription" href="platform:/plugin/org.polarsys.capella.core.sirius.analysis/description/common.odesign#//@ownedViewpoints[name='Common']/@ownedRepresentations[name='Component%20Exchanges%20Scenario']"/>
         <target xmi:type="org.polarsys.capella.core.data.interaction:Scenario" href="rm-bridge.capella#374b1216-2b2c-4306-aa5b-00a1be7e79b0"/>
       </ownedRepresentationDescriptors>
@@ -54,7 +54,7 @@
     </ownedViews>
     <ownedViews xmi:type="viewpoint:DView" uid="_ufo3cOsQEeycurNzOvi5ng">
       <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.polarsys.capella.core.sirius.analysis/description/context.odesign#//@ownedViewpoints[name='System%20Analysis']"/>
-      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_zsWz8OsQEeycurNzOvi5ng" name="[MCB] System Capabilities Overview" repPath="#_zsTwoOsQEeycurNzOvi5ng" changeId="23574945-be0f-4057-b3ff-65343625da5d">
+      <ownedRepresentationDescriptors xmi:type="viewpoint:DRepresentationDescriptor" uid="_zsWz8OsQEeycurNzOvi5ng" name="[MCB] System Capabilities Overview" repPath="#_zsTwoOsQEeycurNzOvi5ng" changeId="6fe09fd5-67e1-431a-bced-f4d053403882">
         <description xmi:type="description_1:DiagramDescription" href="platform:/plugin/org.polarsys.capella.core.sirius.analysis/description/context.odesign#//@ownedViewpoints[name='System%20Analysis']/@ownedRepresentations[name='Missions%20Capabilities%20Blank']"/>
         <target xmi:type="org.polarsys.capella.core.data.ctx:CapabilityPkg" href="rm-bridge.capella#19d51c2a-4831-4ca2-8f18-2a799bbc0154"/>
       </ownedRepresentationDescriptors>
@@ -361,7 +361,7 @@
     <ownedAnnotationEntries xmi:type="description:AnnotationEntry" uid="_zsiaIOsQEeycurNzOvi5ng" source="DANNOTATION_CUSTOMIZATION_KEY">
       <data xmi:type="diagram:ComputedStyleDescriptionRegistry" uid="_zsiaIesQEeycurNzOvi5ng"/>
     </ownedAnnotationEntries>
-    <ownedDiagramElements xmi:type="diagram:DNode" uid="_9vKm4Lk7Ee27nfW_ShLRQA" name="analyse requirements in MBSE environment" outgoingEdges="_s-qMMrk9Ee27nfW_ShLRQA _txwdGrk9Ee27nfW_ShLRQA _vUrBXrk9Ee27nfW_ShLRQA _uCV0OLmoEe27nfW_ShLRQA" width="7" height="7" resizeKind="NSEW">
+    <ownedDiagramElements xmi:type="diagram:DNode" uid="_9vKm4Lk7Ee27nfW_ShLRQA" name="process requirements in MBSE environment" outgoingEdges="_s-qMMrk9Ee27nfW_ShLRQA _txwdGrk9Ee27nfW_ShLRQA _vUrBXrk9Ee27nfW_ShLRQA _uCV0OLmoEe27nfW_ShLRQA" width="7" height="7" resizeKind="NSEW">
       <target xmi:type="org.polarsys.capella.core.data.ctx:Capability" href="rm-bridge.capella#d26f45c7-b3a2-4084-a8b2-79f3f4c27144"/>
       <semanticElements xmi:type="org.polarsys.capella.core.data.ctx:Capability" href="rm-bridge.capella#d26f45c7-b3a2-4084-a8b2-79f3f4c27144"/>
       <arrangeConstraints>KEEP_LOCATION</arrangeConstraints>
@@ -5555,7 +5555,7 @@
         <description xmi:type="style:FlatContainerStyleDescription" href="platform:/plugin/org.polarsys.capella.core.sirius.analysis/description/common.odesign#//@ownedViewpoints[name='Common']/@ownedRepresentations[name='Component%20Exchanges%20Scenario']/@defaultLayer/@containerMappings[name='CombinedFragmentDF']/@style"/>
       </ownedStyle>
       <actualMapping xmi:type="description_2:CombinedFragmentMapping" href="platform:/plugin/org.polarsys.capella.core.sirius.analysis/description/common.odesign#//@ownedViewpoints[name='Common']/@ownedRepresentations[name='Component%20Exchanges%20Scenario']/@defaultLayer/@containerMappings[name='CombinedFragmentDF']"/>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_m1tp0rmyEe27nfW_ShLRQA" name="[ project configuration is set for automated update using RM tool as a trigger source ]">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_m1tp0rmyEe27nfW_ShLRQA" name="[ automated update using RM tool as a trigger source is ENABLED ]">
         <target xmi:type="org.polarsys.capella.core.data.interaction:InteractionOperand" href="rm-bridge.capella#8cf5909b-4848-4195-ab82-0e53dd859daa"/>
         <semanticElements xmi:type="org.polarsys.capella.core.data.interaction:InteractionOperand" href="rm-bridge.capella#8cf5909b-4848-4195-ab82-0e53dd859daa"/>
         <graphicalFilters xmi:type="diagram:AbsoluteBoundsFilter" uid="_m2shQLmyEe27nfW_ShLRQA" x="91" y="272" height="101" width="654"/>
@@ -5564,7 +5564,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_2:OperandMapping" href="platform:/plugin/org.polarsys.capella.core.sirius.analysis/description/common.odesign#//@ownedViewpoints[name='Common']/@ownedRepresentations[name='Component%20Exchanges%20Scenario']/@defaultLayer/@containerMappings[name='CombinedFragmentDF']/@subContainerMappings[name='OperandDF']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_pyot8LmyEe27nfW_ShLRQA" name="[ project is not set for automated update using RM tool as a trigger source ]">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_pyot8LmyEe27nfW_ShLRQA" name="[ automated update using RM tool as a trigger source is DISABLED ]">
         <target xmi:type="org.polarsys.capella.core.data.interaction:InteractionOperand" href="rm-bridge.capella#3c6ccb1e-2fc3-4a51-a708-2e2f4e019e5f"/>
         <semanticElements xmi:type="org.polarsys.capella.core.data.interaction:InteractionOperand" href="rm-bridge.capella#3c6ccb1e-2fc3-4a51-a708-2e2f4e019e5f"/>
         <graphicalFilters xmi:type="diagram:AbsoluteBoundsFilter" uid="_pypVALmyEe27nfW_ShLRQA" x="91" y="373" height="97" width="654"/>
@@ -5573,7 +5573,7 @@
         </ownedStyle>
         <actualMapping xmi:type="description_2:OperandMapping" href="platform:/plugin/org.polarsys.capella.core.sirius.analysis/description/common.odesign#//@ownedViewpoints[name='Common']/@ownedRepresentations[name='Component%20Exchanges%20Scenario']/@defaultLayer/@containerMappings[name='CombinedFragmentDF']/@subContainerMappings[name='OperandDF']"/>
       </ownedDiagramElements>
-      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_zLZ3ULm2Ee27nfW_ShLRQA" name="[ project configuration is set to check for RM tool changes on model change event ]">
+      <ownedDiagramElements xmi:type="diagram:DNodeContainer" uid="_zLZ3ULm2Ee27nfW_ShLRQA" name="[ automated update using MBSE CM tool change event as a trigger is ENABLED ]">
         <target xmi:type="org.polarsys.capella.core.data.interaction:InteractionOperand" href="rm-bridge.capella#287dfc24-f8ef-4fc2-b250-8d4b842cdc8e"/>
         <semanticElements xmi:type="org.polarsys.capella.core.data.interaction:InteractionOperand" href="rm-bridge.capella#287dfc24-f8ef-4fc2-b250-8d4b842cdc8e"/>
         <graphicalFilters xmi:type="diagram:AbsoluteBoundsFilter" uid="_zLbFcLm2Ee27nfW_ShLRQA" x="91" y="470" height="104" width="654"/>

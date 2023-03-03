@@ -192,10 +192,10 @@
       <ownedAbstractCapabilityPkg xsi:type="org.polarsys.capella.core.data.ctx:CapabilityPkg"
           id="19d51c2a-4831-4ca2-8f18-2a799bbc0154" name="Capabilities">
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
-            id="d26f45c7-b3a2-4084-a8b2-79f3f4c27144" name="analyse requirements in MBSE environment"
-            description="&lt;p>As a Systems Engineer I manage requirements (such as customer, stakeholder, system, etc.) in an RM tool but also need those to be available in the MBSE tool so that I could analyse those and derive system model elements, such as actors, system and actor functions, interfaces and constraints.&lt;/p>&#xA;&#xA;&lt;p>I will link every derived model element to the requirement(s) that I derived it from and will need that linkage information to be available in the RM tool so that the project stakeholders with no MBSE tool access could evaluate and review analysis progress and coverage.&lt;/p>&#xA;&#xA;&lt;p>I may also need other objects and object attributes from the RM tool to be available in the model so that I could use those as design rationales for modeling artifacts&lt;/p>&#xA;&#xA;&lt;p>Depending on a project setup this capability may be triggered by on demand by the Systems Engineer, RM tool Object Change Event, Document Baseline Event or MBSE CM Model Change Event as well as a basic Scheduler (for example, perform transfer of changes every night at 03:00).&lt;/p>&#xA;">
+            id="d26f45c7-b3a2-4084-a8b2-79f3f4c27144" name="process requirements in MBSE environment"
+            description="&lt;p>As a Systems Engineer I manage requirements (such as customer, stakeholder, etc.) in an RM tool but also need those to be available in the MBSE tool so that I could analyse those and derive system model elements, such as actors, system and actor functions, interfaces and constraints.&lt;/p>&#xA;&#xA;&lt;p>I will link every derived model element to the requirement(s) that I derived it from and will need that linkage information to be available in the RM tool so that the project stakeholders with no MBSE tool access could evaluate and review analysis progress and coverage.&lt;/p>&#xA;&#xA;&lt;p>I may also need other objects and object attributes from the RM tool to be available in the model so that I could use those as design rationales for modeling artifacts&lt;/p>&#xA;&#xA;&lt;p>Depending on a project setup this capability may be triggered by on demand by the Systems Engineer, RM tool Object Change Event, Document Baseline Event or MBSE CM Model Change Event as well as a basic Scheduler (for example, perform transfer of changes every night at 03:00).&lt;/p>&#xA;">
           <ownedScenarios xsi:type="org.polarsys.capella.core.data.interaction:Scenario"
-              id="374b1216-2b2c-4306-aa5b-00a1be7e79b0" name="[ES] analyse requirements in MBSE environment"
+              id="374b1216-2b2c-4306-aa5b-00a1be7e79b0" name="[ES] process requirements in MBSE environment"
               kind="DATA_FLOW">
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
                 id="8cdba1e7-514d-48ae-8161-730c2d0cbd68" name="Systems Engineer"
@@ -292,7 +292,7 @@
                   id="5e6a7ef1-e876-41e3-b8da-10e64ae8975b" name="">
                 <ownedSpecification xsi:type="org.polarsys.capella.core.data.information.datavalue:OpaqueExpression"
                     id="394839e3-68a4-4e99-8682-00acc050db56">
-                  <bodies>project configuration is set for automated update using RM tool as a trigger source</bodies>
+                  <bodies>automated update using RM tool as a trigger source is ENABLED</bodies>
                   <languages>capella:linkedText</languages>
                 </ownedSpecification>
               </ownedConstraints>
@@ -325,7 +325,7 @@
                   id="e8f2dd1e-4a3f-451e-8b59-e16024e8141c" name="">
                 <ownedSpecification xsi:type="org.polarsys.capella.core.data.information.datavalue:OpaqueExpression"
                     id="48f4d2a5-98f4-4b84-a58f-f0f0be94cd68">
-                  <bodies>project is not set for automated update using RM tool as a trigger source</bodies>
+                  <bodies>automated update using RM tool as a trigger source is DISABLED</bodies>
                   <languages>capella:linkedText</languages>
                 </ownedSpecification>
               </ownedConstraints>
@@ -358,7 +358,7 @@
                   id="d79d6bf3-fa10-4276-855e-750d385633c9" name="">
                 <ownedSpecification xsi:type="org.polarsys.capella.core.data.information.datavalue:OpaqueExpression"
                     id="fbaccf7b-493c-46ef-8324-f83c9ce137e9">
-                  <bodies>project configuration is set to check for RM tool changes on model change event</bodies>
+                  <bodies>automated update using MBSE CM tool change event as a trigger is ENABLED</bodies>
                   <languages>capella:linkedText</languages>
                 </ownedSpecification>
               </ownedConstraints>
@@ -614,7 +614,7 @@
         </ownedCapabilities>
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
             id="5bceb885-fc35-4530-84e9-399e3cba9145" name="discover requirements through MBSE process"
-            description="&lt;p>As a Systems Engineer I may discover new requirements while using the MBSE tool and will need those available in the RM tool so that the lifecycle of the discovered requirements could be managed (review, release / approval).&lt;/p>&#xA;&#xA;&lt;p>Upon transfer the authority over requirements may be shared between the MBSE tool and the RM tool: as requirement originated in the MBSE tool, the context of requirement may change and so requirement may change as well so the change should be reflected in the RM tool. However a reason for change may also originate from the RM tool and may not require change of larger requirement context in the MBSE tool. In that case it might be acceptable to modify such requirement from the RM tool and hence have a mixed authority.&lt;/p>&#xA;&#xA;&lt;p>In case of concurrent change - if a requirement was modified in both tools and if requirement&amp;#39;s origin is in the MBSE model then change to the requirement from the MBSE tool shall prevail over a change from the RM tool and the representation of such requirement in the RM tool shall be updated.&lt;/p>&#xA;">
+            description="&lt;p>As a Systems Engineer I may discover new requirements while using the MBSE tool and will need those available in the RM tool so that the lifecycle of the discovered requirements could be managed (review, release / approval). To distinguish discovered requirements from external requirements we may decorate those with an ID prefix, attribute or use a dedicated type.&lt;/p>&#xA;&#xA;&lt;p>Upon transfer the authority over requirements may be shared between the MBSE tool and the RM tool: as requirement originated in the MBSE tool, the context of requirement may change and so requirement may change as well so the change should be reflected in the RM tool. However a reason for change may also originate from the RM tool and may not require change of larger requirement context in the MBSE tool. In that case it might be acceptable to modify such requirement from the RM tool and hence have a mixed authority.&lt;/p>&#xA;&#xA;&lt;p>In case of concurrent change - if a requirement was modified in both tools and if requirement&amp;#39;s origin is in the MBSE model then change to the requirement from the MBSE tool shall prevail over a change from the RM tool and the representation of such requirement in the RM tool shall be updated.&lt;/p>&#xA;">
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="4763493e-98c1-4a1b-889e-df375a848b1a" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
