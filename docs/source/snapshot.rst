@@ -208,8 +208,9 @@ are supported:
   calculation.
 
 With the ``children`` key the hierarchical structure of the workitems is
-exported and empty children will result in a ``Requirement``. Conversely
-non-empty children will cause change action on a ``Folder``.
+exported. The existance of a ``children`` key will result in a ``Folder``.
+Conversely if there is no ``children`` key will cause change action on a
+``Requirement``.
 
 Complete snapshot
 =================

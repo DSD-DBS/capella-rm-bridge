@@ -31,6 +31,6 @@ def find_by(
 
 def find_by_identifier(
     model: capellambse.MelodyModel, id: str, *xtypes: str, **kw
-) -> reqif.ReqIFElement:
+) -> reqif.ReqIFElement | None:
     """Try to return a model object by its ``identifier``."""
     return find_by(model, id, *xtypes, **kw)

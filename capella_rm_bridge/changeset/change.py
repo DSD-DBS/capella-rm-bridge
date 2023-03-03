@@ -1117,6 +1117,7 @@ class TrackerChange:
             self.model, f"{id} {req_type_id}", deftype, below=self.reqt_folder
         )
         attr = req.attributes.by_definition(attrdef, single=True)
+        assert attrdef is not None
         if isinstance(attr, reqif.EnumerationValueAttribute):
             assert isinstance(valueid, list)
             actual = set(attr.values.by_identifier)

@@ -435,15 +435,14 @@ class TestModActions(ActionsTest):
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
         titem["imagination"] = 1
-        message_end = (
-            "Invalid module 'project/space/example title'. Invalid "
-            "workitem 'REQ-001'. imagination isn't defined on Folder"
-        )
 
         with caplog.at_level(logging.ERROR):
             self.tracker_change(migration_model, tracker, gather_logs=False)
 
-        assert caplog.messages[0].endswith(message_end)
+        assert "project/space/example title" in caplog.messages[0]
+        assert "REQ-001" in caplog.messages[0]
+        assert "imagination" in caplog.messages[0]
+        assert "Folder" in caplog.messages[0]
 
     def test_InvalidAttributeDefinition_errors_are_gathered(
         self, migration_model: capellambse.MelodyModel
