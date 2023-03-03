@@ -84,7 +84,7 @@
           id="19d51c2a-4831-4ca2-8f18-2a799bbc0154" name="Capabilities">
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
             id="d26f45c7-b3a2-4084-a8b2-79f3f4c27144" name="analyse requirements in MBSE environment"
-            description="&lt;p>As a Systems Engineer I manage requirements (such as customer, stakeholder, system, etc.) in an RM tool but also need those to be available in the MBSE tool so that I could analyse those and derive system model elements, such as actors, system and actor functions, interfaces and constraints.&lt;/p>&#xA;&#xA;&lt;p>I will link every derived model element to the requirement(s) that I derived it from and will need that linkage information to be available in the RM tool so that the project stakeholders with no MBSE tool access could evaluate and review analysis progress and coverage.&lt;/p>&#xA;&#xA;&lt;p>I may also need other objects and object attributes from the RM tool to be available in the model so that I could use those as design rationales for modeling artifacts&lt;/p>&#xA;&#xA;&lt;p>In ideal case the head revision of the requirements of in&lt;/p>&#xA;">
+            description="&lt;p>As a Systems Engineer I manage requirements (such as customer, stakeholder, system, etc.) in an RM tool but also need those to be available in the MBSE tool so that I could analyse those and derive system model elements, such as actors, system and actor functions, interfaces and constraints.&lt;/p>&#xA;&#xA;&lt;p>I will link every derived model element to the requirement(s) that I derived it from and will need that linkage information to be available in the RM tool so that the project stakeholders with no MBSE tool access could evaluate and review analysis progress and coverage.&lt;/p>&#xA;&#xA;&lt;p>I may also need other objects and object attributes from the RM tool to be available in the model so that I could use those as design rationales for modeling artifacts&lt;/p>&#xA;&#xA;&lt;p>Depending on a project setup this capability may be triggered by on demand by the Systems Engineer, RM tool Object Change Event, Document Baseline Event or MBSE CM Model Change Event as well as a basic Scheduler (for example, perform transfer of changes every night at 03:00).&lt;/p>&#xA;">
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="06d52d58-28f2-4659-9062-0a489a703ad5" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
@@ -93,6 +93,8 @@
               id="42d9d31f-966c-4d92-adc2-cde6a10e13e9" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="8969f544-a58a-449a-80f3-69743a35085a" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="14f98d09-a776-49a0-9fed-c015b944f9c2" involved="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
         </ownedCapabilities>
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
             id="5bceb885-fc35-4530-84e9-399e3cba9145" name="discover requirements through MBSE process"
@@ -105,6 +107,8 @@
               id="c382675b-4a4b-4a5d-bc7a-7908e0a42571" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="dd92d99c-c968-499b-9bb0-2063947b0f27" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="e0f74cb2-9290-4c29-a292-267a3e8157cb" involved="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
         </ownedCapabilities>
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
             id="8d3e6091-b56e-4eb9-99de-93de1e934356" name="author documents with references to model elements"
@@ -114,9 +118,9 @@
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="b229bcd6-ef1c-4a83-9938-37672bd55530" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="ad8a9953-ad06-4492-9ed9-d40acf15f0e9" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
-          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="9e7d3034-c3e3-4835-8833-a376d3c478d5" involved="#0792c506-f216-4e21-b06b-316aedafba16"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="712f2c8f-970e-43b6-97d3-22692b18fd5f" involved="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
         </ownedCapabilities>
       </ownedAbstractCapabilityPkg>
       <ownedInterfacePkg xsi:type="org.polarsys.capella.core.data.cs:InterfacePkg"
@@ -228,6 +232,8 @@
             name="Systems Engineer" abstractType="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="0370eeb3-f90b-4614-b68b-60e1bc61a809"
             name="Project Stakeholder" abstractType="#0792c506-f216-4e21-b06b-316aedafba16"/>
+        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="918f6a1d-9abe-4c6e-afce-44f1874fa90a"
+            name="MBSE CM" abstractType="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
             id="190f2b51-8e95-4ea0-9d36-5909302ca75c" name="RM Bridge">
           <ownedStateMachines xsi:type="org.polarsys.capella.core.data.capellacommon:StateMachine"
@@ -250,8 +256,11 @@
               sub="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
         </ownedSystemComponents>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="0792c506-f216-4e21-b06b-316aedafba16" name="Project Stakeholder" actor="true"
-            human="true"/>
+            id="0792c506-f216-4e21-b06b-316aedafba16" name="Project Stakeholder" description="&lt;p>Project Stakeholder is a generic member of a project that has access to basic project documentation that is managed in an RM Tool. Project stakeholder may have rights to contribute to the documentation via review comments or textual changes but may not have means or need to contribute to the model contents directly / may not use the MBSE CM and MBSE Tool.&lt;/p>&#xA;"
+            actor="true" human="true"/>
+        <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
+            id="5f51013a-6ff7-4f6c-a8df-e1c3e955b62c" name="MBSE CM" description="&lt;p>MBSE Configuration Management (CM) system is there to capture model changes / increments and baselines / releases. We assume that in a project engineering context no model changes happen outside of MBSE CM so it is the center piece of all modeling work. Depending on a project configuration it may be realized by commercial products like TeamForCapella, Teamcenter Modeling Workbench but also basic self-hosted or SaaS git repository management systems like Github and Gitlab.&lt;/p>&#xA;&#xA;&lt;p>MBSE CM is also a source of Model Change Event and Model Release Event. &amp;nbsp;Those events could be used for example to automatically start the transfer of relevant model element changes into an RM tool.&lt;/p>&#xA;"
+            actor="true"/>
       </ownedSystemComponentPkg>
       <ownedMissionPkg xsi:type="org.polarsys.capella.core.data.ctx:MissionPkg" id="62e24571-2094-48e5-8afc-bc2e1d12cbf3"
           name="Missions"/>
