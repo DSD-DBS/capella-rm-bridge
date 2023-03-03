@@ -129,7 +129,7 @@
                 id="9175badf-5cec-4c84-9d97-72d8914f63f3" name="FOP 1"/>
           </ownedFunctions>
           <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
-              id="97ad2760-ba65-48ed-ae88-c6dec50b5c86" name="synch model with RM snapshot">
+              id="97ad2760-ba65-48ed-ae88-c6dec50b5c86" name="compare model with RM snapshot">
             <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
                 id="3dd3b761-a81e-4579-85a5-b7bdb462620f" name="FIP 1"/>
             <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
@@ -153,6 +153,13 @@
               id="7bacb71e-7a1f-446d-9e0e-a6aa409dacba" name="handle model change">
             <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
                 id="920237e8-b9e0-4ef8-b3cb-fdb88464cfab" name="FIP 1"/>
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="c9739480-1153-4293-b933-56d9f2976753" name="FIP 2"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="5bb44c50-a8e6-4162-bfce-467b29adb1df" name="commit model changes">
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="e418c058-36a3-41fe-baaa-7758513b973f" name="FOP 1"/>
           </ownedFunctions>
           <ownedFunctionRealizations xsi:type="org.polarsys.capella.core.data.fa:FunctionRealization"
               id="15e0232d-c75a-45be-a51c-a4fdde26d2a2" targetElement="#687bdbfc-572d-4548-987b-971b29800f27"
@@ -187,13 +194,16 @@
           <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
               id="79441bac-b961-469b-9e35-ca0a6d9b1244" name="model update (commit and push)"
               target="#920237e8-b9e0-4ef8-b3cb-fdb88464cfab" source="#6971ccd6-4a92-4207-a5a5-136ca22bf7b4"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="6a7261d6-9e6d-408e-b915-7618ff46ba73" name="model update (commit and push)"
+              target="#c9739480-1153-4293-b933-56d9f2976753" source="#e418c058-36a3-41fe-baaa-7758513b973f"/>
         </ownedSystemFunctions>
       </ownedFunctionPkg>
       <ownedAbstractCapabilityPkg xsi:type="org.polarsys.capella.core.data.ctx:CapabilityPkg"
           id="19d51c2a-4831-4ca2-8f18-2a799bbc0154" name="Capabilities">
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
             id="d26f45c7-b3a2-4084-a8b2-79f3f4c27144" name="process requirements in MBSE environment"
-            description="&lt;p>As a Systems Engineer I manage requirements (such as customer, stakeholder, etc.) in an RM tool but also need those to be available in the MBSE tool so that I could analyse those and derive system model elements, such as actors, system and actor functions, interfaces and constraints.&lt;/p>&#xA;&#xA;&lt;p>I will link every derived model element to the requirement(s) that I derived it from and will need that linkage information to be available in the RM tool so that the project stakeholders with no MBSE tool access could evaluate and review analysis progress and coverage.&lt;/p>&#xA;&#xA;&lt;p>I may also need other objects and object attributes from the RM tool to be available in the model so that I could use those as design rationales for modeling artifacts&lt;/p>&#xA;&#xA;&lt;p>Depending on a project setup this capability may be triggered by on demand by the Systems Engineer, RM tool Object Change Event, Document Baseline Event or MBSE CM Model Change Event as well as a basic Scheduler (for example, perform transfer of changes every night at 03:00).&lt;/p>&#xA;">
+            description="&lt;p>As a Systems Engineer, I work with (mostly external) requirements in an RM tool. However, I also need to process these requirements in an MBSE tool - analyze them and create system model elements (like actors, system and actor functions, interfaces, and constraints).&lt;/p>&#xA;&#xA;&lt;p>To make reasoning behind the model elements transparent, I will link each model element back to the requirement it came from. This linkage information needs to be available in the RM tool so that project stakeholders without access to the MBSE tool can review progress and coverage.&lt;/p>&#xA;&#xA;&lt;p>In addition, I may need to use other objects and object attributes from the RM tool as design rationales for modeling artifacts.&lt;/p>&#xA;&#xA;&lt;p>This process can be triggered in different ways, such as by the Systems Engineer, a change event (emited by either RM tool or MBSE CM), or a scheduled transfer of changes at a set time.&lt;/p>&#xA;">
           <ownedScenarios xsi:type="org.polarsys.capella.core.data.interaction:Scenario"
               id="374b1216-2b2c-4306-aa5b-00a1be7e79b0" name="[ES] process requirements in MBSE environment"
               kind="DATA_FLOW">
@@ -203,7 +213,7 @@
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
                 id="63385082-2570-4afb-a8d1-bf207ffee06a" name="RM Tool" representedInstance="#0eca71b9-1f56-4101-8e17-d89ec89d5d42"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
-                id="40d4b58a-0332-405e-8a91-836b8e7cd9d9" name="RM Bridge" representedInstance="#4974f634-df3e-4a4c-a5a6-431713950376"/>
+                id="40d4b58a-0332-405e-8a91-836b8e7cd9d9" name="RM-Bridge" representedInstance="#4974f634-df3e-4a4c-a5a6-431713950376"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
                 id="3625e66f-1a02-47c7-944e-cb3b5e9ec86f" name="MBSE CM" representedInstance="#918f6a1d-9abe-4c6e-afce-44f1874fa90a"/>
             <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
@@ -220,6 +230,10 @@
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
                 id="12d3c873-326f-4d2b-bbce-dbfcb7b2cfab" name="manual request" kind="ASYNCHRONOUS_CALL"
                 sendingEnd="#6ec73f1a-05da-434a-982d-794b9d6e4ff1" receivingEnd="#241f365b-2f63-4588-b0b9-75c412df6ad2"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="db59a632-d144-4b3e-823e-d942d53547dc" name="model update (commit and push)"
+                kind="ASYNCHRONOUS_CALL" sendingEnd="#b98099f3-4982-4774-9903-aac0530a21b5"
+                receivingEnd="#9a3758a6-a0df-4693-957d-7ce7d78774cd"/>
             <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
                 id="4170f3d0-abb0-48ec-a90d-78cf85fd8605" name="Change Event" kind="ASYNCHRONOUS_CALL"
                 sendingEnd="#f220d05e-770f-4551-933b-e667add076de" receivingEnd="#f55b66e6-539d-40d2-9ed6-482499eff2ed"/>
@@ -284,9 +298,9 @@
                 id="b2d3dc91-ec20-4100-b18a-c44ea6d85741" name="endExec" coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a"
                 event="#84a25ce8-4902-452e-bc55-c24b2d8497c6"/>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:FragmentEnd"
-                id="3a815a22-9d22-48a1-93a3-932cfd707e7e" name="start" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f"/>
+                id="3a815a22-9d22-48a1-93a3-932cfd707e7e" name="start" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"/>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionOperand"
-                id="8cf5909b-4848-4195-ab82-0e53dd859daa" name="operand 1" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f"
+                id="8cf5909b-4848-4195-ab82-0e53dd859daa" name="operand 1" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"
                 guard="#5e6a7ef1-e876-41e3-b8da-10e64ae8975b">
               <ownedConstraints xsi:type="org.polarsys.capella.core.data.capellacore:Constraint"
                   id="5e6a7ef1-e876-41e3-b8da-10e64ae8975b" name="">
@@ -319,7 +333,7 @@
                 id="a8298786-4e0b-46ae-897d-aca61d4f6c8c" name="endExec" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9"
                 event="#098b96dd-b568-40e2-a2fd-280335654038"/>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionOperand"
-                id="3c6ccb1e-2fc3-4a51-a708-2e2f4e019e5f" name="operand" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f"
+                id="3c6ccb1e-2fc3-4a51-a708-2e2f4e019e5f" name="operand" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"
                 guard="#e8f2dd1e-4a3f-451e-8b59-e16024e8141c">
               <ownedConstraints xsi:type="org.polarsys.capella.core.data.capellacore:Constraint"
                   id="e8f2dd1e-4a3f-451e-8b59-e16024e8141c" name="">
@@ -352,7 +366,7 @@
                 id="7ca7fe62-b5f0-4944-9293-c8b11da65974" name="endExec" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9"
                 event="#aa628844-4d1d-49bd-a39e-c29913fc581e"/>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionOperand"
-                id="287dfc24-f8ef-4fc2-b250-8d4b842cdc8e" name="operand" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f"
+                id="287dfc24-f8ef-4fc2-b250-8d4b842cdc8e" name="operand" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"
                 guard="#d79d6bf3-fa10-4276-855e-750d385633c9">
               <ownedConstraints xsi:type="org.polarsys.capella.core.data.capellacore:Constraint"
                   id="d79d6bf3-fa10-4276-855e-750d385633c9" name="">
@@ -364,11 +378,32 @@
               </ownedConstraints>
             </ownedInteractionFragments>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="8a2da9db-905f-4740-a9c6-cf8a4eed90b7" name="commit model changes"
+                coveredInstanceRoles="#98fb281e-72fe-4eb0-9f76-2219d3130e6f" relatedAbstractFunction="#5bb44c50-a8e6-4162-bfce-467b29adb1df"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="8d142b77-ba31-4cc0-80e5-428747c15f19" name="commit model changes"
+                coveredInstanceRoles="#98fb281e-72fe-4eb0-9f76-2219d3130e6f" relatedAbstractFunction="#5bb44c50-a8e6-4162-bfce-467b29adb1df"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="b98099f3-4982-4774-9903-aac0530a21b5" name="Send Call Message Call"
+                coveredInstanceRoles="#98fb281e-72fe-4eb0-9f76-2219d3130e6f" event="#cecc3004-2415-4e8a-b3e3-92e10c017922"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="9a3758a6-a0df-4693-957d-7ce7d78774cd" name="Receive Call Message Call"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" event="#81423f5c-f82f-4df0-a4af-a7395532594f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="a2757c4e-6988-4de9-9c68-714274f9fb4c" name="handle model change"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="4be6faaf-a22f-41f5-abe0-40fe1df1c296" name="handle model change"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
                 id="6b31f5a2-e64c-4926-ab15-804b50ec4408" name="emit model change event"
                 coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#2af1aace-5607-45b8-bb39-d7027a2adc2f"/>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
                 id="5f1da9b2-c041-4cb9-b181-24788e778744" name="emit model change event"
                 coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#2af1aace-5607-45b8-bb39-d7027a2adc2f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="6a6a8d30-8a98-47f8-b135-58467e826893" name="endExec" coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f"
+                event="#2ba3040d-f62a-4972-85aa-b7015745af7a"/>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
                 id="f220d05e-770f-4551-933b-e667add076de" name="Send Call Message Call"
                 coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" event="#a8815bb5-5941-4c16-b334-70aa16fe74a4"/>
@@ -385,7 +420,7 @@
                 id="4ab6f44a-7908-4460-a7c2-c711b98dc2cc" name="endExec" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9"
                 event="#7fa4ea2b-49c5-4f6e-b5bc-a5a9f6793a7b"/>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:FragmentEnd"
-                id="b4faf6a0-82b2-472a-9e76-1869b23f1e31" name="end" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f"/>
+                id="b4faf6a0-82b2-472a-9e76-1869b23f1e31" name="end" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"/>
             <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
                 id="bcf655f3-b513-42c2-b017-3356810b6e11" name="request objects of interest"
                 coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" relatedAbstractFunction="#1acc3d85-4c75-4416-9183-2c0561255461"/>
@@ -482,7 +517,7 @@
             <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:CombinedFragment"
                 id="e098eac3-b20b-4b40-8e88-7aa34634287f" name="combined fragment"
                 start="#3a815a22-9d22-48a1-93a3-932cfd707e7e" finish="#b4faf6a0-82b2-472a-9e76-1869b23f1e31"
-                operator="ALT" referencedOperands="#8cf5909b-4848-4195-ab82-0e53dd859daa #3c6ccb1e-2fc3-4a51-a708-2e2f4e019e5f #287dfc24-f8ef-4fc2-b250-8d4b842cdc8e"/>
+                operator="PAR" referencedOperands="#8cf5909b-4848-4195-ab82-0e53dd859daa #3c6ccb1e-2fc3-4a51-a708-2e2f4e019e5f #287dfc24-f8ef-4fc2-b250-8d4b842cdc8e"/>
             <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
                 id="878a8c2f-70bf-49c9-976f-a6641bcf8d3d" start="#992949b3-c993-4520-845e-480e196e82ab"
                 finish="#a8298786-4e0b-46ae-897d-aca61d4f6c8c"/>
@@ -540,6 +575,15 @@
             <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
                 id="de73d4c7-5825-411a-83ef-4cf2be51adcd" start="#df25f787-d1e3-4e85-bec4-cb1221d0aebc"
                 finish="#cb0e5cce-b5cf-4e80-a44e-c2fc7823a811" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="1344c9a9-c415-41a6-a259-5178ef4c299a" start="#9a3758a6-a0df-4693-957d-7ce7d78774cd"
+                finish="#6a6a8d30-8a98-47f8-b135-58467e826893"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="c1f4b8e2-e694-41cf-bf73-8157aa6b5c6d" start="#a2757c4e-6988-4de9-9c68-714274f9fb4c"
+                finish="#4be6faaf-a22f-41f5-abe0-40fe1df1c296" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="eef7872a-6755-4e6d-849f-44ac0fa421f1" start="#8a2da9db-905f-4740-a9c6-cf8a4eed90b7"
+                finish="#8d142b77-ba31-4cc0-80e5-428747c15f19" relatedAbstractFunction="#5bb44c50-a8e6-4162-bfce-467b29adb1df"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
                 id="62c861da-e2d5-47f9-8af4-f95e087a67ce" operation="#15cfd80b-d74c-452f-a5ac-f2ad126c70c5"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
@@ -600,6 +644,12 @@
                 id="f0fde188-4e58-42b9-829a-e086e999e4a6" operation="#79441bac-b961-469b-9e35-ca0a6d9b1244"/>
             <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
                 id="a06195b7-8d83-4aec-a67e-d3f7cb1e5ca0"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="cecc3004-2415-4e8a-b3e3-92e10c017922" operation="#6a7261d6-9e6d-408e-b915-7618ff46ba73"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="81423f5c-f82f-4df0-a4af-a7395532594f" operation="#6a7261d6-9e6d-408e-b915-7618ff46ba73"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="2ba3040d-f62a-4972-85aa-b7015745af7a"/>
           </ownedScenarios>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="06d52d58-28f2-4659-9062-0a489a703ad5" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
@@ -614,7 +664,7 @@
         </ownedCapabilities>
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
             id="5bceb885-fc35-4530-84e9-399e3cba9145" name="discover requirements through MBSE process"
-            description="&lt;p>As a Systems Engineer I may discover new requirements while using the MBSE tool and will need those available in the RM tool so that the lifecycle of the discovered requirements could be managed (review, release / approval). To distinguish discovered requirements from external requirements we may decorate those with an ID prefix, attribute or use a dedicated type.&lt;/p>&#xA;&#xA;&lt;p>Upon transfer the authority over requirements may be shared between the MBSE tool and the RM tool: as requirement originated in the MBSE tool, the context of requirement may change and so requirement may change as well so the change should be reflected in the RM tool. However a reason for change may also originate from the RM tool and may not require change of larger requirement context in the MBSE tool. In that case it might be acceptable to modify such requirement from the RM tool and hence have a mixed authority.&lt;/p>&#xA;&#xA;&lt;p>In case of concurrent change - if a requirement was modified in both tools and if requirement&amp;#39;s origin is in the MBSE model then change to the requirement from the MBSE tool shall prevail over a change from the RM tool and the representation of such requirement in the RM tool shall be updated.&lt;/p>&#xA;">
+            description="&lt;p>As a Systems Engineer I may discover new requirements while using the MBSE tool but I will need to manage those in the RM tool. To differentiate these new requirements from those that came from the RM tool originally, I may give them a special identifier, type or an attribute.&lt;/p>&#xA;&#xA;&lt;p>When I transfer requirements between the tools, I may need to share authority over them. If a change to a requirement originates from the MBSE tool, the RM tool should reflect that change. However, if a change to such MBSE-originating requirement comes from the RM tool and does not affect large model context (only textual edit) it is acceptable to make such change in the RM tool and it should get reflected in the MBSE tool.&lt;/p>&#xA;&#xA;&lt;p>If there are concurrent changes to a requirement in both tools, the change from the MBSE tool should take precedence and be reflected in the RM tool&amp;#39;s representation of the requirement. The competing change from the RM tool will be lost. However, the likelyhood of such conflict may be low if roles and responsibilities within a project are respected and 2 engineers will not attempt editing same requirement same time in both tools. In formal project this issue is also avoided via explicit assignment of development tasks.&lt;/p>&#xA;">
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="4763493e-98c1-4a1b-889e-df375a848b1a" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
@@ -628,7 +678,7 @@
         </ownedCapabilities>
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
             id="8d3e6091-b56e-4eb9-99de-93de1e934356" name="author documents with references to model elements"
-            description="&lt;p>As a Project Stakeholder I may perform a document authoring activity in the RM tool and so I need to reference some model elements with objects I create in the RM tool so that the traceability is established and I could be notified if a model element change results in need for change to the linked RM tool objects.&lt;/p>&#xA;&#xA;&lt;p>As a part of this activity I may need to explore relationships of the model elements and so I need to see the model element context (linked model elements) from the RM tool.&lt;/p>&#xA;&#xA;&lt;p>Depending on a project configuration, I may also be able to edit descriptions of model elements from the document context if I find this helpful for overall content improvement. This however should require project level acceptance.&lt;/p>&#xA;">
+            description="&lt;p>As a Project Stakeholder, I may create documents in the RM tool and need to link them to certain model elements. This helps establish traceability, so I can be notified if a change to a model element affects any linked RM tool objects.&lt;/p>&#xA;&#xA;&lt;p>To create these links, I need to see the context of the model elements from the RM tool. I may also need diagrams from the MBSE tool to illustrate my documents.&lt;/p>&#xA;&#xA;&lt;p>Depending on project settings, I may be able to edit model element descriptions from the document context to improve overall content. However, this requires project-level approval as increases risk of conflicting changes due to mixed content authority -configuration needs to explcitly state which tool will win in case of conflicting change to model object descriptions.&lt;/p>&#xA;">
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
               id="6c8772d3-b886-4305-bdb6-4a1b1326b846" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
@@ -739,7 +789,7 @@
       <ownedSystemComponentPkg xsi:type="org.polarsys.capella.core.data.ctx:SystemComponentPkg"
           id="39c93f7e-e48c-4892-b9a3-61f2ac174791" name="Structure">
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="4974f634-df3e-4a4c-a5a6-431713950376"
-            name="RM Bridge" abstractType="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+            name="RM-Bridge" abstractType="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="0eca71b9-1f56-4101-8e17-d89ec89d5d42"
             name="RM Tool" abstractType="#54ebf659-7ecd-4565-b346-aa886da48225"/>
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="228b70f0-2e87-4b40-af38-4dd17fc02b4c"
@@ -751,7 +801,7 @@
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="918f6a1d-9abe-4c6e-afce-44f1874fa90a"
             name="MBSE CM" abstractType="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="190f2b51-8e95-4ea0-9d36-5909302ca75c" name="RM Bridge">
+            id="190f2b51-8e95-4ea0-9d36-5909302ca75c" name="RM-Bridge">
           <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
               id="52e8216b-62c7-4a95-9581-f1ca1bd905c7" targetElement="#1acc3d85-4c75-4416-9183-2c0561255461"
               sourceElement="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
@@ -785,7 +835,11 @@
         </ownedSystemComponents>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
             id="4cee2194-06ff-4a53-a99f-0d30a708b69d" name="MBSE Tool" description="&lt;p>Model Based Systems Engineering (MBSE) tool may be used by a project team to analyse the operational needs, define and specify the system under consideration as well as perform design activities such as logical and phisical architecting. New requirements are usually discovered during the system analysis / definition activities, however in most cases MBSE tools are not made for formal requirements management.&lt;/p>&#xA;"
-            actor="true"/>
+            actor="true">
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="61d2038a-8d71-42e1-9c34-75a45d6c3712" targetElement="#5bb44c50-a8e6-4162-bfce-467b29adb1df"
+              sourceElement="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+        </ownedSystemComponents>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
             id="1f0de6c4-af52-4977-9c92-3dfeff5fe446" name="Systems Engineer" description="&lt;p>Systems Engineer is a generic project team member who may have roles within Requirements Engineering, System Analysis and Design disciplines. Systems Engineer may use both RM tool and MBSE tool.&lt;/p>&#xA;"
             actor="true" human="true">
