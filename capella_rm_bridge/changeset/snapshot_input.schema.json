@@ -59,9 +59,29 @@
               "patternProperties": {
                 ".": {
                   "description": "The values that are available for this EnumerationDataTypeDefinition. They are sometimes called \"options\"",
-                  "type": "array",
-                  "items": {
-                    "type": "string"
+                  "type": "object",
+                  "properties": {
+                    "long_name": {
+                      "description": "Value of the \"Long Name\" field in Capella. Here it is the long name of the EnumerationDataTypeDefinition.",
+                      "type": "string"
+                    },
+                    "values": {
+                      "description": "EnumValues in Capella.",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "description": "Value of the \"Identifier\" field in Capella. Here it is the identifier of the EnumValue.",
+                            "type": "string"
+                          },
+                          "long_name": {
+                            "description": "Value of the \"Long Name\" field in Capella. Here it is the long name of the EnumValue.",
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -93,6 +113,10 @@
                           "oneOf": [
                             {
                               "properties": {
+                                "long_name": {
+                                  "description": "Value of the \"Long Name\" field in Capella. Here it is the long name of the AttributeDefinition.",
+                                  "type": "string"
+                                },
                                 "type": {
                                   "type": "string",
                                   "enum": [
@@ -108,6 +132,10 @@
                             },
                             {
                               "properties": {
+                                "long_name": {
+                                  "description": "Value of the \"Long Name\" field in Capella. Here it is the long name of the EnumerationAttributeDefinition.",
+                                  "type": "string"
+                                },
                                 "type": {
                                   "type": "string",
                                   "const": "Enum"

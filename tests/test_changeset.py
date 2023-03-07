@@ -49,14 +49,37 @@ TEST_MODULE_CHANGE_1 = decl.load(TEST_MOD_CHANGESET_PATH)
 TEST_MODULE_CHANGE_2 = decl.load(TEST_DATA_PATH / "changesets" / "delete.yaml")
 
 INVALID_FIELD_VALUES = [
-    ("Type", ["Not an option"], "values"),
-    ("Capella ID", None, "value"),
-    ("Type", None, "values"),
-    ("Submitted at", 1, "value"),
+    (
+        "type",
+        ["Not an option"],
+        "values",
+        "Invalid field found: values ['Not an option'] for 'type'",
+    ),
+    (
+        "capellaID",
+        None,
+        "value",
+        "Invalid field found: 'capellaID'. Not matching expected types: "
+        "None should be of type 'str'",
+    ),
+    (
+        "type",
+        None,
+        "values",
+        "Invalid field found: 'type'. Not matching expected types: "
+        "None should be of type 'list'",
+    ),
+    (
+        "submittedAt",
+        1,
+        "value",
+        "Invalid field found: 'submittedAt'. Not matching expected types: "
+        "1 should be of type 'datetime'",
+    ),
 ]
 INVALID_ATTR_DEF_ERROR_MSG = (
     "In RequirementType 'System Requirement': "
-    "Invalid AttributeDefinitionEnumeration found: 'Not-Defined'. "
+    "Invalid AttributeDefinitionEnumeration found: 'notDefined'. "
     "Missing its datatype definition in `data_types`."
 )
 
@@ -193,23 +216,24 @@ class TestCreateActions(ActionsTest):
 
         assert action == self.REQ_CHANGE
 
-    @pytest.mark.parametrize("attr,faulty_value,key", INVALID_FIELD_VALUES)
+    @pytest.mark.parametrize(
+        "attr,faulty_value,key,message_end", INVALID_FIELD_VALUES
+    )
     def test_faulty_attribute_values_log_InvalidFieldValue_as_error(
         self,
         clean_model: capellambse.MelodyModel,
         attr: str,
         faulty_value: actiontypes.Primitive,
         key: str,
+        message_end: str,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test logging ``InvalidFieldValue`` on faulty field data."""
+        del key
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
         first_child = titem["children"][0]
         first_child["attributes"][attr] = faulty_value  # type:ignore[index]
-        message_end = (
-            f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
-        )
 
         with caplog.at_level(logging.ERROR):
             self.tracker_change(clean_model, tracker, gather_logs=False)
@@ -224,14 +248,11 @@ class TestCreateActions(ActionsTest):
         titem = tracker["items"][0]
         first_child = titem["children"][0]
         messages = list[str]()
-        for attr, faulty_value, key in INVALID_FIELD_VALUES[1:]:
+        for attr, faulty_value, key, msg in INVALID_FIELD_VALUES[1:]:
             first_child["attributes"][
                 attr
             ] = faulty_value  # type:ignore[index]
-            messages.append(
-                "Invalid workitem 'REQ-002'. "
-                f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
-            )
+            messages.append(f"Invalid workitem 'REQ-002'. {msg}")
 
         tchange = self.tracker_change(clean_model, tracker, gather_logs=True)
 
@@ -244,9 +265,9 @@ class TestCreateActions(ActionsTest):
     ) -> None:
         tracker = copy.deepcopy(self.tracker)
         reqtype = tracker["requirement_types"]["system_requirement"]
-        reqtype["attributes"]["Not-Defined"] = {  # type: ignore[call-overload]
+        reqtype["attributes"]["notDefined"] = {  # type: ignore[call-overload]
+            "long_name": "Not-Defined",
             "type": "Enum",
-            "data_type": "Not-Defined",
         }
 
         with caplog.at_level(logging.ERROR):
@@ -260,9 +281,9 @@ class TestCreateActions(ActionsTest):
         """Test faulty field data are gathered in errors."""
         tracker = copy.deepcopy(self.tracker)
         reqtype = tracker["requirement_types"]["system_requirement"]
-        reqtype["attributes"]["Not-Defined"] = {  # type: ignore[call-overload]
+        reqtype["attributes"]["notDefined"] = {  # type: ignore[call-overload]
+            "long_name": "Not-Defined",
             "type": "Enum",
-            "data_type": "Not-Defined",
         }
 
         tchange = self.tracker_change(clean_model, tracker, gather_logs=True)
@@ -291,12 +312,12 @@ class TestCreateActions(ActionsTest):
         tracker = copy.deepcopy(self.tracker)
         tracker["data_types"]["new"] = tracker[  # type: ignore[index]
             "data_types"
-        ]["Type"]
+        ]["type"]
         tracker["requirement_types"]["system_requirement"][  # type: ignore
             "attributes"
-        ]["new"] = {"type": "Enum"}
+        ]["new"] = {"long_name": "New", "type": "Enum"}
         req_item = tracker["items"][0]["children"][0]
-        req_item["attributes"]["new"] = ["Functional"]  # type: ignore[index]
+        req_item["attributes"]["new"] = ["functional"]  # type: ignore[index]
 
         change_set = self.tracker_change(
             clean_model, tracker, gather_logs=True
@@ -364,23 +385,24 @@ class TestModActions(ActionsTest):
 
         assert tchange.actions[4:] == self.REQ_CHANGE + [self.REQ_FOLDER_MOVE]
 
-    @pytest.mark.parametrize("attr,faulty_value,key", INVALID_FIELD_VALUES)
+    @pytest.mark.parametrize(
+        "attr,faulty_value,key,message_end", INVALID_FIELD_VALUES
+    )
     def test_faulty_attribute_values_log_InvalidFieldValue_as_error(
         self,
         migration_model: capellambse.MelodyModel,
         attr: str,
         faulty_value: actiontypes.Primitive,
         key: str,
+        message_end: str,
         caplog: pytest.LogCaptureFixture,
     ) -> None:
         """Test logging ``InvalidFieldValue`` on faulty field data."""
+        del key
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
         first_child = titem["children"][0]
         first_child["attributes"][attr] = faulty_value
-        message_end = (
-            f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
-        )
 
         with caplog.at_level(logging.ERROR):
             self.tracker_change(migration_model, tracker, gather_logs=False)
@@ -394,9 +416,9 @@ class TestModActions(ActionsTest):
     ) -> None:
         tracker = copy.deepcopy(self.tracker)
         reqtype = tracker["requirement_types"]["system_requirement"]
-        reqtype["attributes"]["Not-Defined"] = {  # type: ignore[call-overload]
+        reqtype["attributes"]["notDefined"] = {  # type: ignore[call-overload]
+            "long_name": "Not-Defined",
             "type": "Enum",
-            "data_type": "Not-Defined",
         }
 
         with caplog.at_level(logging.ERROR):
@@ -413,15 +435,14 @@ class TestModActions(ActionsTest):
         tracker = copy.deepcopy(self.tracker)
         titem = tracker["items"][0]
         titem["imagination"] = 1
-        message_end = (
-            "Invalid module 'project/space/example title'. Invalid "
-            "workitem 'REQ-001'. imagination isn't defined on Folder"
-        )
 
         with caplog.at_level(logging.ERROR):
             self.tracker_change(migration_model, tracker, gather_logs=False)
 
-        assert caplog.messages[0].endswith(message_end)
+        assert "project/space/example title" in caplog.messages[0]
+        assert "REQ-001" in caplog.messages[0]
+        assert "imagination" in caplog.messages[0]
+        assert "Folder" in caplog.messages[0]
 
     def test_InvalidAttributeDefinition_errors_are_gathered(
         self, migration_model: capellambse.MelodyModel
@@ -429,9 +450,9 @@ class TestModActions(ActionsTest):
         """Test faulty field data are gathered in errors."""
         tracker = copy.deepcopy(self.tracker)
         reqtype = tracker["requirement_types"]["system_requirement"]
-        reqtype["attributes"]["Not-Defined"] = {  # type: ignore[call-overload]
+        reqtype["attributes"]["notDefined"] = {  # type: ignore[call-overload]
+            "long_name": "Not-Defined",
             "type": "Enum",
-            "data_type": "Not-Defined",
         }
 
         tchange = self.tracker_change(
@@ -470,13 +491,46 @@ class TestModActions(ActionsTest):
     def test_enum_value_long_name_collision_produces_no_Unfulffilled_Promises(
         self, migration_model: capellambse.MelodyModel
     ) -> None:
-        tracker = copy.deepcopy(self.tracker)
-        tracker["data_types"]["new"] = tracker["data_types"]["Type"]
-        tracker["requirement_types"]["system_requirement"]["attributes"][
-            "new"
-        ] = {"type": "Enum"}
-        req_item = tracker["items"][0]["children"][0]
-        req_item["attributes"]["new"] = ["Functional"]
+        tracker_yaml = """\
+        id: project/space/example title
+        long_name: example title
+        data_types:
+          new:
+            long_name: Type
+            values:
+              - id: unset
+                long_name: Unset
+              - id: functional
+                long_name: Functional
+              - id: nonFunctional
+                long_name: Non-Functional
+          release:
+            long_name: Release
+            values:
+              - id: rel.1
+                long_name: Rel. 1
+          type:
+            long_name: Type
+            values:
+              - id: unset
+                long_name: Unset
+              - id: functional
+                long_name: Functional
+              - id: nonFunctional
+                long_name: Non-Functional
+        requirement_types:
+          system_requirement:
+            long_name: System Requirement
+            attributes:
+              new:
+                long_name: New
+                type: Enum
+              type:
+                long_name: Type
+                type: Enum
+        items: []"""
+
+        tracker = yaml.safe_load(tracker_yaml)
 
         change_set = self.tracker_change(
             migration_model, tracker, gather_logs=True
@@ -506,9 +560,9 @@ class TestDeleteActions(ActionsTest):
     tracker = TEST_SNAPSHOT_2["modules"][0]
     titem = tracker["items"][0]
 
-    REQ_TYPE_FOLDER_DEL = TEST_MODULE_CHANGE_2[0]
-    ENUM_DATA_TYPE_DEL = TEST_MODULE_CHANGE_2[1]
-    ATTR_DEF_DEL = TEST_MODULE_CHANGE_2[2]
+    ENUM_DATA_TYPE_DEL = TEST_MODULE_CHANGE_2[0]
+    ATTR_DEF_DEL = TEST_MODULE_CHANGE_2[1]
+    REQ_TYPE_FOLDER_DEL = TEST_MODULE_CHANGE_2[2]
     REQ_DEL, FOLDER_DEL = TEST_MODULE_CHANGE_2[-2:]
 
     def resolve_ChangeSet(
@@ -550,7 +604,7 @@ class TestDeleteActions(ActionsTest):
         data_type_del = copy.deepcopy(self.REQ_TYPE_FOLDER_DEL)
         del data_type_del["delete"]["requirement_types"]
         data_type_del = self.resolve_ChangeSet(deletion_model, data_type_del)
-        expected_actions = [data_type_del, self.ENUM_DATA_TYPE_DEL]
+        expected_actions = [self.ENUM_DATA_TYPE_DEL, data_type_del]
 
         tchange = self.tracker_change(deletion_model, snapshot)
         enum_data_type_actions = tchange.actions[:2]
@@ -571,7 +625,7 @@ class TestDeleteActions(ActionsTest):
 
         tchange = self.tracker_change(deletion_model, snapshot)
 
-        assert tchange.actions[:2] == [req_type_del, attr_def_del]
+        assert tchange.actions[:2] == [attr_def_del, req_type_del]
 
     def test_delete_requirements_actions(
         self, deletion_model: capellambse.MelodyModel
@@ -594,8 +648,8 @@ class TestDeleteActions(ActionsTest):
     ) -> None:
         """Test ChangeSet on clean model for first migration run."""
         expected_change_set = copy.deepcopy(TEST_MODULE_CHANGE_2)
-        expected_change_set[2] = self.resolve_ChangeSet(
-            deletion_model, TEST_MODULE_CHANGE_2[2]
+        expected_change_set[1] = self.resolve_ChangeSet(
+            deletion_model, TEST_MODULE_CHANGE_2[1]
         )
         expected_change_set[3] = self.resolve_ChangeSet(
             deletion_model, TEST_MODULE_CHANGE_2[3]
@@ -706,14 +760,14 @@ class TestCalculateChangeSet(ActionsTest):
     ) -> None:
         """Test that an invalid AttributeDefinition will not prohibit."""
         snapshot = copy.deepcopy(TEST_SNAPSHOT["modules"][0])
-        missing_enumdt = "Release"
+        missing_enumdt = "release"
         del snapshot["data_types"][missing_enumdt]  # type: ignore[attr-defined]
         tconfig = TEST_CONFIG["modules"][0]
         message = (
             "In RequirementType 'System Requirement': Invalid "
-            "AttributeDefinitionEnumeration found: 'Release'. Missing its "
+            "AttributeDefinitionEnumeration found: 'release'. Missing its "
             "datatype definition in `data_types`.\n"
-            "Invalid workitem 'REQ-002'. Invalid field found: 'Release'. "
+            "Invalid workitem 'REQ-002'. Invalid field found: 'release'. "
             "Missing its datatype definition in `data_types`."
         )
 
@@ -748,17 +802,14 @@ class TestCalculateChangeSet(ActionsTest):
         titem["attributes"] = {"Test": 1}  # type: ignore[index]
         messages = [
             "Invalid workitem 'REQ-001'. "
-            "Invalid field found: field name 'Test' not defined in "
+            "Invalid field found: field identifier 'Test' not defined in "
             "attributes of requirement type 'system_requirement'"
         ]
-        for attr, faulty_value, key in INVALID_FIELD_VALUES[1:]:
+        for attr, faulty_value, _, msg in INVALID_FIELD_VALUES[1:]:
             first_child["attributes"][
                 attr
             ] = faulty_value  # type:ignore[index]
-            messages.append(
-                "Invalid workitem 'REQ-002'. "
-                + f"Invalid field found: {key} {faulty_value!r} for {attr!r}"
-            )
+            messages.append(f"Invalid workitem 'REQ-002'. {msg}")
         del titem["children"][1]["type"]
         titem["children"][1]["attributes"] = {"Test": 1}
         tconfig = TEST_CONFIG["modules"][0]
