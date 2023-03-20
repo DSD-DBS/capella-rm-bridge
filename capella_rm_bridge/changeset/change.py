@@ -541,6 +541,7 @@ class TrackerChange:
                     child_actions = self.yield_requirements_create_actions(
                         child
                     )
+                    # pylint: disable=stop-iteration-return
                     action = next(child_actions)
                 else:
                     assert isinstance(creq, (reqif.Requirement, reqif.Folder))
@@ -1042,6 +1043,7 @@ class TrackerChange:
                     child_actions = self.yield_requirements_create_actions(
                         child
                     )
+                    # pylint: disable=stop-iteration-return
                     action = next(child_actions)
                     container.append(action)
                 else:
@@ -1199,11 +1201,7 @@ class TrackerChange:
                 dtype = attrdef.data_type
                 if dtype is None or dtype.identifier != identifier:
                     mods["data_type"] = identifier
-                if (
-                    attrdef.multi_valued
-                    != data.get("multi_values")
-                    is not None
-                ):
+                if attrdef.multi_valued != data.get("multi_values", False):
                     mods["multi_valued"] = data[
                         "multi_values"  # type:ignore[typeddict-item]
                     ]
