@@ -349,19 +349,19 @@ class RMReporter:
         module_id: str,
         module_category: str,
     ) -> None:
-        """Assigns the RequirementsModule to changes and stores them."""
+        """Assigns the CapellaModule to changes and stores them."""
         self.categories[module_category] += 1
 
         for change in changes:
             parent_id = self._assign_module(change)
             if not parent_id:
                 raise ValueError(  # XXX Maybe custom exception but what name?
-                    f"Can't assign RequirementModule to change {change!r}"
+                    f"Can't assign CapellaModule to change {change!r}"
                 )
 
             if parent_id != module_id:
                 LOGGER.warning(
-                    "Found changes to an unexpected RequirementsModule: "
+                    "Found changes to an unexpected CapellaModule: "
                     "%r to %s",
                     change,
                     parent_id,

@@ -264,7 +264,7 @@ class TestRMReporter:
         assert len(caplog.records) == 3
         assert caplog.records[0].levelname == "WARNING"
         assert (
-            f"Found changes to an unexpected RequirementsModule: "
+            f"Found changes to an unexpected CapellaModule: "
             f"{self.CHANGES[0]} to 1"
         ) in caplog.text
 
