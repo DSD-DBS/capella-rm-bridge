@@ -9,6 +9,7 @@ import typing as t
 
 import capellambse
 from capellambse.extensions import reqif
+from capellambse.model import common
 
 LOGGER = logging.getLogger(__name__)
 
@@ -18,7 +19,7 @@ def find_by(
     value: t.Any,
     *xtypes: str,
     attr: str = "identifier",
-    below: reqif.ReqIFElement | None = None,
+    below: common.GenericElement | None = None,
 ) -> reqif.ReqIFElement | None:
     try:
         objs = model.search(*xtypes, below=below)

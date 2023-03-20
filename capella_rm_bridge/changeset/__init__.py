@@ -52,7 +52,7 @@ def calculate_change_set(
     The returned list (``ChangeSet``) stores the needed actions to
     synchronize the ``model`` with the content of the ``snapshot``. The
     ``snapshot`` stores a tracker or live-document which correspond to a
-    ``reqif.RequirementsModule``.
+    ``reqif.CapellaModule``.
 
     Parameters
     ----------

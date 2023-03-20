@@ -35,6 +35,9 @@ _ATTR_VALUE_DEFAULT_MAP: cabc.Mapping[str, type] = {
 
 WorkItem = t.Union[reqif.Requirement, reqif.Folder]
 RMIdentifier = t.NewType("RMIdentifier", str)
+AttributeDefinitionClass = t.Union[
+    type[reqif.AttributeDefinition], type[reqif.AttributeDefinitionEnumeration]
+]
 
 
 class _AttributeValueBuilder(t.NamedTuple):
@@ -57,7 +60,7 @@ class TrackerChange:
     errors: list[str]
 
     tracker: cabc.Mapping[str, t.Any]
-    """Snapshot of tracker, i.e. a `reqif.RequirementsModule`."""
+    """Snapshot of tracker, i.e. a `reqif.CapellaModule`."""
     model: capellambse.MelodyModel
     """Model instance."""
     config: act.TrackerConfig
@@ -65,10 +68,10 @@ class TrackerChange:
     gather_logs: bool
     """Collect error messages in ``errors`` instead of immediate logging."""
 
-    req_module: reqif.RequirementsModule
-    """The corresponding ``reqif.RequirementsModule`` for the tracker."""
-    reqt_folder: reqif.RequirementsTypesFolder | None
-    """The `reqif.RequirementsTypesFolder` storing fields data."""
+    req_module: reqif.CapellaModule
+    """The corresponding ``reqif.CapellaModule`` for the tracker."""
+    reqt_folder: reqif.CapellaTypesFolder | None
+    """The `reqif.CapellaTypesFolder` storing fields data."""
     reqtype_fields_filter: cabc.Mapping[RMIdentifier, set[str]]
     """A mapping for whitelisted fieldnames per RequirementType."""
     actions: list[dict[str, t.Any]]
@@ -104,9 +107,9 @@ class TrackerChange:
         InvalidTrackerConfig
             If the given ``config`` is missing any of the mandatory
             keys (uuid, project and/or title).
-        MissingRequirementsModule
-            If the model is missing a ``RequirementsModule`` from the
-            UUID declared in the ``config``.
+        MissingCapellaModule
+            If the model is missing a ``CapellaModule`` from the UUID
+            declared in the ``config``.
         InvalidWorkItemType
             May be raised during
             :meth:`TrackerChange.calculate_change` if an unknown ID of a
@@ -135,7 +138,7 @@ class TrackerChange:
         self.calculate_change()
 
     def calculate_change(self) -> None:
-        """Render actions for RequirementsModule synchronization.
+        """Render actions for CapellaModule synchronization.
 
         Handles synchronization of RequirementTypesFolder first and
         Requirements and Folders afterwards. If no
@@ -145,7 +148,7 @@ class TrackerChange:
         deletions.
         """
         base = self.check_requirements_module()
-        self.reqt_folder = find.find_by_identifier(
+        self.reqt_folder = find.find_by_identifier(  # type: ignore [assignment]
             self.model,
             TYPES_FOLDER_IDENTIFIER,
             reqif.CapellaTypesFolder.__name__,
@@ -154,6 +157,7 @@ class TrackerChange:
         if self.reqt_folder is None:
             base = self.requirement_types_folder_create_action(base)
         else:
+            assert isinstance(self.reqt_folder, reqif.CapellaTypesFolder)
             reqt_folder_action = self.data_type_definition_mod_actions()
             if reqtype_deletions := self.requirement_type_delete_actions():
                 dels = {"delete": {"requirement_types": reqtype_deletions}}
@@ -187,6 +191,7 @@ class TrackerChange:
                 item_action = next(req_actions)
                 _add_action_safely(base, "extend", second_key, item_action)
             else:
+                assert isinstance(req, (reqif.Requirement, reqif.Folder))
                 try:
                     req_actions = self.yield_requirements_mod_actions(
                         req, item
@@ -199,8 +204,8 @@ class TrackerChange:
 
                 visited.add(req.identifier)
                 if req.parent != self.req_module:
-                    item_action = decl.UUIDReference(req.uuid)
-                    _add_action_safely(base, "extend", second_key, item_action)
+                    iaction = decl.UUIDReference(req.uuid)
+                    _add_action_safely(base, "extend", second_key, iaction)
                     self._location_changed.add(RMIdentifier(req.identifier))
                     self.invalidate_deletion(req)
 
@@ -216,25 +221,25 @@ class TrackerChange:
             self.actions.append(base)
 
     def check_requirements_module(self) -> dict[str, t.Any]:
-        """Return the starting action for the ``RequirementsModule``.
+        """Return the starting action for the ``CapellaModule``.
 
-        Check if a ``RequirementsModule`` can be found and that the
-        config is valid.
+        Check if a ``CapellaModule`` can be found and that the config is
+        valid.
         """
         try:
             module_uuid = self.config["capella-uuid"]
-            self.req_module = find.find_by(
+            req_module = find.find_by(
                 self.model, module_uuid, "CapellaModule", attr="uuid"
             )
         except KeyError as error:
             raise act.InvalidTrackerConfig(
                 "The given module configuration is missing UUID of the "
-                "target RequirementsModule"
+                "target CapellaModule"
             ) from error
 
-        if self.req_module is None:
+        if req_module is None:
             raise MissingCapellaModule(
-                f"No RequirementsModule with UUID {module_uuid!r} found in "
+                f"No CapellaModule with UUID {module_uuid!r} found in "
                 + repr(self.model.info)
             )
 
@@ -245,7 +250,11 @@ class TrackerChange:
                 "In the snapshot the module is missing an id key"
             ) from error
 
-        base = {"parent": decl.UUIDReference(self.req_module.uuid)}
+        assert isinstance(req_module, reqif.CapellaModule)
+        self.req_module = req_module
+        base: dict[str, t.Any] = {
+            "parent": decl.UUIDReference(self.req_module.uuid)
+        }
         if self.req_module.identifier != identifier:
             base["modify"] = {"identifier": identifier}
 
@@ -291,7 +300,7 @@ class TrackerChange:
     ) -> dict[str, t.Any]:
         """Return an action for deleting elements under the ReqModule.
 
-        Filter all elements from the RequirementsModule attribute with
+        Filter all elements from the CapellaModule attribute with
         name ``attr_name`` against ``visited``. These are the elements
         that are still in the model but not in the snapshot, and have to
         be deleted.
@@ -309,11 +318,11 @@ class TrackerChange:
     def requirement_types_folder_create_action(
         self, base: dict[str, t.Any]
     ) -> dict[str, t.Any]:
-        """Return an action for creating the ``RequirementTypesFolder``.
+        """Return an action for creating the ``CapellaTypesFolder``.
 
         See Also
         --------
-        capellambse.extensions.reqif.RequirementsTypesFolder :
+        capellambse.extensions.reqif.CapellaTypesFolder :
             Folder for (Data-)Type- and Attribute-Definitions
         """
         data_type_defs = self.yield_data_type_definition_create_actions()
@@ -427,7 +436,7 @@ class TrackerChange:
             "identifier": identifier,
             "long_name": item["long_name"],
         }
-        cls = reqif.AttributeDefinition
+        cls: AttributeDefinitionClass = reqif.AttributeDefinition
         if item["type"] == "Enum":
             cls = reqif.AttributeDefinitionEnumeration
             etdef = find.find_by_identifier(
@@ -445,11 +454,13 @@ class TrackerChange:
                         "datatype definition in `data_types`."
                     )
 
-                data_type_ref = decl.Promise(promise_id)
+                ref: decl.Promise | decl.UUIDReference = decl.Promise(
+                    promise_id
+                )
             else:
-                data_type_ref = decl.UUIDReference(etdef.uuid)
+                ref = decl.UUIDReference(etdef.uuid)
 
-            base["data_type"] = data_type_ref
+            base["data_type"] = ref
             base["multi_valued"] = item.get("multi_values") is not None
 
         base["_type"] = cls.__name__
@@ -525,12 +536,15 @@ class TrackerChange:
                         self.model, child["id"], "Requirement"
                     )
 
+                action: dict[str, t.Any] | decl.UUIDReference
                 if creq is None:
                     child_actions = self.yield_requirements_create_actions(
                         child
                     )
+                    # pylint: disable=stop-iteration-return
                     action = next(child_actions)
                 else:
+                    assert isinstance(creq, (reqif.Requirement, reqif.Folder))
                     child_actions = self.yield_requirements_mod_actions(
                         creq, child, decl.Promise(identifier)
                     )
@@ -624,12 +638,20 @@ class TrackerChange:
             )
 
             for evid in builder.value:
+                if isinstance(evid, decl.UUIDReference):
+                    eid: str = evid.uuid
+                elif isinstance(evid, decl.Promise):
+                    eid = evid.identifier
+                else:
+                    eid = evid
+
                 enumvalue = find.find_by_identifier(
                     self.model,
-                    evid,
+                    eid,
                     "EnumValue",
                     below=edtdef or self.reqt_folder,
                 )
+                ev_ref: decl.Promise | decl.UUIDReference
                 if enumvalue is None:
                     ev_ref = decl.Promise(f"EnumValue {id} {evid}")
                     assert ev_ref is not None
@@ -642,6 +664,7 @@ class TrackerChange:
         definition = find.find_by_identifier(
             self.model, attr_def_id, deftype, below=self.reqt_folder
         )
+        definition_ref: decl.Promise | decl.UUIDReference
         if definition is None:
             promise_id = f"{deftype} {attr_def_id}"
             if promise_id in self._faulty_attribute_definitions:
@@ -745,7 +768,9 @@ class TrackerChange:
             else:
                 dt_defs_creations.append(action)
 
-        base = {"parent": decl.UUIDReference(self.reqt_folder.uuid)}
+        base: dict[str, t.Any] = {
+            "parent": decl.UUIDReference(self.reqt_folder.uuid)
+        }
         if dt_defs_creations:
             base["extend"] = {"data_type_definitions": dt_defs_creations}
         if dt_defs_deletions:
@@ -778,7 +803,7 @@ class TrackerChange:
             dtdef = self.reqt_folder.data_type_definitions.by_identifier(
                 id, single=True
             )
-            base = {"parent": decl.UUIDReference(dtdef.uuid)}
+            base: dict[str, t.Any] = {"parent": decl.UUIDReference(dtdef.uuid)}
             mods = dict[str, t.Any]()
             if dtdef.long_name != ddef["long_name"]:
                 mods["long_name"] = ddef["long_name"]
@@ -864,7 +889,9 @@ class TrackerChange:
                 else:
                     attr_defs_creations.append(action)
 
-            base = {"parent": decl.UUIDReference(reqtype.uuid)}
+            base: dict[str, t.Any] = {
+                "parent": decl.UUIDReference(reqtype.uuid)
+            }
             if mods:
                 base["modify"] = mods
 
@@ -883,12 +910,9 @@ class TrackerChange:
 
     def yield_requirements_mod_actions(
         self,
-        req: reqif.RequirementsModule | WorkItem,
+        req: reqif.CapellaModule | WorkItem,
         item: dict[str, t.Any] | act.WorkItem,
-        parent: reqif.RequirementsModule
-        | WorkItem
-        | decl.Promise
-        | None = None,
+        parent: reqif.CapellaModule | WorkItem | decl.Promise | None = None,
     ) -> cabc.Iterator[dict[str, t.Any]]:
         """Yield an action for modifying given ``req``.
 
@@ -899,7 +923,7 @@ class TrackerChange:
         children the method is called recursively and yields actions
         from it.
         """
-        base = {"parent": decl.UUIDReference(req.uuid)}
+        base: dict[str, t.Any] = {"parent": decl.UUIDReference(req.uuid)}
         try:
             mods = _compare_simple_attributes(
                 req, item, filter=("id", "type", "attributes", "children")
@@ -911,7 +935,7 @@ class TrackerChange:
             return
 
         req_type_id = RMIdentifier(item.get("type", ""))
-        attributes_deletions = list[dict[str, t.Any]]()
+        attributes_deletions = list[decl.UUIDReference]()
         if req_type_id != req.type.identifier:
             if req_type_id and req_type_id not in self.requirement_types:
                 raise act.InvalidWorkItemType(
@@ -990,6 +1014,7 @@ class TrackerChange:
 
         if req.parent != parent:
             self._location_changed.add(RMIdentifier(req.identifier))
+            assert not isinstance(req, reqif.CapellaModule)
             self.invalidate_deletion(req)
 
         children = item.get("children", [])
@@ -1018,9 +1043,11 @@ class TrackerChange:
                     child_actions = self.yield_requirements_create_actions(
                         child
                     )
+                    # pylint: disable=stop-iteration-return
                     action = next(child_actions)
                     container.append(action)
                 else:
+                    assert isinstance(creq, (reqif.Requirement, reqif.Folder))
                     try:
                         child_actions = self.yield_requirements_mod_actions(
                             creq, child, req
@@ -1073,9 +1100,9 @@ class TrackerChange:
 
     def attribute_value_mod_action(
         self,
-        req: reqif.RequirementsModule | WorkItem,
+        req: reqif.CapellaModule | WorkItem,
         id: str,
-        valueid: str | list[str],
+        valueid: str | list[str | decl.UUIDReference | decl.Promise],
         req_type_id: RMIdentifier,
     ) -> dict[str, t.Any] | None:
         """Return an action for modifying an ``AttributeValue``.
@@ -1174,11 +1201,7 @@ class TrackerChange:
                 dtype = attrdef.data_type
                 if dtype is None or dtype.identifier != identifier:
                     mods["data_type"] = identifier
-                if (
-                    attrdef.multi_valued
-                    != data.get("multi_values")
-                    is not None
-                ):
+                if attrdef.multi_valued != data.get("multi_values", False):
                     mods["multi_valued"] = data[
                         "multi_values"  # type:ignore[typeddict-item]
                     ]
@@ -1199,7 +1222,7 @@ class TrackerChange:
 
 
 def make_requirement_delete_actions(
-    req: reqif.RequirementsFolder,
+    req: reqif.Folder,
     child_ids: cabc.Container[RMIdentifier],
     key: str = "requirements",
 ) -> list[decl.UUIDReference]:
@@ -1225,7 +1248,7 @@ def _blacklisted(name: str, value: act.Primitive | None) -> bool:
 
 
 def _compare_simple_attributes(
-    req: reqif.RequirementsModule | WorkItem,
+    req: reqif.ReqIFElement,
     item: dict[str, t.Any] | act.WorkItem | act.RequirementType,
     filter: cabc.Iterable[str],
 ) -> dict[str, t.Any]:
@@ -1257,7 +1280,7 @@ def _compare_simple_attributes(
             continue
 
         converter = type_conversion.get(name, lambda i: i)
-        converted_value = converter(value)
+        converted_value = converter(value)  # type: ignore[arg-type]
         if getattr(req, name) != converted_value:
             mods[name] = value
     return mods
@@ -1267,7 +1290,7 @@ def _add_action_safely(
     base: dict[str, t.Any],
     first_key: str,
     second_key: str,
-    action: dict[str, t.Any],
+    action: dict[str, t.Any] | decl.UUIDReference,
 ) -> None:
     try:
         base[first_key][second_key].append(action)
