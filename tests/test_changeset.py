@@ -566,10 +566,8 @@ class TestDeleteActions(ActionsTest):
     REQ_DEL, FOLDER_DEL = TEST_MODULE_CHANGE_2[-2:]
 
     def resolve_ChangeSet(
-        self,
-        model: capellambse.MelodyModel,
-        change_set: cabc.MutableMapping[str, t.Any],
-    ) -> cabc.MutableMapping[str, t.Any]:
+        self, model: capellambse.MelodyModel, change_set: dict[str, t.Any]
+    ) -> dict[str, t.Any]:
         """Fix promised objects in the ``ChangeSet``.
 
         Some objects are created dynamically in the ``deletion_model``
@@ -601,7 +599,9 @@ class TestDeleteActions(ActionsTest):
             "requirement_types"
         ]
         snapshot["items"] = []
-        data_type_del = copy.deepcopy(self.REQ_TYPE_FOLDER_DEL)
+        data_type_del: dict[str, t.Any] = copy.deepcopy(
+            self.REQ_TYPE_FOLDER_DEL
+        )
         del data_type_del["delete"]["requirement_types"]
         data_type_del = self.resolve_ChangeSet(deletion_model, data_type_del)
         expected_actions = [self.ENUM_DATA_TYPE_DEL, data_type_del]
@@ -620,7 +620,7 @@ class TestDeleteActions(ActionsTest):
         snapshot["items"] = []
         req_type_del = copy.deepcopy(self.REQ_TYPE_FOLDER_DEL)
         del req_type_del["delete"]["data_type_definitions"]
-        attr_def_del = copy.deepcopy(self.ATTR_DEF_DEL)
+        attr_def_del: dict[str, t.Any] = copy.deepcopy(self.ATTR_DEF_DEL)
         attr_def_del = self.resolve_ChangeSet(deletion_model, attr_def_del)
 
         tchange = self.tracker_change(deletion_model, snapshot)
@@ -647,7 +647,9 @@ class TestDeleteActions(ActionsTest):
         self, deletion_model: capellambse.MelodyModel
     ) -> None:
         """Test ChangeSet on clean model for first migration run."""
-        expected_change_set = copy.deepcopy(TEST_MODULE_CHANGE_2)
+        expected_change_set: list[dict[str, t.Any]] = copy.deepcopy(
+            TEST_MODULE_CHANGE_2
+        )
         expected_change_set[1] = self.resolve_ChangeSet(
             deletion_model, TEST_MODULE_CHANGE_2[1]
         )
@@ -681,7 +683,7 @@ class TestCalculateChangeSet(ActionsTest):
         del config["capella-uuid"]  # type:ignore[misc]
         message = (
             "The given module configuration is missing UUID of the target "
-            "RequirementsModule"
+            "CapellaModule"
         )
 
         with caplog.at_level(logging.ERROR):
@@ -703,7 +705,7 @@ class TestCalculateChangeSet(ActionsTest):
         tconfig = TEST_CONFIG["modules"][0]
         del clean_model.la.requirement_modules[0]
         message = (
-            f"No RequirementsModule with UUID '{TEST_REQ_MODULE_UUID}' found "
+            f"No CapellaModule with UUID '{TEST_REQ_MODULE_UUID}' found "
             f"in {clean_model.info!r}"
         )
 
@@ -745,7 +747,7 @@ class TestCalculateChangeSet(ActionsTest):
         del config["capella-uuid"]  # type:ignore[misc]
         message = (
             "The given module configuration is missing UUID of the target "
-            "RequirementsModule"
+            "CapellaModule"
         )
 
         _, errors = calculate_change_set(

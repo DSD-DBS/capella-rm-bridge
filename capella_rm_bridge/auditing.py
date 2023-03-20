@@ -530,7 +530,7 @@ def get_dependencies() -> list[str]:
     return dependencies
 
 
-def formulate_statement(change: Change, obj: reqif.ReqIFElement) -> str:
+def formulate_statement(change: Change, obj: common.GenericElement) -> str:
     """Return an audit statement about the given change."""
     source = obj._short_repr_()
     if isinstance(change, Deletion):

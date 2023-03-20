@@ -8,8 +8,17 @@ import datetime
 import typing as t
 
 import typing_extensions as te
+from capellambse import decl
 
-Primitive = t.Union[int, float, str, list[str], bool, datetime.datetime]
+Primitive = t.Union[
+    int,
+    float,
+    str,
+    decl.UUIDReference | decl.Promise,
+    list[str | decl.UUIDReference | decl.Promise],
+    bool,
+    datetime.datetime,
+]
 """Type alias for primitive values."""
 
 
