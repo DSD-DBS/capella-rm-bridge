@@ -322,6 +322,7 @@ class ChangeAuditor:
             la.LogicalArchitecture,
             oa.OperationalAnalysis,
             pa.PhysicalArchitecture,
+            capellambse.MelodyModel,
         )
         while not isinstance(obj, classes):
             obj = obj.parent
@@ -568,9 +569,8 @@ def get_dependencies() -> list[str]:
     return dependencies
 
 
-def formulate_statement(change: Change, short_representation: str) -> str:
+def formulate_statement(change: Change, source: str) -> str:
     """Return an audit statement about the given change."""
-    source = short_representation
     if isinstance(change, Deletion):
         target = change.element
         return f"{source} deleted {target} from {change.attribute!r}."

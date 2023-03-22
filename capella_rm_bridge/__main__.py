@@ -169,7 +169,7 @@ def main(
             with auditing.ChangeAuditor(model) as changed_objs:
                 decl.apply(model, change_path)
 
-            reporter.store_change(
+            reporter.store_changes(
                 changed_objs, module["id"], module["category"]
             )
 
@@ -182,6 +182,13 @@ def main(
                 push=push, commit_msg=commit_message, push_options=["skip.ci"]
             )
 
+    report = reporter.get_change_report()
+    if report and save_change_history:
+        CHANGE_HISTORY_PATH.write_text(report, encoding="utf8")
+        LOGGER.info("Change-history file %s written.", CHANGE_HISTORY_PATH)
+    else:
+        print(report)
+
     if errors:
         error_statement = create_errors_statement(errors)
         print(error_statement)
@@ -190,13 +197,6 @@ def main(
             LOGGER.info("Change-errors file %s written.", ERROR_PATH)
 
         sys.exit(1)
-
-    report = reporter.get_change_report()
-    if report and save_change_history:
-        CHANGE_HISTORY_PATH.write_text(report, encoding="utf8")
-        LOGGER.info("Change-history file %s written.", CHANGE_HISTORY_PATH)
-    else:
-        print(report)
 
 
 if __name__ == "__main__":

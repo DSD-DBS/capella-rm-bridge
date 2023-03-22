@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 import logging
+import textwrap
 
 import capellambse
 import pytest
@@ -374,24 +375,27 @@ def test_create_commit_message(migration_model: capellambse.MelodyModel):
         "tool": "tool version 1",
         "connector": "connector v1",
     }
+    expected = textwrap.dedent(
+        f"""\
+        Updated model with RM content from rev.123
+
+        Synchronized 1 category1 and 1 category2:
+        - 1: created: 1; updated: 1; deleted: 1; type-changes: 0
+        - project/space/example title: created: 0; updated: 0; deleted: 1; type-changes: 2
+
+        This was done using:
+        - tool version 1
+        - connector v1
+        - RM-Bridge v{__version__}
+        """
+    )
 
     reporter = auditing.RMReporter(migration_model)
     for changes, module_id, module_category in context:
         reporter.store_changes(changes, module_id, module_category)
     commit_message = reporter.create_commit_message(tool_metadata)
 
-    assert commit_message.startswith(
-        "Updated model with RM content from rev.123\n"
-        "\n"
-        "Synchronized 1 category1 and 1 category2:\n"
-        "- 1: created: 1; updated: 1; deleted: 1; type-changes: 0\n"
-        "- project/space/example title: created: 0; updated: 0; deleted: 1; type-changes: 2\n"
-        "\n"
-        "This was done using:\n"
-        "- tool version 1\n"
-        "- connector v1\n"
-        f"- RM-Bridge v{__version__}\n"
-    )
+    assert commit_message.startswith(expected)
 
 
 @pytest.mark.integtest
@@ -465,33 +469,39 @@ def test_get_change_report(migration_model: capellambse.MelodyModel):
         (TestRMReporter.CHANGES, "1", "category1"),
         (TEST_CHANGES, TEST_MODULE_ID, "category2"),
     ]
+    expected = textwrap.dedent(
+        """\
+        <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)>
+        ========================================================
+        Extensions: 0, Modifications: 1, Deletions: 0
+        ------------------In-Depth-------------------
+        <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)> modified 'long_name' from '1' to 'New'.
+
+        <CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)>
+        ====================================================================
+        Extensions: 2, Modifications: 0, Deletions: 1
+        ------------------In-Depth-------------------
+        <CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)> extended 'folders' by <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)>.
+        <CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)> deleted <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)> from 'folders'.
+
+        <Folder 'Kinds' (9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19)>
+        =======================================================
+        Extensions: 1, Modifications: 0, Deletions: 1
+        ------------------In-Depth-------------------
+        <Folder 'Kinds' (9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19)> deleted <Requirement 'Kind Requirement' (163394f5-c1ba-4712-a238-b0b143c66aed)> from 'requirements'.
+
+        <CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)>
+        ===================================================================
+        Extensions: 1, Modifications: 1, Deletions: 0
+        ------------------In-Depth-------------------
+        <CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)> modified 'identifier' from '-2' to 'Types'.
+        <CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)> extended 'data_type_definitions' by <EnumerationDataTypeDefinition '' (686e198b-8baf-49f9-9d85-24571bd05d93)>.
+        """
+    )
 
     reporter = auditing.RMReporter(migration_model)
     for changes, module_id, module_category in context:
         reporter.store_changes(changes, module_id, module_category)
     change_report = reporter.get_change_report()
 
-    assert change_report.startswith(
-        "<Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)>\n"
-        "========================================================\n"
-        "Extensions: 0, Modifications: 1, Deletions: 0\n"
-        "------------------In-Depth-------------------\n"
-        "<Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)> modified 'long_name' from '1' to 'New'.\n\n"
-        "<CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)>\n"
-        "====================================================================\n"
-        "Extensions: 2, Modifications: 0, Deletions: 1\n"
-        "------------------In-Depth-------------------\n"
-        "<CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)> extended 'folders' by <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)>.\n"
-        "<CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)> deleted <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)> from 'folders'.\n\n"
-        "<Folder 'Kinds' (9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19)>\n"
-        "=======================================================\n"
-        "Extensions: 1, Modifications: 0, Deletions: 1\n"
-        "------------------In-Depth-------------------\n"
-        "<Folder 'Kinds' (9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19)> deleted <Requirement 'Kind Requirement' (163394f5-c1ba-4712-a238-b0b143c66aed)> from 'requirements'.\n\n"
-        "<CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)>\n"
-        "===================================================================\n"
-        "Extensions: 1, Modifications: 1, Deletions: 0\n"
-        "------------------In-Depth-------------------\n"
-        "<CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)> modified 'identifier' from '-2' to 'Types'.\n"
-        "<CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)> extended 'data_type_definitions' by <EnumerationDataTypeDefinition '' (686e198b-8baf-49f9-9d85-24571bd05d93)>."
-    )
+    assert change_report.startswith(expected)
