@@ -1,0 +1,570 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="capella-rm-bridge" href="code/modules.html" /><link rel="prev" title="Snapshot" href="snapshot.html" />
+
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>ChangeSet - Capella-RM-Bridge documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Capella-RM-Bridge  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Capella-RM-Bridge  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Input</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="snapshot.html">Snapshot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Output</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">ChangeSet</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="code/modules.html">capella-rm-bridge</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="code/capella_rm_bridge.html">capella_rm_bridge package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="code/capella_rm_bridge.changeset.html">capella_rm_bridge.changeset package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="code/tests.html">tests package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="changeset">
+<span id="change-set"></span><h1>ChangeSet<a class="headerlink" href="#changeset" title="Permalink to this heading">#</a></h1>
+<p>The ChangeSet is the output of
+<a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.calculate_change_set" title="capella_rm_bridge.changeset.calculate_change_set"><code class="xref py py-func docutils literal notranslate"><span class="pre">calculate_change_set()</span></code></a> and uses the
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/start/declarative.html#declarative-modelling" title="(in py-capellambse v0.5.18.dev1)"><span class="xref std std-ref">declarative modelling</span></a> syntax of capellambse. An
+example for the initial migration of the snapshot example:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4</span>
+<span class="w">  </span><span class="nt">modify</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">project/space/example title</span>
+<span class="w">    </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example title</span>
+<span class="w">  </span><span class="nt">extend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">requirement_types_folders</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Types</span>
+<span class="w">        </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;-2&quot;</span>
+<span class="w">        </span><span class="nt">data_type_definitions</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type</span>
+<span class="w">            </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">            </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unset</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Unset</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue type unset</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">functional</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Functional</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue type functional</span>
+<span class="w">            </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumerationDataTypeDefinition type</span>
+<span class="w">            </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumerationDataTypeDefinition</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release</span>
+<span class="w">            </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">            </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">featureRel.1</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Feature Rel. 1</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue release featureRel.1</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">featureRel.2</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Feature Rel. 2</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue release featureRel.2</span>
+<span class="w">            </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumerationDataTypeDefinition release</span>
+<span class="w">            </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumerationDataTypeDefinition</span>
+<span class="w">        </span><span class="nt">requirement_types</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system_requirement</span>
+<span class="w">            </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System Requirement</span>
+<span class="w">            </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequirementType system_requirement</span>
+<span class="w">            </span><span class="nt">attribute_definitions</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">capellaID system_requirement</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Capella ID</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition capellaID system_requirement</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type system_requirement</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">                </span><span class="nt">data_type</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumerationDataTypeDefinition type</span>
+<span class="w">                </span><span class="nt">multi_valued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinitionEnumeration type system_requirement</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinitionEnumeration</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">submittedAt system_requirement</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Submitted at</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition submittedAt system_requirement</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release system_requirement</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">                </span><span class="nt">data_type</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumerationDataTypeDefinition release</span>
+<span class="w">                </span><span class="nt">multi_valued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinitionEnumeration release system_requirement</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinitionEnumeration</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">software_requirement</span>
+<span class="w">            </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Software Requirement</span>
+<span class="w">            </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequirementType software_requirement</span>
+<span class="w">            </span><span class="nt">attribute_definitions</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">capellaID software_requirement</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Capella ID</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition capellaID software_requirement</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">type software_requirement</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">                </span><span class="nt">data_type</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumerationDataTypeDefinition type</span>
+<span class="w">                </span><span class="nt">multi_valued</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinitionEnumeration type software_requirement</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinitionEnumeration</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">submittedAt software_requirement</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Submitted at</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition submittedAt software_requirement</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stakeholder_requirement</span>
+<span class="w">            </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stakeholder Requirement</span>
+<span class="w">            </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequirementType stakeholder_requirement</span>
+<span class="w">            </span><span class="nt">attribute_definitions</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">capellaID stakeholder_requirement</span>
+<span class="w">                </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Capella ID</span>
+<span class="w">                </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition capellaID stakeholder_requirement</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition</span>
+<span class="w">    </span><span class="nt">folders</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Functional Requirements</span>
+<span class="w">        </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQ-001</span>
+<span class="w">        </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;p&gt;Test Description&lt;/p&gt;</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequirementType system_requirement</span>
+<span class="w">        </span><span class="nt">folders</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kinds</span>
+<span class="w">            </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQ-003</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequirementType software_requirement</span>
+<span class="w">            </span><span class="nt">requirements</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Kind Requirement</span>
+<span class="w">                </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQ-004</span>
+<span class="w">                </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequirementType stakeholder_requirement</span>
+<span class="w">                </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition capellaID stakeholder_requirement</span>
+<span class="w">                    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">R-FNC-00002</span>
+<span class="w">                    </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">        </span><span class="nt">requirements</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Function Requirement</span>
+<span class="w">            </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQ-002</span>
+<span class="w">            </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;...&quot;</span>
+<span class="w">            </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RequirementType system_requirement</span>
+<span class="w">            </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition capellaID system_requirement</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">R-FNC-00001</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinitionEnumeration type system_requirement</span>
+<span class="w">                </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue type functional</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enum</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinitionEnumeration release system_requirement</span>
+<span class="w">                </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue release featureRel.1</span>
+<span class="w">                  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue release featureRel.2</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enum</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition submittedAt system_requirement</span>
+<span class="w">                </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2022-06-30 17:07:18.664000+02:00</span>
+<span class="w">                </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">date</span>
+</pre></div>
+</div>
+<p>The following ChangeSet shows modifications (i.e. synchronizations) after the
+initial migration:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">686e198b-8baf-49f9-9d85-24571bd05d93</span>
+<span class="w">  </span><span class="nt">extend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nonFunctional</span>
+<span class="w">        </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Non-Functional</span>
+<span class="w">        </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue type nonFunctional</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">98aaca05-d47f-4916-a9f9-770dc60aa04f</span>
+<span class="w">  </span><span class="nt">extend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">rel.1</span>
+<span class="w">        </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Rel. 1</span>
+<span class="w">        </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue release rel.1</span>
+<span class="w">  </span><span class="nt">delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">e91aa844-584d-451d-a201-2bb7bf13dcb0</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3a39327a-a40d-47a6-a054-d29b1851e478</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">02bb4cdd-52cc-4fc3-af1c-e57dad8c51de</span>
+<span class="w">  </span><span class="nt">extend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attribute_definitions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testAfterMigration system_requirement</span>
+<span class="w">        </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test after migration</span>
+<span class="w">        </span><span class="nt">promise_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition testAfterMigration system_requirement</span>
+<span class="w">        </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cbc96c24-58c9-4292-9dfa-1ecb5ee16a82</span>
+<span class="w">  </span><span class="nt">modify</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stakeholders Requirement</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">b2c39449-ebbe-43cb-a712-22c740707a8b</span>
+<span class="w">  </span><span class="nt">modify</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Non-Functional Requirements</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;p&gt;Changed Test Description&lt;/p&gt;</span>
+<span class="w">  </span><span class="nt">extend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">87af9e2a-41b6-4962-a57e-eb695e0a03ad</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RF-NFNC-00001</span>
+<span class="w">        </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12d97ef4-8b6e-4d45-8b3d-a1b6fe5b8aed</span>
+<span class="w">        </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue type nonFunctional</span>
+<span class="w">        </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enum</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">e46d4629-da10-4f7f-954e-146bd2697638</span>
+<span class="w">        </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue release rel.1</span>
+<span class="w">        </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enum</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25ccf941-17ed-4226-847b-040575922283</span>
+<span class="w">  </span><span class="nt">modify</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Non-Function Requirement</span>
+<span class="w">  </span><span class="nt">extend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AttributeDefinition testAfterMigration system_requirement</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">New</span>
+<span class="w">        </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">  </span><span class="nt">delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0386897b-1e6c-41d0-bb9f-0127c6afe2f1</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dda9887a-a0a2-4d58-9040-9b023544b5b4</span>
+<span class="w">  </span><span class="nt">modify</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">R-NFNC-00002</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6708cf60-2f06-4ccf-9973-21a035415ccb</span>
+<span class="w">  </span><span class="nt">modify</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!promise</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EnumValue type nonFunctional</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19</span>
+<span class="w">  </span><span class="nt">modify</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Functional Requirements</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;p&gt;Brand new&lt;/p&gt;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">163394f5-c1ba-4712-a238-b0b143c66aed</span>
+<span class="w">  </span><span class="nt">modify</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Function Requirement</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bde333d5-141d-4ced-acf8-6f8507337c90</span>
+<span class="w">  </span><span class="nt">delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1fca2a91-c678-448c-ad44-c80b0e174e55</span>
+<span class="w">  </span><span class="nt">extend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7c3a47a0-efff-4cda-baae-0ef3bfb2cbed</span>
+<span class="w">        </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">R-FNC-00001</span>
+<span class="w">        </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">string</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">79ffc1c8-38d3-4c65-a45f-c9f52de30834</span>
+<span class="w">        </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">61d37f6e-b821-49fa-b68d-c4ff48b8cbbf</span>
+<span class="w">        </span><span class="nt">_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">enum</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4</span>
+<span class="w">  </span><span class="nt">extend</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">folders</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19</span>
+</pre></div>
+</div>
+<p>Then an example for deletions is given by:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">686e198b-8baf-49f9-9d85-24571bd05d93</span>
+<span class="w">  </span><span class="nt">delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5a03662a-d602-4524-8706-5bf83275ee2a</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">02bb4cdd-52cc-4fc3-af1c-e57dad8c51de</span>
+<span class="w">  </span><span class="nt">delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attribute_definitions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">e46d4629-da10-4f7f-954e-146bd2697638</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">long_name Test after migration</span><span class="w"> </span><span class="c1"># dynamically generated object</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a15e8b60-bf39-47ba-b7c7-74ceecb25c9c</span>
+<span class="w">  </span><span class="nt">delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">data_type_definitions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">98aaca05-d47f-4916-a9f9-770dc60aa04f</span>
+<span class="w">    </span><span class="nt">requirement_types</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cbc96c24-58c9-4292-9dfa-1ecb5ee16a82</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">b2c39449-ebbe-43cb-a712-22c740707a8b</span>
+<span class="w">  </span><span class="nt">delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">definition.long_name Release</span><span class="w"> </span><span class="c1"># dynamically generated object</span>
+<span class="w">    </span><span class="nt">requirements</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">25ccf941-17ed-4226-847b-040575922283</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3be8d0fc-c693-4b9b-8fa1-d59a9eec6ea4</span>
+<span class="w">  </span><span class="nt">delete</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">folders</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="kt">!uuid</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19</span>
+</pre></div>
+</div>
+<p>A module in the snapshot is resolved in the
+<a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange" title="capella_rm_bridge.changeset.change.TrackerChange"><code class="xref py py-class docutils literal notranslate"><span class="pre">TrackerChange</span></code></a> and its method
+<a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.calculate_change" title="capella_rm_bridge.changeset.change.TrackerChange.calculate_change"><code class="xref py py-meth docutils literal notranslate"><span class="pre">calculate_change()</span></code></a>:</p>
+<dl class="py class">
+<dt class="sig sig-object py">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.changeset.change.</span></span><span class="sig-name descname"><span class="pre">TrackerChange</span></span></dt>
+<dd><dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">TrackerChange.</span></span><span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tracker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gather_logs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span></dt>
+<dd><p>Construct a <code class="docutils literal notranslate"><span class="pre">TrackerChange</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tracker</strong> – Is a mapping that has <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">data_types</span></code>,
+<code class="docutils literal notranslate"><span class="pre">requirement_types</span></code> and <code class="docutils literal notranslate"><span class="pre">items</span></code> defined. Maybe called
+module in different RM tools.</p></li>
+<li><p><strong>model</strong> – An instance of <code class="docutils literal notranslate"><span class="pre">MelodyModel</span></code> for comparison with the
+snapshot.</p></li>
+<li><p><strong>config</strong> – A configuration for the module (tracker).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidTrackerConfig" title="capella_rm_bridge.changeset.actiontypes.InvalidTrackerConfig"><strong>InvalidTrackerConfig</strong></a> – If the given <code class="docutils literal notranslate"><span class="pre">config</span></code> is missing any of the mandatory
+    keys (uuid, project and/or title).</p></li>
+<li><p><a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.MissingCapellaModule" title="capella_rm_bridge.changeset.change.MissingCapellaModule"><strong>MissingCapellaModule</strong></a> – If the model is missing a <code class="docutils literal notranslate"><span class="pre">CapellaModule</span></code> from the UUID
+    declared in the <code class="docutils literal notranslate"><span class="pre">config</span></code>.</p></li>
+<li><p><a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidWorkItemType" title="capella_rm_bridge.changeset.actiontypes.InvalidWorkItemType"><strong>InvalidWorkItemType</strong></a> – May be raised during
+    <a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.calculate_change" title="capella_rm_bridge.changeset.change.TrackerChange.calculate_change"><code class="xref py py-meth docutils literal notranslate"><span class="pre">TrackerChange.calculate_change()</span></code></a> if an unknown ID of a
+    RequirementType is used (i.e. the integrity of the
+    <code class="docutils literal notranslate"><span class="pre">requirement_types</span></code> section in the snapshot is broken).</p></li>
+<li><p><a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidFieldValue" title="capella_rm_bridge.changeset.actiontypes.InvalidFieldValue"><strong>InvalidFieldValue</strong></a> – May be raised during
+    <a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.calculate_change" title="capella_rm_bridge.changeset.change.TrackerChange.calculate_change"><code class="xref py py-meth docutils literal notranslate"><span class="pre">TrackerChange.calculate_change()</span></code></a> if it is tried to
+    set an unavailable field value (i.e. the integrity of the
+    <code class="docutils literal notranslate"><span class="pre">attributes</span></code> of a work item is broken).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">TrackerChange.</span></span><span class="sig-name descname"><span class="pre">calculate_change</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>Render actions for CapellaModule synchronization.</p>
+<p>Handles synchronization of RequirementTypesFolder first and
+Requirements and Folders afterwards. If no
+RequirementTypesFolder was found an action for creation will be
+added to the actions. Work items are searched by the
+<code class="docutils literal notranslate"><span class="pre">identifier</span></code>. Location changes of work items will invalidate
+deletions.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="code/modules.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">capella-rm-bridge</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="snapshot.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Snapshot</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; DB Netz AG and the capella-RM-Bridge contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link fa-solid fa-brands fa-github fa-2x" href="https://github.com/DSD-DBS/rm-bridge" aria-label="GitHub"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>

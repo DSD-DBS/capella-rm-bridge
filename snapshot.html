@@ -1,0 +1,495 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="ChangeSet" href="changeset.html" /><link rel="prev" title="Welcome to the documentation!" href="index.html" />
+
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>Snapshot - Capella-RM-Bridge documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">Capella-RM-Bridge  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  
+  <span class="sidebar-brand-text">Capella-RM-Bridge  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Input</span></p>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Snapshot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Output</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="changeset.html">ChangeSet</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="code/modules.html">capella-rm-bridge</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="code/capella_rm_bridge.html">capella_rm_bridge package</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="code/capella_rm_bridge.changeset.html">capella_rm_bridge.changeset package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="code/tests.html">tests package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="snapshot">
+<span id="id1"></span><h1>Snapshot<a class="headerlink" href="#snapshot" title="Permalink to this heading">#</a></h1>
+<p>The snapshot is the input needed for calculating the
+<a class="reference internal" href="changeset.html#change-set"><span class="std std-ref">ChangeSet</span></a>. It consists of a metadata section and a list of
+modules. The metadata documents the versions of the used RM tool and its
+connector, the revision of the RM content and the  Each module will be compared
+against a matching
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.CapellaModule" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CapellaModule</span></code></a> from the given
+model. If no matching <code class="docutils literal notranslate"><span class="pre">CapellaModule</span></code> was found this module will be skipped.
+Differences of the module snapshot and the model <code class="docutils literal notranslate"><span class="pre">CapellaModule</span></code> will result
+in change actions according to the <a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/start/declarative.html#declarative-modelling" title="(in py-capellambse v0.5.18.dev1)"><span class="xref std std-ref">declarative
+modelling</span></a> syntax of capellambse.</p>
+<section id="module-description">
+<h2>Module description<a class="headerlink" href="#module-description" title="Permalink to this heading">#</a></h2>
+<p>As previously noted: A module (or tracker) in the given snapshot equals a
+<code class="docutils literal notranslate"><span class="pre">CapellaModule</span></code> in Capella. Every module consists of 4 sections:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">metadata</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">tool</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RM Tool Version</span>
+<span class="w">  </span><span class="nt">revision</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">r1234</span>
+<span class="w">  </span><span class="nt">connector</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RM-Bridge-Polarion vX.Y.Z</span>
+<span class="nt">modules</span><span class="p">:</span>
+<span class="w"> </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">MODULE-000</span><span class="w"> </span><span class="c1"># mandatory</span>
+<span class="w">   </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Example</span><span class="w"> </span><span class="c1"># optional</span>
+
+<span class="w">   </span><span class="nt">data_types</span><span class="p">:</span><span class="w"> </span><span class="c1"># Enumeration Data Type Definitions</span>
+<span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">   </span><span class="nt">requirement_types</span><span class="p">:</span><span class="w"> </span><span class="c1"># WorkItemTypes</span>
+<span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+<span class="w">   </span><span class="nt">items</span><span class="p">:</span><span class="w"> </span><span class="c1"># WorkItems</span>
+<span class="w">     </span><span class="l l-Scalar l-Scalar-Plain">...</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>descriptionary part of the module,</p></li>
+<li><p><strong>data_types</strong>: For
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.EnumerationDataTypeDefinition" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumerationDataTypeDefinition</span></code></a>s, all needed options/values for
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.EnumerationValueAttribute" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumerationValueAttribute</span></code></a>s,</p></li>
+<li><p><strong>requirement_types</strong>: For
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.RequirementType" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RequirementType</span></code></a>s
+and finally</p></li>
+<li><p><strong>items</strong>: For the exported work items that will result into
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.Requirement" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Requirement</span></code></a>s and
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.Folder" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Folder</span></code></a>s.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">id</span></code> is required and will be compared with the <code class="docutils literal notranslate"><span class="pre">identifier</span></code> of the
+matched <code class="docutils literal notranslate"><span class="pre">CapellaModule</span></code>. Other attributes like <code class="docutils literal notranslate"><span class="pre">long_name</span></code> or <code class="docutils literal notranslate"><span class="pre">text</span></code>
+can be declared optionally for comparison.</p>
+</section>
+<section id="enumeration-data-types-data-types">
+<h2>Enumeration Data Types (<code class="docutils literal notranslate"><span class="pre">data_types</span></code>)<a class="headerlink" href="#enumeration-data-types-data-types" title="Permalink to this heading">#</a></h2>
+<p>This section describes <code class="docutils literal notranslate"><span class="pre">EnumerationDataTypeDefinition</span></code>s: For now only as a
+mapping from <code class="docutils literal notranslate"><span class="pre">long_name</span></code> to its values.</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">data_types</span><span class="p">:</span><span class="w"> </span><span class="c1"># Enumeration Data Type Definitions</span>
+<span class="w">  </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">   </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unset</span>
+<span class="w">      </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Unset</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">folder</span>
+<span class="w">      </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Folder</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">functional</span>
+<span class="w">      </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Functional</span>
+<span class="w">  </span><span class="nt">release</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">   </span><span class="nt">values</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">featureRel.1</span>
+<span class="w">      </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Feature Rel. 1</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">feature_rel.1</span>
+<span class="w">      </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Feature Rel. 2</span>
+</pre></div>
+</div>
+<p>In order to have a nice display of <code class="docutils literal notranslate"><span class="pre">ValueAttribute</span></code>s for <code class="docutils literal notranslate"><span class="pre">Requirement</span></code>s
+in Capella and also functioning <code class="docutils literal notranslate"><span class="pre">.values</span></code> for
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.EnumerationValueAttribute" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">EnumerationValueAttribute</span></code></a>s, <a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.AttributeDefinition" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeDefinition</span></code></a>
+and
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.AttributeDefinitionEnumeration" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">AttributeDefinitionEnumeration</span></code></a>s are needed. The <em>data_types</em> subsection maps <code class="docutils literal notranslate"><span class="pre">identifier</span></code>s to a
+<a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.DataType" title="capella_rm_bridge.changeset.actiontypes.DataType"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataType</span></code></a>. These share the same
+mapping that are matched against the attribute-definitions (<code class="docutils literal notranslate"><span class="pre">attributes</span></code>)
+subsection in <a class="reference internal" href="#requirement-types"><span class="std std-ref">Requirement Types (requirement_types)</span></a>.</p>
+</section>
+<section id="requirement-types-requirement-types">
+<span id="requirement-types"></span><h2>Requirement Types (<code class="docutils literal notranslate"><span class="pre">requirement_types</span></code>)<a class="headerlink" href="#requirement-types-requirement-types" title="Permalink to this heading">#</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">requirement_types</span><span class="p">:</span><span class="w"> </span><span class="c1"># WorkItemTypes</span>
+<span class="w"> </span><span class="nt">system_requirement</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">System Requirement</span>
+<span class="w">   </span><span class="nt">attributes</span><span class="p">:</span><span class="w"> </span><span class="c1"># Field Definitions, we don&#39;t need the IDs</span>
+<span class="w">     </span><span class="nt">capellaID</span><span class="p">:</span><span class="w"> </span><span class="c1"># Field identifier</span>
+<span class="w">       </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Capella ID</span><span class="w"> </span><span class="c1"># Field name</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span><span class="w"> </span><span class="c1"># -&gt; AttributeDefinition</span>
+<span class="w">     </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="c1"># type should also be declared under data_types!</span>
+<span class="w">       </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enum</span><span class="w"> </span><span class="c1"># -&gt; EnumerationAttributeDefinition</span>
+<span class="w">     </span><span class="nt">submitted_at</span><span class="p">:</span>
+<span class="w">       </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Submitted At</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Date</span><span class="w"> </span><span class="c1"># -&gt; AttributeDefinition</span>
+<span class="w">     </span><span class="nt">release</span><span class="p">:</span>
+<span class="w">       </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Release</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enum</span>
+<span class="w">       </span><span class="nt">multi_values</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="w"> </span><span class="nt">software_requirement</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Software Requirement</span>
+<span class="w">   </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">capellaID</span><span class="p">:</span>
+<span class="w">       </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Capella ID</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
+<span class="w">     </span><span class="nt">type</span><span class="p">:</span>
+<span class="w">       </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Type</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Enum</span>
+<span class="w">     </span><span class="nt">submitted_at</span><span class="p">:</span>
+<span class="w">       </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Submitted At</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Date</span>
+
+<span class="w"> </span><span class="nt">stakeholder_requirement</span><span class="p">:</span>
+<span class="w">   </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stakeholder Requirement</span>
+<span class="w">   </span><span class="nt">attributes</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">capellaID</span><span class="p">:</span>
+<span class="w">       </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Capella ID</span>
+<span class="w">       </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
+</pre></div>
+</div>
+<p>Work item types are dealt by most RM tools as special fields. This section is
+therefore a mapping that describes <code class="docutils literal notranslate"><span class="pre">RequirementType</span></code>s from a given
+<code class="docutils literal notranslate"><span class="pre">identifier</span></code> to its
+<a class="reference internal" href="code/capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.RequirementType" title="capella_rm_bridge.changeset.actiontypes.RequirementType"><code class="xref py py-class docutils literal notranslate"><span class="pre">RequirementType</span></code></a>.</p>
+</section>
+<section id="requirements-and-requirementfolders-items">
+<h2><code class="docutils literal notranslate"><span class="pre">Requirement</span></code>s and <code class="docutils literal notranslate"><span class="pre">RequirementFolder</span></code>s (<code class="docutils literal notranslate"><span class="pre">items</span></code>)<a class="headerlink" href="#requirements-and-requirementfolders-items" title="Permalink to this heading">#</a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">items</span><span class="p">:</span><span class="w"> </span><span class="c1"># WorkItems</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQ-001</span>
+<span class="w">    </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Functional Requirements</span>
+<span class="w">    </span><span class="nt">text</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">&lt;p&gt;Test Description&lt;/p&gt;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">system_requirement</span><span class="w"> </span><span class="c1"># WorkItemType ID</span>
+
+<span class="w">    </span><span class="nt">attributes</span><span class="p">:</span><span class="w"> </span><span class="c1"># Fields for a Folder</span>
+<span class="w">      </span><span class="nt">capellaID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">R-FNC-00001</span><span class="w"> </span><span class="c1"># String Attribute</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">unset</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Enum Attribute value identifier</span>
+<span class="w">      </span><span class="nt">submitted_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2022-06-30 17:07:18.664000+02:00</span>
+
+<span class="w">    </span><span class="nt">children</span><span class="p">:</span><span class="w"> </span><span class="c1"># Folder b/c children key exists</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQ-002</span>
+<span class="w">        </span><span class="nt">long_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Function Requirement</span>
+<span class="w">        </span><span class="nt">attributes</span><span class="p">:</span><span class="w"> </span><span class="c1"># Fields for a WorkItem</span>
+<span class="w">         </span><span class="nt">capellaID</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">R-FNC-00002</span><span class="w"> </span><span class="c1"># String Attribute</span>
+<span class="w">         </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">functional</span><span class="p p-Indicator">]</span><span class="w"> </span><span class="c1"># Enum Attribute value identifier</span>
+<span class="w">         </span><span class="nt">submitted_at</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2022-06-30 17:07:18.664000+02:00</span>
+<span class="w">        </span><span class="c1"># [...]</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">REQ-003</span>
+<span class="w">        </span><span class="c1"># [...]</span>
+</pre></div>
+</div>
+<p>This section consists of all work items and folders that are exported from the
+RM tool. Important keys are the <code class="docutils literal notranslate"><span class="pre">id</span></code> (written to <code class="docutils literal notranslate"><span class="pre">identifier</span></code>) and
+<code class="docutils literal notranslate"><span class="pre">text</span></code>. The latter can also include referenced content like images using the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Data_URI_scheme">data-URI</a> schema. The <code class="docutils literal notranslate"><span class="pre">type</span></code> field is an identifier for the respective
+<code class="docutils literal notranslate"><span class="pre">RequirementType</span></code> and needs to also appear under <a class="reference internal" href="#requirement-types"><span class="std std-ref">Requirement Types (requirement_types)</span></a>.</p>
+<p>The field data of work items is reflected by the <code class="docutils literal notranslate"><span class="pre">attributes</span></code> key. In general
+fields are <code class="docutils literal notranslate"><span class="pre">ValueAttributes</span></code> in Capella. For now only the basic primitives
+are supported:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">IntegerValueAttribute</span></code> (required as an integer value in the snapshot)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">StringValueAttribute</span></code> (required as a string value in the snapshot)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RealValueAttribute</span></code> (required as a float value in the snapshot)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DateValueAttribute</span></code> (required as a !!timestamp value in the snapshot)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BooleanValueAttribute</span></code> (required as a boolean value in the snapshot)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">EnumerationValueAttribute</span></code> (required as a sequence of strings value in the
+snapshot)</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>During execution of
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">calculate_change()</span></code>
+the integrity of the snapshot is checked. That means for example work items
+that have <code class="docutils literal notranslate"><span class="pre">type</span></code> identifiers which are not defined in the
+<a class="reference internal" href="#requirement-types"><span class="std std-ref">Requirement Types (requirement_types)</span></a> section will be skipped. In general there needs to
+be a <code class="docutils literal notranslate"><span class="pre">type</span></code> identifier exported in order to have fields maintained.</p>
+<p>Another example: If there are any options/values exported on an enum-field
+which are not defined in the respective enum definition under <code class="docutils literal notranslate"><span class="pre">data_types</span></code>,
+the field will be skipped if the force mode is enabled. If force mode is
+disabled (default) any error will result into cancelation of the ChangeSet
+calculation.</p>
+</div>
+<p>With the <code class="docutils literal notranslate"><span class="pre">children</span></code> key the hierarchical structure of the workitems is
+exported. The existance of a <code class="docutils literal notranslate"><span class="pre">children</span></code> key will result in a <code class="docutils literal notranslate"><span class="pre">Folder</span></code>.
+Conversely if there is no <code class="docutils literal notranslate"><span class="pre">children</span></code> key will cause change action on a
+<code class="docutils literal notranslate"><span class="pre">Requirement</span></code>.</p>
+</section>
+<section id="complete-snapshot">
+<h2>Complete snapshot<a class="headerlink" href="#complete-snapshot" title="Permalink to this heading">#</a></h2>
+<p>The exemplary sections combined to one snapshot will result into the following
+Capella model state:</p>
+<img alt="_images/capella_migration.png" src="_images/capella_migration.png" />
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The
+<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.extensions.reqif.html#capellambse.extensions.reqif.CapellaTypesFolder" title="(in py-capellambse v0.5.18.dev1)"><code class="xref py py-class docutils literal notranslate"><span class="pre">CapellaTypesFolder</span></code></a>
+will be initially created in the <code class="docutils literal notranslate"><span class="pre">EnumerationDataTypeDefinition</span></code> for
+compactness. Every module has its own <code class="docutils literal notranslate"><span class="pre">CapellaTypesFolder</span></code> named
+<strong>Types</strong> with all necessary definitions.</p>
+</div>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="changeset.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">ChangeSet</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="index.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Home</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; DB Netz AG and the capella-RM-Bridge contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link fa-solid fa-brands fa-github fa-2x" href="https://github.com/DSD-DBS/rm-bridge" aria-label="GitHub"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Snapshot</a><ul>
+<li><a class="reference internal" href="#module-description">Module description</a></li>
+<li><a class="reference internal" href="#enumeration-data-types-data-types">Enumeration Data Types (<code class="docutils literal notranslate"><span class="pre">data_types</span></code>)</a></li>
+<li><a class="reference internal" href="#requirement-types-requirement-types">Requirement Types (<code class="docutils literal notranslate"><span class="pre">requirement_types</span></code>)</a></li>
+<li><a class="reference internal" href="#requirements-and-requirementfolders-items"><code class="docutils literal notranslate"><span class="pre">Requirement</span></code>s and <code class="docutils literal notranslate"><span class="pre">RequirementFolder</span></code>s (<code class="docutils literal notranslate"><span class="pre">items</span></code>)</a></li>
+<li><a class="reference internal" href="#complete-snapshot">Complete snapshot</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/scripts/furo.js"></script>
+    </body>
+</html>

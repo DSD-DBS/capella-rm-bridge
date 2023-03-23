@@ -1,0 +1,37 @@
+capella\_rm\_bridge package
+===========================
+
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   capella_rm_bridge.changeset
+
+Submodules
+----------
+
+capella\_rm\_bridge.auditing module
+-----------------------------------
+
+.. automodule:: capella_rm_bridge.auditing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+capella\_rm\_bridge.load module
+-------------------------------
+
+.. automodule:: capella_rm_bridge.load
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: capella_rm_bridge
+   :members:
+   :undoc-members:
+   :show-inheritance:

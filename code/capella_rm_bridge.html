@@ -1,0 +1,896 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../genindex.html" /><link rel="search" title="Search" href="../search.html" /><link rel="next" title="capella_rm_bridge.changeset package" href="capella_rm_bridge.changeset.html" /><link rel="prev" title="capella-rm-bridge" href="modules.html" />
+
+    <!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07 -->
+        <title>capella_rm_bridge package - Capella-RM-Bridge documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=91d0f0d1c444bdcb17a68e833c7a53903343c195" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=30d1aed668e5c3a91c3e3bf6a60b675221979f0e" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #272822;
+  --color-code-foreground: #f8f8f2;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../index.html"><div class="brand">Capella-RM-Bridge  documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../index.html">
+  
+  
+  <span class="sidebar-brand-text">Capella-RM-Bridge  documentation</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Input</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../snapshot.html">Snapshot</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Output</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../changeset.html">ChangeSet</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="modules.html">capella-rm-bridge</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current has-children current-page"><a class="current reference internal" href="#">capella_rm_bridge package</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html">capella_rm_bridge.changeset package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tests.html">tests package</a></li>
+</ul>
+</li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle">
+              <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+              <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <div class="visually-hidden">Toggle table of contents sidebar</div>
+            <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+          </label>
+        </div>
+        <article role="main">
+          <section id="capella-rm-bridge-package">
+<h1>capella_rm_bridge package<a class="headerlink" href="#capella-rm-bridge-package" title="Permalink to this heading">#</a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="capella_rm_bridge.changeset.html">capella_rm_bridge.changeset package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="capella_rm_bridge.changeset.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="capella_rm_bridge.changeset.html#module-capella_rm_bridge.changeset.actiontypes">capella_rm_bridge.changeset.actiontypes module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.AttributeDefinition"><code class="docutils literal notranslate"><span class="pre">AttributeDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.AttributeDefinition.__new__"><code class="docutils literal notranslate"><span class="pre">AttributeDefinition.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.AttributeDefinition.long_name"><code class="docutils literal notranslate"><span class="pre">AttributeDefinition.long_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.AttributeDefinition.type"><code class="docutils literal notranslate"><span class="pre">AttributeDefinition.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Config"><code class="docutils literal notranslate"><span class="pre">Config</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Config.__new__"><code class="docutils literal notranslate"><span class="pre">Config.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Config.modules"><code class="docutils literal notranslate"><span class="pre">Config.modules</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Config.trackers"><code class="docutils literal notranslate"><span class="pre">Config.trackers</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.DataType"><code class="docutils literal notranslate"><span class="pre">DataType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.DataType.__new__"><code class="docutils literal notranslate"><span class="pre">DataType.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.DataType.long_name"><code class="docutils literal notranslate"><span class="pre">DataType.long_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.DataTypeValue"><code class="docutils literal notranslate"><span class="pre">DataTypeValue</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.DataTypeValue.__new__"><code class="docutils literal notranslate"><span class="pre">DataTypeValue.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.DataTypeValue.id"><code class="docutils literal notranslate"><span class="pre">DataTypeValue.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.DataTypeValue.long_name"><code class="docutils literal notranslate"><span class="pre">DataTypeValue.long_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.EnumAttributeDefinition"><code class="docutils literal notranslate"><span class="pre">EnumAttributeDefinition</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.EnumAttributeDefinition.__new__"><code class="docutils literal notranslate"><span class="pre">EnumAttributeDefinition.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.EnumAttributeDefinition.long_name"><code class="docutils literal notranslate"><span class="pre">EnumAttributeDefinition.long_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.EnumAttributeDefinition.multi_values"><code class="docutils literal notranslate"><span class="pre">EnumAttributeDefinition.multi_values</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.EnumAttributeDefinition.type"><code class="docutils literal notranslate"><span class="pre">EnumAttributeDefinition.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidAttributeDefinition"><code class="docutils literal notranslate"><span class="pre">InvalidAttributeDefinition</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidFieldValue"><code class="docutils literal notranslate"><span class="pre">InvalidFieldValue</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidSnapshotModule"><code class="docutils literal notranslate"><span class="pre">InvalidSnapshotModule</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidTrackerConfig"><code class="docutils literal notranslate"><span class="pre">InvalidTrackerConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidWorkItem"><code class="docutils literal notranslate"><span class="pre">InvalidWorkItem</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.InvalidWorkItemType"><code class="docutils literal notranslate"><span class="pre">InvalidWorkItemType</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.MetaData"><code class="docutils literal notranslate"><span class="pre">MetaData</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.MetaData.__new__"><code class="docutils literal notranslate"><span class="pre">MetaData.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.MetaData.connector"><code class="docutils literal notranslate"><span class="pre">MetaData.connector</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.MetaData.revision"><code class="docutils literal notranslate"><span class="pre">MetaData.revision</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.MetaData.tool"><code class="docutils literal notranslate"><span class="pre">MetaData.tool</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Primitive"><code class="docutils literal notranslate"><span class="pre">Primitive</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.RequirementType"><code class="docutils literal notranslate"><span class="pre">RequirementType</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.RequirementType.attributes"><code class="docutils literal notranslate"><span class="pre">RequirementType.attributes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.RequirementType.long_name"><code class="docutils literal notranslate"><span class="pre">RequirementType.long_name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Snapshot"><code class="docutils literal notranslate"><span class="pre">Snapshot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Snapshot.__new__"><code class="docutils literal notranslate"><span class="pre">Snapshot.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Snapshot.metadata"><code class="docutils literal notranslate"><span class="pre">Snapshot.metadata</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.Snapshot.modules"><code class="docutils literal notranslate"><span class="pre">Snapshot.modules</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerConfig"><code class="docutils literal notranslate"><span class="pre">TrackerConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerConfig.__new__"><code class="docutils literal notranslate"><span class="pre">TrackerConfig.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerConfig.id"><code class="docutils literal notranslate"><span class="pre">TrackerConfig.id</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerSnapshot"><code class="docutils literal notranslate"><span class="pre">TrackerSnapshot</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerSnapshot.__new__"><code class="docutils literal notranslate"><span class="pre">TrackerSnapshot.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerSnapshot.data_types"><code class="docutils literal notranslate"><span class="pre">TrackerSnapshot.data_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerSnapshot.id"><code class="docutils literal notranslate"><span class="pre">TrackerSnapshot.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerSnapshot.requirement_types"><code class="docutils literal notranslate"><span class="pre">TrackerSnapshot.requirement_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.TrackerSnapshot.version"><code class="docutils literal notranslate"><span class="pre">TrackerSnapshot.version</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkItem"><code class="docutils literal notranslate"><span class="pre">WorkItem</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkItem.__new__"><code class="docutils literal notranslate"><span class="pre">WorkItem.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkItem.attributes"><code class="docutils literal notranslate"><span class="pre">WorkItem.attributes</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkItem.children"><code class="docutils literal notranslate"><span class="pre">WorkItem.children</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkItem.id"><code class="docutils literal notranslate"><span class="pre">WorkItem.id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkItem.long_name"><code class="docutils literal notranslate"><span class="pre">WorkItem.long_name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkItem.text"><code class="docutils literal notranslate"><span class="pre">WorkItem.text</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkItem.type"><code class="docutils literal notranslate"><span class="pre">WorkItem.type</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkitemTypeConfig"><code class="docutils literal notranslate"><span class="pre">WorkitemTypeConfig</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkitemTypeConfig.__new__"><code class="docutils literal notranslate"><span class="pre">WorkitemTypeConfig.__new__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkitemTypeConfig.fields"><code class="docutils literal notranslate"><span class="pre">WorkitemTypeConfig.fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.actiontypes.WorkitemTypeConfig.name"><code class="docutils literal notranslate"><span class="pre">WorkitemTypeConfig.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="capella_rm_bridge.changeset.html#module-capella_rm_bridge.changeset.change">capella_rm_bridge.changeset.change module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.MissingCapellaModule"><code class="docutils literal notranslate"><span class="pre">MissingCapellaModule</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange"><code class="docutils literal notranslate"><span class="pre">TrackerChange</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.__init__"><code class="docutils literal notranslate"><span class="pre">TrackerChange.__init__()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.actions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.actions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.attribute_definition_create_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.attribute_definition_create_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.attribute_definition_mod_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.attribute_definition_mod_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.attribute_value_create_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.attribute_value_create_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.attribute_value_mod_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.attribute_value_mod_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.calculate_change"><code class="docutils literal notranslate"><span class="pre">TrackerChange.calculate_change()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.check_attribute_value_is_valid"><code class="docutils literal notranslate"><span class="pre">TrackerChange.check_attribute_value_is_valid()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.check_requirements_module"><code class="docutils literal notranslate"><span class="pre">TrackerChange.check_requirements_module()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.config"><code class="docutils literal notranslate"><span class="pre">TrackerChange.config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.data_type_create_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.data_type_create_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.data_type_definition_mod_actions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.data_type_definition_mod_actions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.data_type_definitions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.data_type_definitions</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.data_type_mod_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.data_type_mod_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.errors"><code class="docutils literal notranslate"><span class="pre">TrackerChange.errors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.gather_logs"><code class="docutils literal notranslate"><span class="pre">TrackerChange.gather_logs</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.invalidate_deletion"><code class="docutils literal notranslate"><span class="pre">TrackerChange.invalidate_deletion()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.model"><code class="docutils literal notranslate"><span class="pre">TrackerChange.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.req_delete_actions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.req_delete_actions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.req_module"><code class="docutils literal notranslate"><span class="pre">TrackerChange.req_module</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.reqt_folder"><code class="docutils literal notranslate"><span class="pre">TrackerChange.reqt_folder</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.reqtype_fields_filter"><code class="docutils literal notranslate"><span class="pre">TrackerChange.reqtype_fields_filter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.requirement_type_create_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.requirement_type_create_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.requirement_type_delete_actions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.requirement_type_delete_actions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.requirement_type_mod_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.requirement_type_mod_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.requirement_types"><code class="docutils literal notranslate"><span class="pre">TrackerChange.requirement_types</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.requirement_types_folder_create_action"><code class="docutils literal notranslate"><span class="pre">TrackerChange.requirement_types_folder_create_action()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.tracker"><code class="docutils literal notranslate"><span class="pre">TrackerChange.tracker</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.yield_data_type_definition_create_actions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.yield_data_type_definition_create_actions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.yield_requirement_type_create_actions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.yield_requirement_type_create_actions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.yield_requirements_create_actions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.yield_requirements_create_actions()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.TrackerChange.yield_requirements_mod_actions"><code class="docutils literal notranslate"><span class="pre">TrackerChange.yield_requirements_mod_actions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.change.make_requirement_delete_actions"><code class="docutils literal notranslate"><span class="pre">make_requirement_delete_actions()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="capella_rm_bridge.changeset.html#module-capella_rm_bridge.changeset.find">capella_rm_bridge.changeset.find module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.find.find_by"><code class="docutils literal notranslate"><span class="pre">find_by()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.find.find_by_identifier"><code class="docutils literal notranslate"><span class="pre">find_by_identifier()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="capella_rm_bridge.changeset.html#module-capella_rm_bridge.changeset">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="capella_rm_bridge.changeset.html#capella_rm_bridge.changeset.calculate_change_set"><code class="docutils literal notranslate"><span class="pre">calculate_change_set()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading">#</a></h2>
+</section>
+<section id="module-capella_rm_bridge.auditing">
+<span id="capella-rm-bridge-auditing-module"></span><h2>capella_rm_bridge.auditing module<a class="headerlink" href="#module-capella_rm_bridge.auditing" title="Permalink to this heading">#</a></h2>
+<p>Functionality for reporting changes during model modification.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.ChangeAuditor">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">ChangeAuditor</span></span><a class="headerlink" href="#capella_rm_bridge.auditing.ChangeAuditor" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Audits changes to ModelElements via its Accessors.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This will permanently add an audit hook to the global hook
+table. The auditor will keep the model alive, which may consume
+excessive memory. To avoid this, call the auditor object’s
+<code class="docutils literal notranslate"><span class="pre">detach()</span></code> method once you are done with it. This is
+automatically done if you use it as a context manager.</p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ChangeAuditor</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="k">as</span> <span class="n">changes</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">comp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">all_components</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s2">&quot;Hogwarts&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">comp</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Not Hogwarts anymore&quot;</span>
+<span class="gp">... </span>    <span class="n">comp</span><span class="o">.</span><span class="n">allocated_functions</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="mi">0</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">all_functions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span>    <span class="k">del</span> <span class="n">comp</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">changes</span>
+<span class="go">[</span>
+<span class="go">    Modification(</span>
+<span class="go">        module=&quot;853cb005-cba0-489b-8fe3-bb694ad4543b&quot;,</span>
+<span class="go">        parent=&quot;&lt;LogicalComponent &#39;Hogwarts&#39; (0d2edb8f-fa34-4e73-89e...)&gt;&quot;,</span>
+<span class="go">        attribute=&quot;name&quot;,</span>
+<span class="go">        new=&quot;Not Hogwarts anymore&quot;,</span>
+<span class="go">        old=&quot;Hogwarts&quot;,</span>
+<span class="go">    ),</span>
+<span class="go">    Extension(</span>
+<span class="go">        module=&quot;853cb005-cba0-489b-8fe3-bb694ad4543b&quot;,</span>
+<span class="go">        parent=&quot;&lt;LogicalComponent &#39;Hogwarts&#39; (0d2edb8f-fa34-4e73-89e...)&gt;&quot;,</span>
+<span class="go">        attribute=&quot;allocated_functions&quot;,</span>
+<span class="go">        element=&quot;&lt;LogicalFunction &#39;Root Logical Function&#39; (f2...)&gt;&quot;,</span>
+<span class="go">        uuid=&quot;f28ec0f8-f3b3-43a0-8af7-79f194b29a2d&quot;,</span>
+<span class="go">    ),</span>
+<span class="go">    Deletion(</span>
+<span class="go">        module=&quot;853cb005-cba0-489b-8fe3-bb694ad4543b&quot;,</span>
+<span class="go">        parent=&quot;&lt;LogicalComponent &#39;Hogwarts&#39; (0d2edb8f-fa34-4e73-89e...)&gt;&quot;,</span>
+<span class="go">        attribute=&quot;components&quot;,</span>
+<span class="go">        element=&quot;&lt;LogicalComponent &#39;Campus&#39; (6583b560-6d2f-...)&gt;&quot;,</span>
+<span class="go">        uuid=&quot;6583b560-6d2f-4190-baa2-94eef179c8ea&quot;,</span>
+<span class="go">    )</span>
+<span class="go">]</span>
+</pre></div>
+</div>
+<p>Filtering the context by class-names:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ChangeAuditor</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;LogicalComponent&quot;</span><span class="p">})</span> <span class="k">as</span> <span class="n">changes</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">comp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">all_components</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s2">&quot;Hogwarts&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">comp</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Not Hogwarts anymore&quot;</span>
+<span class="gp">... </span>    <span class="n">fnc</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">all_functions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="n">fnc</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Not Hogwarts anymore&quot;</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">changes</span>
+<span class="go">[</span>
+<span class="go">    Modification(</span>
+<span class="go">        module=&quot;853cb005-cba0-489b-8fe3-bb694ad4543b&quot;,</span>
+<span class="go">        parent=&quot;&lt;LogicalComponent &#39;Hogwarts&#39; (0d2edb8f-fa34-4e73-89e...)&gt;&quot;,</span>
+<span class="go">        attribute=&quot;name&quot;,</span>
+<span class="go">        new=&quot;Not Hogwarts anymore&quot;,</span>
+<span class="go">        old=&quot;Hogwarts&quot;,</span>
+<span class="go">    )</span>
+<span class="go">]</span>
+</pre></div>
+</div>
+<p>Securing writable context with the
+<a class="reference internal" href="#capella_rm_bridge.auditing.dump" title="capella_rm_bridge.auditing.dump"><code class="xref py py-func docutils literal notranslate"><span class="pre">dump()</span></code></a> function:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">with</span> <span class="n">ChangeAuditor</span><span class="p">(</span><span class="n">model</span><span class="p">)</span> <span class="k">as</span> <span class="n">changes</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="n">comp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">all_components</span><span class="o">.</span><span class="n">by_name</span><span class="p">(</span><span class="s2">&quot;Hogwarts&quot;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">comp</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;Not Hogwarts anymore&quot;</span>
+<span class="gp">... </span>    <span class="n">comp</span><span class="o">.</span><span class="n">allocated_functions</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span>
+<span class="gp">... </span>        <span class="mi">0</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">la</span><span class="o">.</span><span class="n">all_functions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="p">)</span>
+<span class="gp">... </span>    <span class="k">del</span> <span class="n">comp</span><span class="o">.</span><span class="n">components</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dump</span><span class="p">(</span><span class="n">changes</span><span class="p">)</span>
+<span class="go">[</span>
+<span class="go">    {</span>
+<span class="go">        &quot;_type&quot;: &quot;Modification,</span>
+<span class="go">        &quot;module&quot;: &quot;853cb005-cba0-489b-8fe3-bb694ad4543b&quot;,</span>
+<span class="go">        &quot;parent&quot;: &quot;&lt;LogicalComponent &#39;Hogwarts&#39; (0d2edb8f-fa34-4e73-...)&gt;&quot;,</span>
+<span class="go">        &quot;attribute&quot;: &quot;name&quot;,</span>
+<span class="go">        &quot;new&quot;: &quot;Not Hogwarts anymore&quot;,</span>
+<span class="go">        &quot;old&quot;: &quot;Hogwarts&quot;</span>
+<span class="go">    },</span>
+<span class="go">    {</span>
+<span class="go">        &quot;_type&quot;: &quot;Extension&quot;,</span>
+<span class="go">        &quot;module&quot;: &quot;853cb005-cba0-489b-8fe3-bb694ad4543b&quot;,</span>
+<span class="go">        &quot;parent&quot;: &quot;&lt;LogicalComponent &#39;Hogwarts&#39; (0d2edb8f-fa34-4e73-...)&gt;&quot;,</span>
+<span class="go">        &quot;attribute&quot;: &quot;allocated_functions&quot;,</span>
+<span class="go">        &quot;element&quot;: &quot;&lt;LogicalFunction &#39;Fnc&#39; (f28ec0f8-f3b3-43a...)&gt;&quot;,</span>
+<span class="go">        &quot;uuid&quot;: &quot;f28ec0f8-f3b3-43a0-8af7-79f194b29a2d&quot;</span>
+<span class="go">    },</span>
+<span class="go">    {</span>
+<span class="go">        &quot;_type&quot;: &quot;Deletion&quot;,</span>
+<span class="go">        &quot;module&quot;: &quot;853cb005-cba0-489b-8fe3-bb694ad4543b&quot;,</span>
+<span class="go">        &quot;parent&quot;: &quot;&lt;LogicalComponent &#39;Hogwarts&#39; (0d2edb8f-fa34-4e73-...)&gt;&quot;,</span>
+<span class="go">        &quot;attribute&quot;: &quot;components&quot;,</span>
+<span class="go">        &quot;element&quot;: &quot;&lt;LogicalComponent &#39;Comp&#39; (6583b560-6d2f-4...)&gt;&quot;,</span>
+<span class="go">        &quot;uuid&quot;: &quot;6583b560-6d2f-4190-baa2-94eef179c8ea&quot;</span>
+<span class="go">    }</span>
+<span class="go">]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.ChangeAuditor.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.ChangeAuditor.__init__" title="Permalink to this definition">#</a></dt>
+<dd><p>Initialize a ChangeAuditor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.model.html#capellambse.model.MelodyModel" title="(in py-capellambse v0.5.18.dev1)"><em>MelodyModel</em></a>) – A model instance to audit changes for.</p></li>
+<li><p><strong>classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Container" title="(in Python v3.11)"><em>Container</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>]</em>) – An optional class-name filter. Only changes to
+<code class="docutils literal notranslate"><span class="pre">ModelObject</span></code>s with matching class-type are stored in
+context.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.ChangeAuditor.detach">
+<span class="sig-name descname"><span class="pre">detach</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.ChangeAuditor.detach" title="Permalink to this definition">#</a></dt>
+<dd><p>Delete the reference to the model instance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Deletion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">Deletion</span></span><a class="headerlink" href="#capella_rm_bridge.auditing.Deletion" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#capella_rm_bridge.auditing.Extension" title="capella_rm_bridge.auditing.Extension"><code class="xref py py-class docutils literal notranslate"><span class="pre">Extension</span></code></a></p>
+<p>Data that describes the context for a deletion event.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Extension">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">Extension</span></span><a class="headerlink" href="#capella_rm_bridge.auditing.Extension" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Change</span></code></p>
+<p>Data that describes the context for an extension event.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Extension.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uuid</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.Extension.__init__" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>parent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>attribute</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>element</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>uuid</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Extension.element">
+<span class="sig-name descname"><span class="pre">element</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#capella_rm_bridge.auditing.Extension.element" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Extension.uuid">
+<span class="sig-name descname"><span class="pre">uuid</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#capella_rm_bridge.auditing.Extension.uuid" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Modification">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">Modification</span></span><a class="headerlink" href="#capella_rm_bridge.auditing.Modification" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_Change</span></code></p>
+<p>Data that describes the context for a modification event.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Modification.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">old</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.Modification.__init__" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>module</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>parent</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>attribute</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>new</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><em>Any</em></a>) – </p></li>
+<li><p><strong>old</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><em>Any</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Modification.new">
+<span class="sig-name descname"><span class="pre">new</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></em><a class="headerlink" href="#capella_rm_bridge.auditing.Modification.new" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.Modification.old">
+<span class="sig-name descname"><span class="pre">old</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><span class="pre">Any</span></a></em><a class="headerlink" href="#capella_rm_bridge.auditing.Modification.old" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">RMReporter</span></span><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter" title="Permalink to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.11)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Stores and reports on all changes that were made to a model.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter.__init__" title="Permalink to this definition">#</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.model.html#capellambse.model.MelodyModel" title="(in py-capellambse v0.5.18.dev1)"><em>MelodyModel</em></a>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter.categories">
+<span class="sig-name descname"><span class="pre">categories</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter.categories" title="Permalink to this definition">#</a></dt>
+<dd><p>A dictionary that maps the category name to its counter.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter.create_commit_message">
+<span class="sig-name descname"><span class="pre">create_commit_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tool_metadata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter.create_commit_message" title="Permalink to this definition">#</a></dt>
+<dd><p>Return a commit message for all changes in the store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – Configuration dictionary for the RM Bridge</p></li>
+<li><p><strong>tool_metadata</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>]</em>) – Metadata of the requirements management tool from the
+snapshot.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>commit_message</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter.get_change_report">
+<span class="sig-name descname"><span class="pre">get_change_report</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter.get_change_report" title="Permalink to this definition">#</a></dt>
+<dd><p>Return an audit report of all changes in the store.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter.model">
+<span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://dsd-dbs.github.io/py-capellambse/code/capellambse.model.html#capellambse.model.MelodyModel" title="(in py-capellambse v0.5.18.dev1)"><span class="pre">MelodyModel</span></a></em><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter.model" title="Permalink to this definition">#</a></dt>
+<dd><p>The model instance that was changed.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter.ptrn">
+<span class="sig-name descname"><span class="pre">ptrn</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('&lt;(?P&lt;ClassName&gt;[A-Za-z]+)\\b.*?&gt;')</span></em><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter.ptrn" title="Permalink to this definition">#</a></dt>
+<dd><p>Regex for matching the class name from a short representation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter.store">
+<span class="sig-name descname"><span class="pre">store</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><span class="pre">Union</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#capella_rm_bridge.auditing.Modification" title="capella_rm_bridge.auditing.Modification"><span class="pre">capella_rm_bridge.auditing.Modification</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#capella_rm_bridge.auditing.Extension" title="capella_rm_bridge.auditing.Extension"><span class="pre">capella_rm_bridge.auditing.Extension</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#capella_rm_bridge.auditing.Deletion" title="capella_rm_bridge.auditing.Deletion"><span class="pre">capella_rm_bridge.auditing.Deletion</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter.store" title="Permalink to this definition">#</a></dt>
+<dd><p>A change-store that maps identifiers to a sequence of changes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.RMReporter.store_changes">
+<span class="sig-name descname"><span class="pre">store_changes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">changes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">module_category</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.RMReporter.store_changes" title="Permalink to this definition">#</a></dt>
+<dd><p>Assigns the CapellaModule to changes and stores them.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>changes</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference internal" href="#capella_rm_bridge.auditing.Modification" title="capella_rm_bridge.auditing.Modification"><em>Modification</em></a><em> | </em><a class="reference internal" href="#capella_rm_bridge.auditing.Extension" title="capella_rm_bridge.auditing.Extension"><em>Extension</em></a><em> | </em><a class="reference internal" href="#capella_rm_bridge.auditing.Deletion" title="capella_rm_bridge.auditing.Deletion"><em>Deletion</em></a><em>]</em>) – </p></li>
+<li><p><strong>module_id</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+<li><p><strong>module_category</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.dump">
+<span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.dump" title="Permalink to this definition">#</a></dt>
+<dd><p>Convert a <code class="docutils literal notranslate"><span class="pre">ChangeContext</span></code> into something savely writable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>context</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.11)"><em>Union</em></a><em>[</em><a class="reference internal" href="#capella_rm_bridge.auditing.Modification" title="capella_rm_bridge.auditing.Modification"><em>capella_rm_bridge.auditing.Modification</em></a><em>, </em><a class="reference internal" href="#capella_rm_bridge.auditing.Extension" title="capella_rm_bridge.auditing.Extension"><em>capella_rm_bridge.auditing.Extension</em></a><em>, </em><a class="reference internal" href="#capella_rm_bridge.auditing.Deletion" title="capella_rm_bridge.auditing.Deletion"><em>capella_rm_bridge.auditing.Deletion</em></a><em>]</em><em>]</em>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.11)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.11)"><em>Any</em></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.formulate_statement">
+<span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">formulate_statement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">change</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.formulate_statement" title="Permalink to this definition">#</a></dt>
+<dd><p>Return an audit statement about the given change.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>change</strong> (<a class="reference internal" href="#capella_rm_bridge.auditing.Modification" title="capella_rm_bridge.auditing.Modification"><em>Modification</em></a><em> | </em><a class="reference internal" href="#capella_rm_bridge.auditing.Extension" title="capella_rm_bridge.auditing.Extension"><em>Extension</em></a><em> | </em><a class="reference internal" href="#capella_rm_bridge.auditing.Deletion" title="capella_rm_bridge.auditing.Deletion"><em>Deletion</em></a>) – </p></li>
+<li><p><strong>source</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.generate_main_message">
+<span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">generate_main_message</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">categories</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.generate_main_message" title="Permalink to this definition">#</a></dt>
+<dd><p>Return the main commit message corpus listing all categories.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>categories</strong> (<a class="reference external" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Iterable" title="(in Python v3.11)"><em>Iterable</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.11)"><em>tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.11)"><em>int</em></a><em>]</em><em>]</em>) – </p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="capella_rm_bridge.auditing.get_dependencies">
+<span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.auditing.</span></span><span class="sig-name descname"><span class="pre">get_dependencies</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.auditing.get_dependencies" title="Permalink to this definition">#</a></dt>
+<dd><p>Return all major dependencies with their current version.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.11)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-capella_rm_bridge.load">
+<span id="capella-rm-bridge-load-module"></span><h2>capella_rm_bridge.load module<a class="headerlink" href="#module-capella_rm_bridge.load" title="Permalink to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="capella_rm_bridge.load.load_yaml">
+<span class="sig-prename descclassname"><span class="pre">capella_rm_bridge.load.</span></span><span class="sig-name descname"><span class="pre">load_yaml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#capella_rm_bridge.load.load_yaml" title="Permalink to this definition">#</a></dt>
+<dd><p>Return Requirements Management (RM) Bridge YAML configuration.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">Example for config_path.yaml</span><a class="headerlink" href="#id1" title="Permalink to this code">#</a></div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">trackers</span><span class="p">:</span> <span class="c1"># List all trackers for which a snapshot should be exported</span>
+  <span class="o">-</span> <span class="n">external</span><span class="o">-</span><span class="nb">id</span> <span class="p">:</span> <span class="mi">25093</span>
+    <span class="n">capella</span><span class="o">-</span><span class="n">uuid</span><span class="p">:</span> <span class="mi">3</span><span class="n">be8d0fc</span><span class="o">-</span><span class="n">c693</span><span class="o">-</span><span class="mi">4</span><span class="n">b9b</span><span class="o">-</span><span class="mi">8</span><span class="n">fa1</span><span class="o">-</span><span class="n">d59a9eec6ea4</span>
+    <span class="n">fields</span><span class="p">:</span>
+      <span class="o">-</span> <span class="n">Capella</span> <span class="n">ID</span>
+      <span class="o">-</span> <span class="n">Type</span>
+      <span class="o">-</span> <span class="n">Status</span>
+      <span class="o">-</span> <span class="n">Color</span>
+      <span class="o">-</span> <span class="n">Submitted</span> <span class="n">at</span>
+
+<span class="n">model</span><span class="p">:</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">YOUR_MODEL</span><span class="o">.</span><span class="n">aird</span>
+
+<span class="c1"># Additional sections which configure the snapshot importer</span>
+<span class="c1"># may also appear here</span>
+</pre></div>
+</div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The whole RM Bridge configuration.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>config</p>
+</dd>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.11)"><em>Path</em></a><em> | </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><em>str</em></a>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-capella_rm_bridge">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-capella_rm_bridge" title="Permalink to this heading">#</a></h2>
+<p>The rm_bridge package.</p>
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          <a class="next-page" href="capella_rm_bridge.changeset.html">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">capella_rm_bridge.changeset package</div>
+              </div>
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+            </a>
+          <a class="prev-page" href="modules.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">capella-rm-bridge</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; DB Netz AG and the capella-RM-Bridge contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            <div class="icons">
+              <a class="muted-link fa-solid fa-brands fa-github fa-2x" href="https://github.com/DSD-DBS/rm-bridge" aria-label="GitHub"></a>
+              
+            </div>
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">capella_rm_bridge package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-capella_rm_bridge.auditing">capella_rm_bridge.auditing module</a><ul>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.ChangeAuditor"><code class="docutils literal notranslate"><span class="pre">ChangeAuditor</span></code></a><ul>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.ChangeAuditor.__init__"><code class="docutils literal notranslate"><span class="pre">ChangeAuditor.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.ChangeAuditor.detach"><code class="docutils literal notranslate"><span class="pre">ChangeAuditor.detach()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Deletion"><code class="docutils literal notranslate"><span class="pre">Deletion</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Extension"><code class="docutils literal notranslate"><span class="pre">Extension</span></code></a><ul>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Extension.__init__"><code class="docutils literal notranslate"><span class="pre">Extension.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Extension.element"><code class="docutils literal notranslate"><span class="pre">Extension.element</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Extension.uuid"><code class="docutils literal notranslate"><span class="pre">Extension.uuid</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Modification"><code class="docutils literal notranslate"><span class="pre">Modification</span></code></a><ul>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Modification.__init__"><code class="docutils literal notranslate"><span class="pre">Modification.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Modification.new"><code class="docutils literal notranslate"><span class="pre">Modification.new</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.Modification.old"><code class="docutils literal notranslate"><span class="pre">Modification.old</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter"><code class="docutils literal notranslate"><span class="pre">RMReporter</span></code></a><ul>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter.__init__"><code class="docutils literal notranslate"><span class="pre">RMReporter.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter.categories"><code class="docutils literal notranslate"><span class="pre">RMReporter.categories</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter.create_commit_message"><code class="docutils literal notranslate"><span class="pre">RMReporter.create_commit_message()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter.get_change_report"><code class="docutils literal notranslate"><span class="pre">RMReporter.get_change_report()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter.model"><code class="docutils literal notranslate"><span class="pre">RMReporter.model</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter.ptrn"><code class="docutils literal notranslate"><span class="pre">RMReporter.ptrn</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter.store"><code class="docutils literal notranslate"><span class="pre">RMReporter.store</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.RMReporter.store_changes"><code class="docutils literal notranslate"><span class="pre">RMReporter.store_changes()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.dump"><code class="docutils literal notranslate"><span class="pre">dump()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.formulate_statement"><code class="docutils literal notranslate"><span class="pre">formulate_statement()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.generate_main_message"><code class="docutils literal notranslate"><span class="pre">generate_main_message()</span></code></a></li>
+<li><a class="reference internal" href="#capella_rm_bridge.auditing.get_dependencies"><code class="docutils literal notranslate"><span class="pre">get_dependencies()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-capella_rm_bridge.load">capella_rm_bridge.load module</a><ul>
+<li><a class="reference internal" href="#capella_rm_bridge.load.load_yaml"><code class="docutils literal notranslate"><span class="pre">load_yaml()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-capella_rm_bridge">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/scripts/furo.js"></script>
+    </body>
+</html>
