@@ -539,6 +539,55 @@ class TestModActions(ActionsTest):
         yml = decl.dump(change_set.actions)
         decl.apply(migration_model, io.StringIO(yml))
 
+    def test_identifier_changes_result_in_extensions(
+        self, migration_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        tracker["data_types"]["type1"] = tracker["data_types"]["type"]
+        del tracker["data_types"]["type"]
+        sysr_attr_defs = tracker["requirement_types"]["system_requirement"][
+            "attributes"
+        ]
+        sysr_attr_defs["type1"] = sysr_attr_defs["type"]
+        del sysr_attr_defs["type"]
+        soft_attr_defs = tracker["requirement_types"]["software_requirement"][
+            "attributes"
+        ]
+        soft_attr_defs["type1"] = soft_attr_defs["type"]
+        del soft_attr_defs["type"]
+        item_attrs = tracker["items"][0]["attributes"]
+        item_attrs["type1"] = item_attrs["type"]
+        del item_attrs["type"]
+        item_attrs = tracker["items"][0]["children"][0]["attributes"]
+        item_attrs["type1"] = item_attrs["type"]
+        del item_attrs["type"]
+        item_attrs = tracker["items"][1]["children"][0]["attributes"]
+        item_attrs["type1"] = item_attrs["type"]
+        del item_attrs["type"]
+
+        change_set = self.tracker_change(
+            migration_model, tracker, gather_logs=True
+        )
+
+        edefs = migration_model.search("EnumerationDataTypeDefinition")
+        assert edefs.by_identifier("type"), "Data type definition missing"
+        adefs = migration_model.search("AttributeDefinitionEnumeration")
+        for id in ("system_requirement", "software_requirement"):
+            assert f"type {id}" in adefs.by_identifier  # type: ignore [operator]
+        assert change_set and change_set.actions
+
+        yml = decl.dump(change_set.actions)
+        decl.apply(migration_model, io.StringIO(yml))
+
+        edefs = migration_model.search("EnumerationDataTypeDefinition")
+        adefs = migration_model.search("AttributeDefinitionEnumeration")
+
+        assert not edefs.by_identifier("type")
+        assert edefs.by_identifier("type1")
+        for id in ("system_requirement", "software_requirement"):
+            assert f"type {id}" not in adefs.by_identifier  # type: ignore [operator]
+            assert f"type1 {id}" in adefs.by_identifier  # type: ignore [operator]
+
     @pytest.mark.integtest
     def test_calculate_change_sets(
         self, migration_model: capellambse.MelodyModel

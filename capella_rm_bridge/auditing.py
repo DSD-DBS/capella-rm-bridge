@@ -8,6 +8,7 @@ import collections
 import collections.abc as cabc
 import dataclasses
 import logging
+import re
 import sys
 import textwrap
 import typing as t
@@ -17,17 +18,22 @@ import capellambse
 from capellambse import helpers
 from capellambse.extensions import reqif
 from capellambse.model import common
+from capellambse.model.layers import ctx, la, oa, pa
 
 from . import __version__
 
 LOGGER = logging.getLogger(__name__)
 DEPENDENCIES = ("capellambse", "lxml", "pyYaml")
+UUID = str
+LiveDocID = str
+TrackerID = str
 
 
 @dataclasses.dataclass
 class _Change:
     """Base dataclass for changes."""
 
+    module: UUID
     parent: str
     attribute: str
 
@@ -45,7 +51,7 @@ class Extension(_Change):
     """Data that describes the context for an extension event."""
 
     element: str
-    uuid: str
+    uuid: UUID
 
 
 class Deletion(Extension):
@@ -62,6 +68,7 @@ class _SafeChange:
     _type: t.Literal["Modification"] | t.Literal["Extension"] | t.Literal[
         "Deletion"
     ]
+    module: UUID
     parent: str
     attribute: str
 
@@ -71,7 +78,7 @@ class _SafeExtensionOrDeletion(_SafeChange):
     """Safe data describing context for a non-modification event."""
 
     element: str
-    uuid: str
+    uuid: UUID
 
 
 @dataclasses.dataclass
@@ -105,19 +112,22 @@ class ChangeAuditor:
     >>> changes
     [
         Modification(
-            parent="0d2edb8f-fa34-4e73-89ec-fb9a63001440",
+            module="853cb005-cba0-489b-8fe3-bb694ad4543b",
+            parent="<LogicalComponent 'Hogwarts' (0d2edb8f-fa34-4e73-89e...)>",
             attribute="name",
             new="Not Hogwarts anymore",
             old="Hogwarts",
         ),
         Extension(
-            parent="0d2edb8f-fa34-4e73-89ec-fb9a63001440",
+            module="853cb005-cba0-489b-8fe3-bb694ad4543b",
+            parent="<LogicalComponent 'Hogwarts' (0d2edb8f-fa34-4e73-89e...)>",
             attribute="allocated_functions",
             element="<LogicalFunction 'Root Logical Function' (f2...)>",
             uuid="f28ec0f8-f3b3-43a0-8af7-79f194b29a2d",
         ),
         Deletion(
-            parent="0d2edb8f-fa34-4e73-89ec-fb9a63001440",
+            module="853cb005-cba0-489b-8fe3-bb694ad4543b",
+            parent="<LogicalComponent 'Hogwarts' (0d2edb8f-fa34-4e73-89e...)>",
             attribute="components",
             element="<LogicalComponent 'Campus' (6583b560-6d2f-...)>",
             uuid="6583b560-6d2f-4190-baa2-94eef179c8ea",
@@ -135,7 +145,8 @@ class ChangeAuditor:
     >>> changes
     [
         Modification(
-            parent="0d2edb8f-fa34-4e73-89ec-fb9a63001440",
+            module="853cb005-cba0-489b-8fe3-bb694ad4543b",
+            parent="<LogicalComponent 'Hogwarts' (0d2edb8f-fa34-4e73-89e...)>",
             attribute="name",
             new="Not Hogwarts anymore",
             old="Hogwarts",
@@ -157,21 +168,24 @@ class ChangeAuditor:
     [
         {
             "_type": "Modification,
-            "parent": "0d2edb8f-fa34-4e73-89ec-fb9a63001440",
+            "module": "853cb005-cba0-489b-8fe3-bb694ad4543b",
+            "parent": "<LogicalComponent 'Hogwarts' (0d2edb8f-fa34-4e73-...)>",
             "attribute": "name",
             "new": "Not Hogwarts anymore",
             "old": "Hogwarts"
         },
         {
             "_type": "Extension",
-            "parent": "0d2edb8f-fa34-4e73-89ec-fb9a63001440",
+            "module": "853cb005-cba0-489b-8fe3-bb694ad4543b",
+            "parent": "<LogicalComponent 'Hogwarts' (0d2edb8f-fa34-4e73-...)>",
             "attribute": "allocated_functions",
             "element": "<LogicalFunction 'Fnc' (f28ec0f8-f3b3-43a...)>",
             "uuid": "f28ec0f8-f3b3-43a0-8af7-79f194b29a2d"
         },
         {
             "_type": "Deletion",
-            "parent": "0d2edb8f-fa34-4e73-89ec-fb9a63001440",
+            "module": "853cb005-cba0-489b-8fe3-bb694ad4543b",
+            "parent": "<LogicalComponent 'Hogwarts' (0d2edb8f-fa34-4e73-...)>",
             "attribute": "components",
             "element": "<LogicalComponent 'Comp' (6583b560-6d2f-4...)>",
             "uuid": "6583b560-6d2f-4190-baa2-94eef179c8ea"
@@ -232,17 +246,22 @@ class ChangeAuditor:
                 oval = getattr(obj, attr_name)
                 nrepr = self._get_value_repr(value)
                 orepr = self._get_value_repr(oval)
-                events = [EventType(obj.uuid, attr_name, nrepr, orepr)]
+                prepr = self._get_value_repr(obj)
+                module = self._assign_module(obj)
+                events = [EventType(module, prepr, attr_name, nrepr, orepr)]
             elif event.endswith("setitem"):
                 assert len(args) == 4
                 obj, attr_name, index, value = args
                 nrepr = self._get_value_repr(value)
                 oval = getattr(obj, attr_name)[index]
                 orepr = self._get_value_repr(oval)
-                events = [EventType(obj.uuid, attr_name, nrepr, orepr)]
+                prepr = self._get_value_repr(obj)
+                module = self._assign_module(obj)
+                events = [EventType(module, prepr, attr_name, nrepr, orepr)]
             elif event.endswith("delete"):
                 assert len(args) == 3
                 obj, attr_name, index = args
+                module = self._assign_module(obj)
                 assert isinstance(index, int) or index is None
                 oval = getattr(obj, attr_name)
                 if index is not None:
@@ -254,7 +273,8 @@ class ChangeAuditor:
                     assert EventType is Deletion
                     for elt in oval:
                         event_type = EventType(
-                            obj.uuid,
+                            module,
+                            self._get_value_repr(obj),
                             attr_name,
                             self._get_value_repr(elt),
                             elt.uuid,
@@ -262,18 +282,29 @@ class ChangeAuditor:
                         events.append(event_type)
                 else:
                     orepr = self._get_value_repr(oval)
-                    events = [EventType(obj.uuid, attr_name, orepr, oval.uuid)]
+                    prepr = self._get_value_repr(obj)
+                    events = [
+                        EventType(module, prepr, attr_name, orepr, oval.uuid)
+                    ]
             elif event.endswith("insert"):
                 assert len(args) == 4
                 obj, attr_name, _, value = args
                 nrepr = self._get_value_repr(value)
                 assert isinstance(value, common.GenericElement)
-                events = [EventType(obj.uuid, attr_name, nrepr, value.uuid)]
+                prepr = self._get_value_repr(obj)
+                module = self._assign_module(obj)
+                events = [
+                    EventType(module, prepr, attr_name, nrepr, value.uuid)
+                ]
             elif event.endswith("create"):
                 assert len(args) == 3
                 obj, attr_name, value = args
                 repr = self._get_value_repr(value)
-                events = [EventType(obj.uuid, attr_name, repr, value.uuid)]
+                prepr = self._get_value_repr(obj)
+                module = self._assign_module(obj)
+                events = [
+                    EventType(module, prepr, attr_name, repr, value.uuid)
+                ]
 
             self.context.extend(events)
 
@@ -281,6 +312,26 @@ class ChangeAuditor:
         if hasattr(value, "_short_repr_"):
             return value._short_repr_()
         return value
+
+    def _assign_module(
+        self, obj: common.GenericElement
+    ) -> LiveDocID | TrackerID:
+        classes = (
+            reqif.CapellaModule,
+            ctx.SystemAnalysis,
+            la.LogicalArchitecture,
+            oa.OperationalAnalysis,
+            pa.PhysicalArchitecture,
+            capellambse.MelodyModel,
+        )
+        while not isinstance(obj, classes):
+            obj = obj.parent
+
+        if isinstance(obj, reqif.CapellaModule):
+            identifier = obj.identifier
+        else:
+            identifier = obj.uuid
+        return identifier
 
 
 def dump(context: list[Change]) -> list[dict[str, t.Any]]:
@@ -293,6 +344,7 @@ def _convert_change(change: _Change) -> dict[str, t.Any]:
     if isinstance(change, Modification):
         converted = _SafeModification(
             _type="Modification",
+            module=change.module,
             parent=change.parent,
             attribute=change.attribute,
             new=_convert_obj(change.new),
@@ -303,6 +355,7 @@ def _convert_change(change: _Change) -> dict[str, t.Any]:
         assert isinstance(change.element, str)
         converted = _SafeExtensionOrDeletion(
             _type=change.__class__.__name__,  # type: ignore[arg-type]
+            module=change.module,
             parent=change.parent,
             attribute=change.attribute,
             element=change.element,
@@ -322,11 +375,6 @@ def _convert_obj(
     return obj
 
 
-LiveDocID = str
-TrackerID = str
-UUID = str
-
-
 class RMReporter:
     """Stores and reports on all changes that were made to a model."""
 
@@ -336,6 +384,8 @@ class RMReporter:
     """A change-store that maps identifiers to a sequence of changes."""
     categories: dict[str, int]
     """A dictionary that maps the category name to its counter."""
+    ptrn = re.compile(r"<(?P<ClassName>[A-Za-z]+)\b.*?>")
+    """Regex for matching the class name from a short representation."""
 
     def __init__(self, model: capellambse.MelodyModel) -> None:
         self.model = model
@@ -343,7 +393,7 @@ class RMReporter:
 
         self.categories: dict[str, int] = collections.defaultdict(lambda: 0)
 
-    def store_change(
+    def store_changes(
         self,
         changes: cabc.Iterable[Change],
         module_id: str,
@@ -351,35 +401,19 @@ class RMReporter:
     ) -> None:
         """Assigns the CapellaModule to changes and stores them."""
         self.categories[module_category] += 1
-
         for change in changes:
-            parent_id = self._assign_module(change)
-            if not parent_id:
-                raise ValueError(  # XXX Maybe custom exception but what name?
-                    f"Can't assign CapellaModule to change {change!r}"
-                )
-
-            if parent_id != module_id:
+            if change.module != module_id:
                 LOGGER.warning(
                     "Found changes to an unexpected CapellaModule: "
                     "%r to %s",
                     change,
-                    parent_id,
+                    change.module,
                 )
 
-            if parent_id not in self.store:
-                self.store[parent_id] = [change]
+            if change.module not in self.store:
+                self.store[change.module] = [change]
             else:
-                self.store[parent_id].append(change)
-
-    def _assign_module(self, change: Change) -> LiveDocID | TrackerID | None:
-        try:
-            obj = self.model.by_uuid(change.parent)
-            while not isinstance(obj, reqif.CapellaModule):
-                obj = obj.parent
-            return obj.identifier
-        except (KeyError, AttributeError):
-            return None
+                self.store[change.module].append(change)
 
     def create_commit_message(self, tool_metadata: dict[str, str]) -> str:
         """Return a commit message for all changes in the store.
@@ -452,34 +486,39 @@ class RMReporter:
 
     def _is_reqtype_change(self, change: Change) -> bool:
         if isinstance(change, (Modification, Deletion)):
-            obj = self.model.by_uuid(change.parent)
+            if match := self.ptrn.match(change.parent):
+                class_name = match.group("ClassName")
+            else:
+                raise ValueError(
+                    "Can't match class name in short representation: "
+                    + change.parent
+                )
         elif isinstance(change, Extension):
             obj = self.model.by_uuid(change.uuid)
+            class_name = type(obj).__name__
 
-        return type(obj) in {
-            reqif.AttributeDefinition,
-            reqif.AttributeDefinitionEnumeration,
-            reqif.DataTypeDefinition,
-            reqif.EnumerationDataTypeDefinition,
-            reqif.EnumValue,
-            reqif.ModuleType,
-            reqif.RelationType,
-            reqif.CapellaTypesFolder,
-            reqif.RequirementType,
+        return class_name in {
+            reqif.AttributeDefinition.__name__,
+            reqif.AttributeDefinitionEnumeration.__name__,
+            reqif.DataTypeDefinition.__name__,
+            reqif.EnumerationDataTypeDefinition.__name__,
+            reqif.EnumValue.__name__,
+            reqif.ModuleType.__name__,
+            reqif.RelationType.__name__,
+            reqif.CapellaTypesFolder.__name__,
+            reqif.RequirementType.__name__,
         }
 
     def get_change_report(self) -> str:
         """Return an audit report of all changes in the store."""
         report_store = self._store_group_by("parent")
         change_statements = list[str]()
-        for identifier, changes in report_store.items():
+        for prepr, changes in report_store.items():
             ext_count = len([c for c in changes if isinstance(c, Extension)])
             mod_count = len(
                 [c for c in changes if isinstance(c, Modification)]
             )
             del_count = len([c for c in changes if isinstance(c, Deletion)])
-            obj = self.model.by_uuid(identifier)
-            title = obj._short_repr_()
             overview = (
                 f"Extensions: {ext_count}, Modifications: {mod_count}, "
                 f"Deletions: {del_count}"
@@ -493,8 +532,8 @@ class RMReporter:
                 indepth_title += "-" * ov
 
             statement = "\n".join(
-                [title, "=" * len(title), overview, indepth_title]
-                + [formulate_statement(change, obj) for change in changes]
+                [prepr, "=" * len(prepr), overview, indepth_title]
+                + [formulate_statement(change, prepr) for change in changes]
             )
             change_statements.append(f"{statement}\n")
 
@@ -530,9 +569,8 @@ def get_dependencies() -> list[str]:
     return dependencies
 
 
-def formulate_statement(change: Change, obj: common.GenericElement) -> str:
+def formulate_statement(change: Change, source: str) -> str:
     """Return an audit statement about the given change."""
-    source = obj._short_repr_()
     if isinstance(change, Deletion):
         target = change.element
         return f"{source} deleted {target} from {change.attribute!r}."

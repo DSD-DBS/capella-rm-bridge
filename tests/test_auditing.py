@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 import logging
+import textwrap
 
 import capellambse
 import pytest
@@ -13,25 +14,60 @@ from capellambse import decl
 
 from capella_rm_bridge import __version__, auditing
 
+TEST_OA_LAYER_UUID = "ddbef16d-ddb9-4162-934c-f1e40e6f8bed"
 TEST_REQMODULE_UUID = "f8e2195d-b5f5-4452-a12b-79233d943d5e"
 TEST_REQMODULE_REPR = f"<CapellaModule 'Test Module' ({TEST_REQMODULE_UUID})>"
 TEST_REQFOLDER_UUID = "e16f5cc1-3299-43d0-b1a0-82d31a137111"
 TEST_REQFOLDER_REPR = f"<Folder 'Folder' ({TEST_REQFOLDER_UUID})>"
 TEST_MODIFICATION = auditing.Modification(
-    TEST_REQFOLDER_UUID, attribute="long_name", new="New", old="1"
+    module="1",
+    parent=TEST_REQFOLDER_REPR,
+    attribute="long_name",
+    new="New",
+    old="1",
 )
 TEST_EXTENSION = auditing.Extension(
-    TEST_REQMODULE_UUID,
+    module="1",
+    parent=TEST_REQMODULE_REPR,
     attribute="folders",
     element=TEST_REQFOLDER_REPR,
     uuid=TEST_REQFOLDER_UUID,
 )
 TEST_DELETION = auditing.Deletion(
-    TEST_REQMODULE_UUID,
+    module="1",
+    parent=TEST_REQMODULE_REPR,
     attribute="folders",
     element=TEST_REQFOLDER_REPR,
     uuid=TEST_REQFOLDER_UUID,
 )
+TEST_MODULE_ID = "project/space/example title"
+TEST_FOLDER_UUID = "9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19"
+TEST_REQTYPESFOLDER_UUID = "a15e8b60-bf39-47ba-b7c7-74ceecb25c9c"
+TEST_DTDEF_UUID = "686e198b-8baf-49f9-9d85-24571bd05d93"
+TEST_REQ_UUID = "163394f5-c1ba-4712-a238-b0b143c66aed"
+TEST_CHANGES: list[auditing.Change] = [
+    auditing.Deletion(
+        module=TEST_MODULE_ID,
+        parent=f"<Folder 'Kinds' ({TEST_FOLDER_UUID})>",
+        attribute="requirements",
+        element=f"<Requirement 'Kind Requirement' ({TEST_REQ_UUID})>",
+        uuid=TEST_REQ_UUID,
+    ),
+    auditing.Modification(
+        module=TEST_MODULE_ID,
+        parent=f"<CapellaTypesFolder 'Types' ({TEST_REQTYPESFOLDER_UUID})>",
+        attribute="identifier",
+        new="Types",
+        old="-2",
+    ),
+    auditing.Extension(
+        module=TEST_MODULE_ID,
+        parent=f"<CapellaTypesFolder 'Types' ({TEST_REQTYPESFOLDER_UUID})>",
+        attribute="data_type_definitions",
+        element=f"<EnumerationDataTypeDefinition '' ({TEST_DTDEF_UUID})>",
+        uuid=TEST_DTDEF_UUID,
+    ),
+]
 
 
 class TestChangeAuditor:
@@ -44,7 +80,8 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance((change := changes[0]), auditing.Modification)
-        assert change.parent == TEST_REQMODULE_UUID
+        assert change.module == obj.identifier
+        assert change.parent == TEST_REQMODULE_REPR
         assert change.attribute == "name"
         assert change.new == new_name
         assert change.old == "Test Module"
@@ -60,7 +97,8 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance((change := changes[0]), auditing.Extension)
-        assert change.parent == TEST_REQMODULE_UUID
+        assert change.module == obj.identifier
+        assert change.parent == TEST_REQMODULE_REPR
         assert change.attribute == "folders"
         assert change.element == f"<Folder 'Folder' ({folder.uuid})>"
         assert change.uuid == folder.uuid
@@ -79,7 +117,8 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance((change := changes[0]), auditing.Extension)
-        assert change.parent == TEST_REQMODULE_UUID
+        assert change.module == obj.identifier
+        assert change.parent == TEST_REQMODULE_REPR
         assert change.attribute == "requirements"
         assert (
             change.element == f"<Requirement '{long_name}' ({new_req.uuid})>"
@@ -114,11 +153,13 @@ class TestChangeAuditor:
             decl.apply(clean_model, io.StringIO(decl.dump(declarative)))
 
         new_enum_data_def = reqtypesfolder.data_type_definitions[-1]
+        nuuid = new_enum_data_def.uuid
         ev = new_enum_data_def.values[0]
 
         assert len(changes) == 2
         assert isinstance(changes[0], auditing.Extension)
-        assert changes[0].parent == uuid
+        assert changes[0].module == TEST_OA_LAYER_UUID
+        assert changes[0].parent == f"<CapellaTypesFolder 'Types' ({uuid})>"
         assert changes[0].attribute == "data_type_definitions"
         assert (
             changes[0].element
@@ -126,7 +167,11 @@ class TestChangeAuditor:
         )
         assert changes[0].uuid == new_enum_data_def.uuid
         assert isinstance(changes[1], auditing.Extension)
-        assert changes[1].parent == new_enum_data_def.uuid
+        assert changes[1].module == TEST_OA_LAYER_UUID
+        assert (
+            changes[1].parent
+            == f"<EnumerationDataTypeDefinition 'Test ChangeAudit' ({nuuid})>"
+        )
         assert changes[1].attribute == "values"
         assert (
             changes[1].element == f"<EnumValue '{name} enum_val' ({ev.uuid})>"
@@ -142,7 +187,8 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance(changes[0], auditing.Deletion)
-        assert changes[0].parent == TEST_REQMODULE_UUID
+        assert changes[0].module == obj.identifier
+        assert changes[0].parent == TEST_REQMODULE_REPR
         assert changes[0].attribute == "folders"
         assert changes[0].element == f"<Folder 'Folder' ({folder.uuid})>"
         assert changes[0].uuid == folder.uuid
@@ -161,20 +207,23 @@ class TestChangeAuditor:
 
         assert len(changes) == 3
         assert isinstance(changes[0], auditing.Modification)
-        assert changes[0].parent == TEST_REQMODULE_UUID
+        assert changes[0].module == obj.identifier
+        assert changes[0].parent == TEST_REQMODULE_REPR
         assert changes[0].attribute == "long_name"
         assert changes[0].new == new_name
         assert changes[0].old == "Module"
         assert isinstance(changes[1], auditing.Extension)
-        assert changes[1].parent == TEST_REQMODULE_UUID
+        assert changes[1].module == obj.identifier
+        assert changes[1].parent == TEST_REQMODULE_REPR
         assert changes[1].attribute == "requirements"
         assert changes[1].element == f"<Requirement 'TestReq1' ({req.uuid})>"
         assert changes[1].uuid == req.uuid
         assert isinstance(changes[2], auditing.Deletion)
-        assert changes[1].parent == TEST_REQMODULE_UUID
-        assert changes[1].attribute == "requirements"
-        assert changes[1].element == f"<Requirement 'TestReq1' ({req.uuid})>"
-        assert changes[1].uuid == req.uuid
+        assert changes[2].module == obj.identifier
+        assert changes[2].parent == TEST_REQMODULE_REPR
+        assert changes[2].attribute == "requirements"
+        assert changes[2].element == f"<Requirement 'TestReq1' ({req.uuid})>"
+        assert changes[2].uuid == req.uuid
 
     def test_filtering_changes_works(
         self, clean_model: capellambse.MelodyModel
@@ -192,7 +241,8 @@ class TestChangeAuditor:
 
         assert len(changes) == 1
         assert isinstance(changes[0], auditing.Modification)
-        assert changes[0].parent == req.uuid
+        assert changes[0].module == obj.identifier
+        assert changes[0].parent == f"<Requirement 'TestReq1' ({req.uuid})>"
         assert changes[0].attribute == "long_name"
         assert changes[0].new == req.long_name
         assert changes[0].old == "1"
@@ -231,24 +281,10 @@ class TestRMReporter:
     def test_store_change(self, clean_model: capellambse.MelodyModel):
         reporter = auditing.RMReporter(clean_model)
 
-        reporter.store_change(self.CHANGES, "1", "category")
+        reporter.store_changes(self.CHANGES, "1", "category")
 
         assert reporter.store == {"1": self.CHANGES}
         assert reporter.categories["category"] == 1
-
-    def test_store_change_raises_ValueError_if_change_cant_be_assigned_to_module(
-        self, clean_model: capellambse.MelodyModel
-    ):
-        reporter = auditing.RMReporter(clean_model)
-        change = auditing.Modification(
-            "ddbef16d-ddb9-4162-934c-f1e40e6f8bed",
-            attribute="name",
-            new="New",
-            old="Operational Analysis",
-        )
-
-        with pytest.raises(ValueError):
-            reporter.store_change([change], "1", "category")
 
     def test_store_change_warns_about_change_to_unexpected_module(
         self,
@@ -259,7 +295,7 @@ class TestRMReporter:
         module_id = "different"
 
         with caplog.at_level(logging.WARNING):
-            reporter.store_change(self.CHANGES, module_id, "category")
+            reporter.store_changes(self.CHANGES, module_id, "category")
 
         assert len(caplog.records) == 3
         assert caplog.records[0].levelname == "WARNING"
@@ -294,24 +330,24 @@ def test_get_dependencies():
 
 
 @pytest.mark.parametrize(
-    ["change", "uuid", "expected"],
+    ["change", "short_repr", "expected"],
     (
         pytest.param(
             TEST_MODIFICATION,
-            TEST_REQFOLDER_UUID,
-            f"{TEST_REQFOLDER_REPR} modified 'long_name' from '1' to 'New'.",
+            TEST_REQMODULE_REPR,
+            f"{TEST_REQMODULE_REPR} modified 'long_name' from '1' to 'New'.",
             id="Modification",
         ),
         pytest.param(
             TEST_EXTENSION,
-            TEST_REQMODULE_UUID,
+            TEST_REQMODULE_REPR,
             f"{TEST_REQMODULE_REPR} extended 'folders' by "
             f"{TEST_REQFOLDER_REPR}.",
             id="Extension",
         ),
         pytest.param(
             TEST_DELETION,
-            TEST_REQMODULE_UUID,
+            TEST_REQMODULE_REPR,
             f"{TEST_REQMODULE_REPR} deleted {TEST_REQFOLDER_REPR} from "
             "'folders'.",
             id="Deletion",
@@ -319,48 +355,55 @@ def test_get_dependencies():
     ),
 )
 def test_formulate_statement(
-    clean_model: capellambse.MelodyModel,
-    change: auditing.Change,
-    uuid: str,
-    expected: str,
+    change: auditing.Change, short_repr: str, expected: str
 ):
-    obj = clean_model.by_uuid(uuid)
-
-    statement = auditing.formulate_statement(change, obj)
+    statement = auditing.formulate_statement(change, short_repr)
 
     assert statement == expected
 
 
 @pytest.mark.integtest
 def test_create_commit_message(migration_model: capellambse.MelodyModel):
-    req_uuid = "163394f5-c1ba-4712-a238-b0b143c66aed"
-    reqtypesfolder_uuid = "a15e8b60-bf39-47ba-b7c7-74ceecb25c9c"
-    dtdef_uuid = "686e198b-8baf-49f9-9d85-24571bd05d93"
-    req = migration_model.by_uuid(req_uuid)
+    req = migration_model.by_uuid(TEST_REQ_UUID)
     req.parent.requirements.remove(req)
-    changes: list[auditing.Change] = [
-        auditing.Deletion(
-            parent="9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19",
-            attribute="requirements",
-            element=f"<Requirement 'Kind Requirement' ({req_uuid})>",
-            uuid=req_uuid,
-        ),
-        auditing.Modification(
-            parent=reqtypesfolder_uuid,
-            attribute="identifier",
-            new="Types",
-            old="-2",
-        ),
-        auditing.Extension(
-            parent=reqtypesfolder_uuid,
-            attribute="data_type_definitions",
-            element=f"<EnumerationDataTypeDefinition '' ({dtdef_uuid})>",
-            uuid=dtdef_uuid,
-        ),
-    ]
     context = [
         (TestRMReporter.CHANGES, "1", "category1"),
-        (changes, "project/space/example title", "category2"),
+        (TEST_CHANGES, TEST_MODULE_ID, "category2"),
+    ]
+    tool_metadata = {
+        "revision": "123",
+        "tool": "tool version 1",
+        "connector": "connector v1",
+    }
+    expected = textwrap.dedent(
+        f"""\
+        Updated model with RM content from rev.123
+
+        Synchronized 1 category1 and 1 category2:
+        - 1: created: 1; updated: 1; deleted: 1; type-changes: 0
+        - project/space/example title: created: 0; updated: 0; deleted: 1; type-changes: 2
+
+        This was done using:
+        - tool version 1
+        - connector v1
+        - RM-Bridge v{__version__}
+        """
+    )
+
+    reporter = auditing.RMReporter(migration_model)
+    for changes, module_id, module_category in context:
+        reporter.store_changes(changes, module_id, module_category)
+    commit_message = reporter.create_commit_message(tool_metadata)
+
+    assert commit_message.startswith(expected)
+
+
+@pytest.mark.integtest
+def test_create_commit_message_on_no_changes(
+    migration_model: capellambse.MelodyModel,
+):
+    context: list[tuple[list[auditing.Change], str, str]] = [
+        ([], "example", "category2")
     ]
     tool_metadata = {
         "revision": "123",
@@ -370,18 +413,95 @@ def test_create_commit_message(migration_model: capellambse.MelodyModel):
 
     reporter = auditing.RMReporter(migration_model)
     for changes, module_id, module_category in context:
-        reporter.store_change(changes, module_id, module_category)
+        reporter.store_changes(changes, module_id, module_category)
     commit_message = reporter.create_commit_message(tool_metadata)
 
     assert commit_message.startswith(
-        "Updated model with RM content from rev.123\n"
+        "No changes identified from rev.123\n"
         "\n"
-        "Synchronized 1 category1 and 1 category2:\n"
-        "- 1: created: 1; updated: 1; deleted: 1; type-changes: 0\n"
-        "- project/space/example title: created: 0; updated: 0; deleted: 1; type-changes: 2\n"
+        "There were no modifications, extensions or deletions from "
+        "the previous revision of RM content.\n"
         "\n"
         "This was done using:\n"
         "- tool version 1\n"
         "- connector v1\n"
         f"- RM-Bridge v{__version__}\n"
     )
+
+
+def test_create_commit_message_raises_ValueError_on_faulty_parent(
+    migration_model: capellambse.MelodyModel,
+):
+    req = migration_model.by_uuid(TEST_REQ_UUID)
+    req.parent.requirements.remove(req)
+    changes: list[auditing.Change] = [
+        auditing.Deletion(
+            module=TEST_MODULE_ID,
+            parent=TEST_FOLDER_UUID,
+            attribute="requirements",
+            element=f"<Requirement 'Kind Requirement' ({TEST_REQ_UUID})>",
+            uuid=TEST_REQ_UUID,
+        ),
+    ]
+    context = [(changes, TEST_MODULE_ID, "1")]
+    tool_metadata = {
+        "revision": "123",
+        "tool": "tool version 1",
+        "connector": "connector v1",
+    }
+    expected_error_msg = (
+        "Can't match class name in short representation: " + TEST_FOLDER_UUID
+    )
+
+    reporter = auditing.RMReporter(migration_model)
+    for changes, module_id, module_category in context:
+        reporter.store_changes(changes, module_id, module_category)
+
+    with pytest.raises(ValueError, match=expected_error_msg):
+        reporter.create_commit_message(tool_metadata)
+
+
+@pytest.mark.integtest
+def test_get_change_report(migration_model: capellambse.MelodyModel):
+    req = migration_model.by_uuid(TEST_REQ_UUID)
+    req.parent.requirements.remove(req)
+    context = [
+        (TestRMReporter.CHANGES, "1", "category1"),
+        (TEST_CHANGES, TEST_MODULE_ID, "category2"),
+    ]
+    expected = textwrap.dedent(
+        """\
+        <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)>
+        ========================================================
+        Extensions: 0, Modifications: 1, Deletions: 0
+        ------------------In-Depth-------------------
+        <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)> modified 'long_name' from '1' to 'New'.
+
+        <CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)>
+        ====================================================================
+        Extensions: 2, Modifications: 0, Deletions: 1
+        ------------------In-Depth-------------------
+        <CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)> extended 'folders' by <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)>.
+        <CapellaModule 'Test Module' (f8e2195d-b5f5-4452-a12b-79233d943d5e)> deleted <Folder 'Folder' (e16f5cc1-3299-43d0-b1a0-82d31a137111)> from 'folders'.
+
+        <Folder 'Kinds' (9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19)>
+        =======================================================
+        Extensions: 1, Modifications: 0, Deletions: 1
+        ------------------In-Depth-------------------
+        <Folder 'Kinds' (9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19)> deleted <Requirement 'Kind Requirement' (163394f5-c1ba-4712-a238-b0b143c66aed)> from 'requirements'.
+
+        <CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)>
+        ===================================================================
+        Extensions: 1, Modifications: 1, Deletions: 0
+        ------------------In-Depth-------------------
+        <CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)> modified 'identifier' from '-2' to 'Types'.
+        <CapellaTypesFolder 'Types' (a15e8b60-bf39-47ba-b7c7-74ceecb25c9c)> extended 'data_type_definitions' by <EnumerationDataTypeDefinition '' (686e198b-8baf-49f9-9d85-24571bd05d93)>.
+        """
+    )
+
+    reporter = auditing.RMReporter(migration_model)
+    for changes, module_id, module_category in context:
+        reporter.store_changes(changes, module_id, module_category)
+    change_report = reporter.get_change_report()
+
+    assert change_report.startswith(expected)

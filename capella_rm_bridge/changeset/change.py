@@ -55,6 +55,7 @@ class TrackerChange:
 
     _location_changed: set[RMIdentifier]
     _req_deletions: dict[helpers.UUIDString, dict[str, t.Any]]
+    _evdeletions: set[RMIdentifier]
     _reqtype_ids: set[RMIdentifier]
     _faulty_attribute_definitions: set[str]
     errors: list[str]
@@ -132,6 +133,7 @@ class TrackerChange:
 
         self._location_changed = set[RMIdentifier]()
         self._req_deletions = {}
+        self._evdeletions = set[RMIdentifier]()
         self._faulty_attribute_definitions = set[str]()
         self.errors = []
 
@@ -652,7 +654,7 @@ class TrackerChange:
                     below=edtdef or self.reqt_folder,
                 )
                 ev_ref: decl.Promise | decl.UUIDReference
-                if enumvalue is None:
+                if enumvalue is None or evid in self._evdeletions:
                     ev_ref = decl.Promise(f"EnumValue {id} {evid}")
                     assert ev_ref is not None
                 else:
@@ -755,6 +757,7 @@ class TrackerChange:
             for dtdef in self.reqt_folder.data_type_definitions
             if dtdef.identifier not in self.data_type_definitions
         ]
+        self._populate_ev_deletions(dt_defs_deletions)
 
         dt_defs_creations = list[dict[str, t.Any]]()
         dt_defs_modifications = list[dict[str, t.Any]]()
@@ -778,6 +781,11 @@ class TrackerChange:
 
         self.actions.extend(dt_defs_modifications)
         return base
+
+    def _populate_ev_deletions(self, refs: list[decl.UUIDReference]) -> None:
+        for ref in refs:
+            dtdef = self.model.by_uuid(ref.uuid)
+            self._evdeletions |= set(dtdef.values.by_identifier)
 
     def data_type_mod_action(
         self, id: str, ddef: act.DataType
@@ -827,6 +835,7 @@ class TrackerChange:
             )
             if deletions:
                 evs = dtdef.values.by_identifier(*deletions)
+                self._evdeletions |= deletions
                 base["delete"] = {
                     "values": [decl.UUIDReference(ev.uuid) for ev in evs]
                 }
@@ -866,9 +875,9 @@ class TrackerChange:
                     f"Invalid workitem '{identifier}'. {error.args[0]}"
                 )
 
-            attribute_definition_ids = (
+            attribute_definition_ids = {
                 f"{id} {reqtype.identifier}" for id in item["attributes"]
-            )
+            }
             attr_defs_deletions: list[decl.UUIDReference] = [
                 decl.UUIDReference(adef.uuid)
                 for adef in reqtype.attribute_definitions
