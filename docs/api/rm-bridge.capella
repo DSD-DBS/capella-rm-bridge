@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--Capella_Version_5.2.0-->
+<!--Capella_Version_6.0.0-->
 <org.polarsys.capella.core.data.capellamodeller:Project xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:libraries="http://www.polarsys.org/capella/common/libraries/5.0.0"
-    xmlns:org.polarsys.capella.core.data.capellacommon="http://www.polarsys.org/capella/core/common/5.0.0"
-    xmlns:org.polarsys.capella.core.data.capellacore="http://www.polarsys.org/capella/core/core/5.0.0"
-    xmlns:org.polarsys.capella.core.data.capellamodeller="http://www.polarsys.org/capella/core/modeller/5.0.0"
-    xmlns:org.polarsys.capella.core.data.cs="http://www.polarsys.org/capella/core/cs/5.0.0"
-    xmlns:org.polarsys.capella.core.data.ctx="http://www.polarsys.org/capella/core/ctx/5.0.0"
-    xmlns:org.polarsys.capella.core.data.epbs="http://www.polarsys.org/capella/core/epbs/5.0.0"
-    xmlns:org.polarsys.capella.core.data.fa="http://www.polarsys.org/capella/core/fa/5.0.0"
-    xmlns:org.polarsys.capella.core.data.information="http://www.polarsys.org/capella/core/information/5.0.0"
-    xmlns:org.polarsys.capella.core.data.information.datatype="http://www.polarsys.org/capella/core/information/datatype/5.0.0"
-    xmlns:org.polarsys.capella.core.data.information.datavalue="http://www.polarsys.org/capella/core/information/datavalue/5.0.0"
-    xmlns:org.polarsys.capella.core.data.interaction="http://www.polarsys.org/capella/core/interaction/5.0.0"
-    xmlns:org.polarsys.capella.core.data.la="http://www.polarsys.org/capella/core/la/5.0.0"
-    xmlns:org.polarsys.capella.core.data.oa="http://www.polarsys.org/capella/core/oa/5.0.0"
-    xmlns:org.polarsys.capella.core.data.pa="http://www.polarsys.org/capella/core/pa/5.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:libraries="http://www.polarsys.org/capella/common/libraries/6.0.0"
+    xmlns:org.polarsys.capella.core.data.capellacommon="http://www.polarsys.org/capella/core/common/6.0.0"
+    xmlns:org.polarsys.capella.core.data.capellacore="http://www.polarsys.org/capella/core/core/6.0.0"
+    xmlns:org.polarsys.capella.core.data.capellamodeller="http://www.polarsys.org/capella/core/modeller/6.0.0"
+    xmlns:org.polarsys.capella.core.data.cs="http://www.polarsys.org/capella/core/cs/6.0.0"
+    xmlns:org.polarsys.capella.core.data.ctx="http://www.polarsys.org/capella/core/ctx/6.0.0"
+    xmlns:org.polarsys.capella.core.data.epbs="http://www.polarsys.org/capella/core/epbs/6.0.0"
+    xmlns:org.polarsys.capella.core.data.fa="http://www.polarsys.org/capella/core/fa/6.0.0"
+    xmlns:org.polarsys.capella.core.data.information="http://www.polarsys.org/capella/core/information/6.0.0"
+    xmlns:org.polarsys.capella.core.data.information.datatype="http://www.polarsys.org/capella/core/information/datatype/6.0.0"
+    xmlns:org.polarsys.capella.core.data.information.datavalue="http://www.polarsys.org/capella/core/information/datavalue/6.0.0"
+    xmlns:org.polarsys.capella.core.data.interaction="http://www.polarsys.org/capella/core/interaction/6.0.0"
+    xmlns:org.polarsys.capella.core.data.la="http://www.polarsys.org/capella/core/la/6.0.0"
+    xmlns:org.polarsys.capella.core.data.oa="http://www.polarsys.org/capella/core/oa/6.0.0"
+    xmlns:org.polarsys.capella.core.data.pa="http://www.polarsys.org/capella/core/pa/6.0.0"
     id="434a5d14-1e9b-4f6f-8548-81dcff64721c"
     name="rm-bridge">
   <ownedExtensions xsi:type="libraries:ModelInformation" id="d1884b3b-32e8-44e7-b165-c451b12b6532"/>
@@ -75,23 +75,606 @@
           id="ca70cfdd-b598-4ae0-bb79-a0ad15a0a7ae" name="System Functions">
         <ownedSystemFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
             id="a44daef8-da37-4e5f-996f-62dd5d98ca05" name="Root System Function">
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="1fee9372-ee36-436d-9fb2-ade546092044" name="capture requirement">
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="4c4512e5-35ae-4c10-a8d0-95a14fd8866a" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="2e928cd7-50d4-48a9-a76b-5f51c3042a07" name="provide means to capture requirements">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="d0bdcc77-f180-4326-ba62-a6b1edc056eb" name="FIP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="264527bc-a3ba-4bcb-bcce-e73aa3139e7b" name="request change saving">
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="e6bdabde-44fc-4edf-ad4a-8204986b9015" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="434aa519-14c0-4f34-abe0-dbf3900f7ff3" name="save changes">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="5e29ed01-b01c-4054-bccc-a11f47dcbd39" name="FIP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="81a594ce-16fb-417a-9917-3955270b2e76" name="emit change event">
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="ca50fdd0-fce6-4e6d-a548-4b0ef4c3d454" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="abb44a58-881f-42e5-a719-da0e932691c4" name="request requirements sync"
+              description="&lt;p>As a Systems Engineer I may have a need to see changes from one tool to appear in the other as soon as possible so if there is no automation with near-real-time synch capability I need means to trigger the synchronization on-demand.&lt;/p>&#xA;">
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="45247289-65f5-47c3-9c99-5e926b87bad3" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="2af1aace-5607-45b8-bb39-d7027a2adc2f" name="emit model change event">
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="4a761afe-93ab-4d17-86ef-6496e9cf217e" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="d53ee560-faef-45c1-b018-c4325cb73aea" name="export RM data">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="bb763d8d-9ef6-4560-a954-7f3b54219eea" name="FIP 1"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="9175badf-5cec-4c84-9d97-72d8914f63f3" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="97ad2760-ba65-48ed-ae88-c6dec50b5c86" name="compare model with RM snapshot">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="3dd3b761-a81e-4579-85a5-b7bdb462620f" name="FIP 1"/>
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="19b907d0-e6e2-44bb-8a2a-a89d5a5f6ca5" name="FIP 2"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="a9e04c20-9fdb-4f7f-a401-99d29ea297b4" name="FOP 1"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="3091af4a-cccc-4f88-b27f-3005dd13e5a5" name="FOP 2"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="cb8b6e13-e279-415f-a144-32c6ea67540c" name="update model">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="28e2c8e9-15c8-42a1-9477-198a7d620f17" name="FIP 1"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="6971ccd6-4a92-4207-a5a5-136ca22bf7b4" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="687e2733-9f31-42f9-acb1-2d41f453e45f" name="provide model revision">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="14d9bcc3-26e3-47be-b2e2-d730ccf5b270" name="FIP 1"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="5844f3ff-8fb9-4038-ae2b-c2b4a0b3c12a" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="7bacb71e-7a1f-446d-9e0e-a6aa409dacba" name="handle model change">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="920237e8-b9e0-4ef8-b3cb-fdb88464cfab" name="FIP 1"/>
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="c9739480-1153-4293-b933-56d9f2976753" name="FIP 2"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="5bb44c50-a8e6-4162-bfce-467b29adb1df" name="commit model changes">
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="e418c058-36a3-41fe-baaa-7758513b973f" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="9638c8fe-0c63-4f9b-87cd-693a1287630b" name="get latest data">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="24ab88c8-e1a0-429b-83e6-98d1be5ea80b" name="FIP 1"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="8196162b-6bc5-424c-a918-3204718ed2d4" name="FOP 1"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="90840126-eeb4-4388-b199-cfc3da678350" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="7cfb0348-feef-4f1a-bbf3-85afa5973167" name="update RM data">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="8bcc9de5-9e4f-4c7a-810a-faa21a528222" name="FIP 1"/>
+            <outputs xsi:type="org.polarsys.capella.core.data.fa:FunctionOutputPort"
+                id="75aa71d4-75fc-4a25-835b-afbffcf5feb6" name="FOP 1"/>
+          </ownedFunctions>
+          <ownedFunctions xsi:type="org.polarsys.capella.core.data.ctx:SystemFunction"
+              id="8fb4ee7c-d782-46c9-a684-4da54b2e871f" name="handle RM data update">
+            <inputs xsi:type="org.polarsys.capella.core.data.fa:FunctionInputPort"
+                id="608feeca-bfd4-4f3f-9ca2-ce1528428d57" name="FIP 1"/>
+          </ownedFunctions>
           <ownedFunctionRealizations xsi:type="org.polarsys.capella.core.data.fa:FunctionRealization"
               id="15e0232d-c75a-45be-a51c-a4fdde26d2a2" targetElement="#687bdbfc-572d-4548-987b-971b29800f27"
               sourceElement="#a44daef8-da37-4e5f-996f-62dd5d98ca05"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="15cfd80b-d74c-452f-a5ac-f2ad126c70c5" name="requirement" target="#d0bdcc77-f180-4326-ba62-a6b1edc056eb"
+              source="#4c4512e5-35ae-4c10-a8d0-95a14fd8866a"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="b6187cd0-2e86-4050-ac2c-1f3fd6100ff0" name="save command" target="#5e29ed01-b01c-4054-bccc-a11f47dcbd39"
+              source="#e6bdabde-44fc-4edf-ad4a-8204986b9015"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="033ce4d8-96bd-4dfb-a41e-978b3a1f73f3" name="change event" target="#24ab88c8-e1a0-429b-83e6-98d1be5ea80b"
+              source="#ca50fdd0-fce6-4e6d-a548-4b0ef4c3d454"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="06c3777e-1517-411f-9b26-ebd6b0112f00" name="manual trigger" target="#24ab88c8-e1a0-429b-83e6-98d1be5ea80b"
+              source="#45247289-65f5-47c3-9c99-5e926b87bad3"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="92c089dd-4053-4d88-830c-3a61d2fd0389" name="change event" target="#24ab88c8-e1a0-429b-83e6-98d1be5ea80b"
+              source="#4a761afe-93ab-4d17-86ef-6496e9cf217e"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="c0455f22-de37-4c6b-af24-c3204eb88a64" name="RM snapshot request"
+              target="#bb763d8d-9ef6-4560-a954-7f3b54219eea" source="#8196162b-6bc5-424c-a918-3204718ed2d4"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="fd2d7314-89b3-46e1-9296-a2d50bbab7dc" name="RM Snapshot" target="#3dd3b761-a81e-4579-85a5-b7bdb462620f"
+              source="#9175badf-5cec-4c84-9d97-72d8914f63f3"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="6b82b357-4791-4381-b74c-f6cb9e00d714" name="model snapshot request"
+              target="#14d9bcc3-26e3-47be-b2e2-d730ccf5b270" source="#90840126-eeb4-4388-b199-cfc3da678350"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="d9ebb43b-dbdd-40dd-906e-b720fabe2158" name="model snapshot" target="#19b907d0-e6e2-44bb-8a2a-a89d5a5f6ca5"
+              source="#5844f3ff-8fb9-4038-ae2b-c2b4a0b3c12a"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="79441bac-b961-469b-9e35-ca0a6d9b1244" name="model update (commit)"
+              target="#920237e8-b9e0-4ef8-b3cb-fdb88464cfab" source="#6971ccd6-4a92-4207-a5a5-136ca22bf7b4"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="6a7261d6-9e6d-408e-b915-7618ff46ba73" name="model update (commit and push)"
+              target="#c9739480-1153-4293-b933-56d9f2976753" source="#e418c058-36a3-41fe-baaa-7758513b973f"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="0433207a-f101-4fed-9c24-6923eebf5bb2" name="model Changeset" target="#28e2c8e9-15c8-42a1-9477-198a7d620f17"
+              source="#a9e04c20-9fdb-4f7f-a401-99d29ea297b4"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="c4914973-6b66-4fd8-99d6-4a87657d7e0a" name="RM Changeset" target="#8bcc9de5-9e4f-4c7a-810a-faa21a528222"
+              source="#3091af4a-cccc-4f88-b27f-3005dd13e5a5"/>
+          <ownedFunctionalExchanges xsi:type="org.polarsys.capella.core.data.fa:FunctionalExchange"
+              id="5ce7a3ff-7f92-4187-a28e-ac99b2f5f268" name="RM update request" target="#608feeca-bfd4-4f3f-9ca2-ce1528428d57"
+              source="#75aa71d4-75fc-4a25-835b-afbffcf5feb6"/>
         </ownedSystemFunctions>
       </ownedFunctionPkg>
       <ownedAbstractCapabilityPkg xsi:type="org.polarsys.capella.core.data.ctx:CapabilityPkg"
           id="19d51c2a-4831-4ca2-8f18-2a799bbc0154" name="Capabilities">
         <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
-            id="7f251b5f-414b-42a3-975d-59a8ab78ec75" name="copy requirements and attribs from RM tool to Arch tool">
+            id="d26f45c7-b3a2-4084-a8b2-79f3f4c27144" name="process requirements in MBSE environment"
+            description="&lt;p>As a Systems Engineer, I work with (mostly external) requirements in an RM tool. However, I also need to process these requirements in an MBSE tool - analyze them and create system model elements (like actors, system and actor functions, interfaces, and constraints).&lt;/p>&#xA;&#xA;&lt;p>To make reasoning behind the model elements transparent, I will link each model element back to the requirement it came from. This linkage information needs to be available in the RM tool so that project stakeholders without access to the MBSE tool can review progress and coverage.&lt;/p>&#xA;&#xA;&lt;p>In addition, I may need to use other objects and object attributes from the RM tool as design rationales for modeling artifacts.&lt;/p>&#xA;&#xA;&lt;p>This process can be triggered in different ways, such as by the Systems Engineer, a change event (emited by either RM tool or MBSE CM), or a scheduled transfer of changes at a set time.&lt;/p>&#xA;">
+          <ownedScenarios xsi:type="org.polarsys.capella.core.data.interaction:Scenario"
+              id="374b1216-2b2c-4306-aa5b-00a1be7e79b0" name="[ES] process requirements in MBSE environment"
+              kind="DATA_FLOW">
+            <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
+                id="8cdba1e7-514d-48ae-8161-730c2d0cbd68" name="Systems Engineer"
+                representedInstance="#c2c2e4fb-ea84-47f5-802c-806296733be4"/>
+            <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
+                id="63385082-2570-4afb-a8d1-bf207ffee06a" name="RM Tool" representedInstance="#0eca71b9-1f56-4101-8e17-d89ec89d5d42"/>
+            <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
+                id="40d4b58a-0332-405e-8a91-836b8e7cd9d9" name="RM-Bridge" representedInstance="#4974f634-df3e-4a4c-a5a6-431713950376"/>
+            <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
+                id="3625e66f-1a02-47c7-944e-cb3b5e9ec86f" name="MBSE CM" representedInstance="#918f6a1d-9abe-4c6e-afce-44f1874fa90a"/>
+            <ownedInstanceRoles xsi:type="org.polarsys.capella.core.data.interaction:InstanceRole"
+                id="98fb281e-72fe-4eb0-9f76-2219d3130e6f" name="MBSE Tool" representedInstance="#228b70f0-2e87-4b40-af38-4dd17fc02b4c"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="f9550deb-d870-47cf-aa17-ed61c0d72326" name="requirement" kind="ASYNCHRONOUS_CALL"
+                sendingEnd="#a9e274e0-19ed-48a0-bc66-2c964e21d279" receivingEnd="#102b3878-830a-485b-ad37-dcdeaac1f354"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="4cf27919-8588-40fc-adda-7e7ef14f1d64" name="save command" kind="ASYNCHRONOUS_CALL"
+                sendingEnd="#34afa666-d736-4a9f-bc42-85aa14cf2138" receivingEnd="#d1b55adc-14fd-4281-8784-c7257bdd0bb7"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="90906201-8397-4f17-a9b4-6db0ae0ba910" name="change event" kind="ASYNCHRONOUS_CALL"
+                sendingEnd="#76161e1e-4699-40d8-88c4-11fd9d1511c2" receivingEnd="#992949b3-c993-4520-845e-480e196e82ab"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="12d3c873-326f-4d2b-bbce-dbfcb7b2cfab" name="manual trigger" kind="ASYNCHRONOUS_CALL"
+                sendingEnd="#6ec73f1a-05da-434a-982d-794b9d6e4ff1" receivingEnd="#241f365b-2f63-4588-b0b9-75c412df6ad2"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="db59a632-d144-4b3e-823e-d942d53547dc" name="model update (commit and push)"
+                kind="ASYNCHRONOUS_CALL" sendingEnd="#b98099f3-4982-4774-9903-aac0530a21b5"
+                receivingEnd="#9a3758a6-a0df-4693-957d-7ce7d78774cd"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="4170f3d0-abb0-48ec-a90d-78cf85fd8605" name="change event" kind="ASYNCHRONOUS_CALL"
+                sendingEnd="#f220d05e-770f-4551-933b-e667add076de" receivingEnd="#f55b66e6-539d-40d2-9ed6-482499eff2ed"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="fed4dcc1-bcd4-4871-b71f-ce74012bd7c4" name="RM snapshot request"
+                kind="ASYNCHRONOUS_CALL" sendingEnd="#ebe316d5-48b3-4a1b-9da0-d1afb2d26641"
+                receivingEnd="#ee971b5c-08cf-4d0f-b71f-01f7481cf5b9"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="8ecd92c1-7d58-4815-9e75-72a9536d6d5f" name="model snapshot request"
+                kind="ASYNCHRONOUS_CALL" sendingEnd="#3d90c40d-91b6-4180-9ba7-5ea66d398374"
+                receivingEnd="#42cc0c33-cbe9-4d22-8470-a5964d448f65"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="2d513478-46aa-4fd0-ae18-b1fee004c700" name="model snapshot" kind="ASYNCHRONOUS_CALL"
+                sendingEnd="#a7a04332-5fe9-459f-9b22-f3caacaa018f" receivingEnd="#616ccde0-dbe8-4f51-bc69-5daf329ac296"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="8e1671c0-274e-4715-afbf-4c172cd9ef78" name="RM Snapshot" kind="ASYNCHRONOUS_CALL"
+                sendingEnd="#c460484d-7856-462f-9a79-88f981efa66c" receivingEnd="#7b70cefe-3398-40d5-a472-b395be686b3a"/>
+            <ownedMessages xsi:type="org.polarsys.capella.core.data.interaction:SequenceMessage"
+                id="99e1f28f-85e4-4a35-b3c1-4569ca074fd8" name="model update (commit)"
+                kind="ASYNCHRONOUS_CALL" sendingEnd="#3d362d37-335b-45f7-af1c-10394aed6376"
+                receivingEnd="#964dd637-420f-4b89-b0dc-c3822df1592d"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="6dc36a38-7ec5-43d1-97ec-947d3ad4ff90" name="capture requirement"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" relatedAbstractFunction="#1fee9372-ee36-436d-9fb2-ade546092044"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="bc6bd2ca-1e1c-405c-8df7-fca5ddf1b8e7" name="capture requirement"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" relatedAbstractFunction="#1fee9372-ee36-436d-9fb2-ade546092044"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="a9e274e0-19ed-48a0-bc66-2c964e21d279" name="Send Call Message Call"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" event="#62c861da-e2d5-47f9-8af4-f95e087a67ce"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="102b3878-830a-485b-ad37-dcdeaac1f354" name="Receive Call Message Call"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" event="#15ce8859-cd73-4d1e-a5cf-9dbb88eabde6"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="7deb0e22-c537-4f8e-8f50-ce1ffb018892" name="provide means to capture requirements"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" relatedAbstractFunction="#2e928cd7-50d4-48a9-a76b-5f51c3042a07"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="7bed6193-297a-4bbb-853c-edf5d46ff11c" name="provide means to capture requirements"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" relatedAbstractFunction="#2e928cd7-50d4-48a9-a76b-5f51c3042a07"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="11326d7f-f727-4fbd-8e14-baa43d02f1a3" name="endExec" coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a"
+                event="#7484de54-70fb-4534-b396-42b0bdee691d"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="314f3763-afb8-40e6-bbba-de59d4d687c6" name="request change saving"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" relatedAbstractFunction="#264527bc-a3ba-4bcb-bcce-e73aa3139e7b"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="868d273a-f607-4e4d-9984-b86ee5885d75" name="request change saving"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" relatedAbstractFunction="#264527bc-a3ba-4bcb-bcce-e73aa3139e7b"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="34afa666-d736-4a9f-bc42-85aa14cf2138" name="Send Call Message Call"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" event="#737b21e0-917e-44e0-ba58-09281b48d51c"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="d1b55adc-14fd-4281-8784-c7257bdd0bb7" name="Receive Call Message Call"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" event="#062c45d8-70ba-4f7f-8505-2717881c444e"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="ff46fe62-bff5-4f60-96a9-b543f8fa80bf" name="save changes" coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a"
+                relatedAbstractFunction="#434aa519-14c0-4f34-abe0-dbf3900f7ff3"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="895d7b9d-ac28-43d0-b27f-4e0782f385dd" name="save changes" coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a"
+                relatedAbstractFunction="#434aa519-14c0-4f34-abe0-dbf3900f7ff3"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="b2d3dc91-ec20-4100-b18a-c44ea6d85741" name="endExec" coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a"
+                event="#84a25ce8-4902-452e-bc55-c24b2d8497c6"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:FragmentEnd"
+                id="3a815a22-9d22-48a1-93a3-932cfd707e7e" name="start" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionOperand"
+                id="8cf5909b-4848-4195-ab82-0e53dd859daa" name="operand 1" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"
+                guard="#5e6a7ef1-e876-41e3-b8da-10e64ae8975b">
+              <ownedConstraints xsi:type="org.polarsys.capella.core.data.capellacore:Constraint"
+                  id="5e6a7ef1-e876-41e3-b8da-10e64ae8975b" name="">
+                <ownedSpecification xsi:type="org.polarsys.capella.core.data.information.datavalue:OpaqueExpression"
+                    id="394839e3-68a4-4e99-8682-00acc050db56">
+                  <bodies>automated update using RM tool as a trigger source is ENABLED</bodies>
+                  <languages>capella:linkedText</languages>
+                </ownedSpecification>
+              </ownedConstraints>
+            </ownedInteractionFragments>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="a39c1277-42d9-46a1-ac09-325375d84807" name="emit change event"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" relatedAbstractFunction="#81a594ce-16fb-417a-9917-3955270b2e76"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="940b504d-9476-44b9-8bdf-51a2a47c831d" name="emit change event"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" relatedAbstractFunction="#81a594ce-16fb-417a-9917-3955270b2e76"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="76161e1e-4699-40d8-88c4-11fd9d1511c2" name="Send Call Message Call"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" event="#a4c48977-2931-41fe-bafe-910bcdf7edbb"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="992949b3-c993-4520-845e-480e196e82ab" name="Receive Call Message Call"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" event="#24ad3fc7-50ae-44ad-887c-e79bf814ba4f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="a8298786-4e0b-46ae-897d-aca61d4f6c8c" name="endExec" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9"
+                event="#098b96dd-b568-40e2-a2fd-280335654038"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionOperand"
+                id="3c6ccb1e-2fc3-4a51-a708-2e2f4e019e5f" name="operand" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"
+                guard="#e8f2dd1e-4a3f-451e-8b59-e16024e8141c">
+              <ownedConstraints xsi:type="org.polarsys.capella.core.data.capellacore:Constraint"
+                  id="e8f2dd1e-4a3f-451e-8b59-e16024e8141c" name="">
+                <ownedSpecification xsi:type="org.polarsys.capella.core.data.information.datavalue:OpaqueExpression"
+                    id="48f4d2a5-98f4-4b84-a58f-f0f0be94cd68">
+                  <bodies>automated update using RM tool as a trigger source is DISABLED</bodies>
+                  <languages>capella:linkedText</languages>
+                </ownedSpecification>
+              </ownedConstraints>
+            </ownedInteractionFragments>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="f3b25ce5-64f7-40b4-ac0e-bf66e2da9dcc" name="request requirements sync"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" relatedAbstractFunction="#abb44a58-881f-42e5-a719-da0e932691c4"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="4e8a8ffb-4d3e-44e0-9a72-20e0e6eb041d" name="request requirements sync"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" relatedAbstractFunction="#abb44a58-881f-42e5-a719-da0e932691c4"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="6ec73f1a-05da-434a-982d-794b9d6e4ff1" name="Send Call Message Call"
+                coveredInstanceRoles="#8cdba1e7-514d-48ae-8161-730c2d0cbd68" event="#6d9c3be1-05dd-4281-a750-86eee3c807d5"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="241f365b-2f63-4588-b0b9-75c412df6ad2" name="Receive Call Message Call"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" event="#b2c431eb-400f-4bc2-ab8b-eb015c61f8bd"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="7ca7fe62-b5f0-4944-9293-c8b11da65974" name="endExec" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9"
+                event="#aa628844-4d1d-49bd-a39e-c29913fc581e"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionOperand"
+                id="287dfc24-f8ef-4fc2-b250-8d4b842cdc8e" name="operand" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"
+                guard="#d79d6bf3-fa10-4276-855e-750d385633c9">
+              <ownedConstraints xsi:type="org.polarsys.capella.core.data.capellacore:Constraint"
+                  id="d79d6bf3-fa10-4276-855e-750d385633c9" name="">
+                <ownedSpecification xsi:type="org.polarsys.capella.core.data.information.datavalue:OpaqueExpression"
+                    id="fbaccf7b-493c-46ef-8324-f83c9ce137e9">
+                  <bodies>automated update using MBSE CM tool change event as a trigger is ENABLED</bodies>
+                  <languages>capella:linkedText</languages>
+                </ownedSpecification>
+              </ownedConstraints>
+            </ownedInteractionFragments>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="8a2da9db-905f-4740-a9c6-cf8a4eed90b7" name="commit model changes"
+                coveredInstanceRoles="#98fb281e-72fe-4eb0-9f76-2219d3130e6f" relatedAbstractFunction="#5bb44c50-a8e6-4162-bfce-467b29adb1df"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="8d142b77-ba31-4cc0-80e5-428747c15f19" name="commit model changes"
+                coveredInstanceRoles="#98fb281e-72fe-4eb0-9f76-2219d3130e6f" relatedAbstractFunction="#5bb44c50-a8e6-4162-bfce-467b29adb1df"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="b98099f3-4982-4774-9903-aac0530a21b5" name="Send Call Message Call"
+                coveredInstanceRoles="#98fb281e-72fe-4eb0-9f76-2219d3130e6f" event="#cecc3004-2415-4e8a-b3e3-92e10c017922"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="9a3758a6-a0df-4693-957d-7ce7d78774cd" name="Receive Call Message Call"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" event="#81423f5c-f82f-4df0-a4af-a7395532594f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="a2757c4e-6988-4de9-9c68-714274f9fb4c" name="handle model change"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="4be6faaf-a22f-41f5-abe0-40fe1df1c296" name="handle model change"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="6b31f5a2-e64c-4926-ab15-804b50ec4408" name="emit model change event"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#2af1aace-5607-45b8-bb39-d7027a2adc2f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="5f1da9b2-c041-4cb9-b181-24788e778744" name="emit model change event"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#2af1aace-5607-45b8-bb39-d7027a2adc2f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="6a6a8d30-8a98-47f8-b135-58467e826893" name="endExec" coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f"
+                event="#2ba3040d-f62a-4972-85aa-b7015745af7a"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="f220d05e-770f-4551-933b-e667add076de" name="Send Call Message Call"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" event="#a8815bb5-5941-4c16-b334-70aa16fe74a4"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="f55b66e6-539d-40d2-9ed6-482499eff2ed" name="Receive Call Message Call"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" event="#bbff28c3-622b-4ec7-b466-c6a7e1ba6739"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="4ab6f44a-7908-4460-a7c2-c711b98dc2cc" name="endExec" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9"
+                event="#7fa4ea2b-49c5-4f6e-b5bc-a5a9f6793a7b"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:FragmentEnd"
+                id="b4faf6a0-82b2-472a-9e76-1869b23f1e31" name="end" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9 #63385082-2570-4afb-a8d1-bf207ffee06a #8cdba1e7-514d-48ae-8161-730c2d0cbd68 #3625e66f-1a02-47c7-944e-cb3b5e9ec86f #98fb281e-72fe-4eb0-9f76-2219d3130e6f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="ebe316d5-48b3-4a1b-9da0-d1afb2d26641" name="Send Call Message Call"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" event="#d845479e-495b-4d86-b7e8-7211347f5c42"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="ee971b5c-08cf-4d0f-b71f-01f7481cf5b9" name="Receive Call Message Call"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" event="#54c4f1f7-bc49-430c-97e9-25859f43ef75"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="b471b0a1-9df0-4525-a75e-4255eb8c19aa" name="export RM data" coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a"
+                relatedAbstractFunction="#d53ee560-faef-45c1-b018-c4325cb73aea"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="3d90c40d-91b6-4180-9ba7-5ea66d398374" name="Send Call Message Call"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" event="#80245c71-073e-4f13-ba17-c6e3ab58dec8"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="42cc0c33-cbe9-4d22-8470-a5964d448f65" name="Receive Call Message Call"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" event="#6c846ba0-9829-4702-b97e-1fa8dbcaa252"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="a333081e-b0da-4d94-af47-7ef10a61b17c" name="provide model revision"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#687e2733-9f31-42f9-acb1-2d41f453e45f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="041dd6aa-e916-47c6-91af-516a477cbdd4" name="export RM data" coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a"
+                relatedAbstractFunction="#d53ee560-faef-45c1-b018-c4325cb73aea"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="4518aa16-d83a-4c82-92be-6417bbe130ef" name="provide model revision"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#687e2733-9f31-42f9-acb1-2d41f453e45f"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="a7a04332-5fe9-459f-9b22-f3caacaa018f" name="Send Call Message Call"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" event="#b4e994db-bc03-491f-ab51-c1882de1472d"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="616ccde0-dbe8-4f51-bc69-5daf329ac296" name="Receive Call Message Call"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" event="#1f9d12c4-4572-4167-8b9d-9648f2503019"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="eea8d27c-4c0c-4d7a-950c-862d0e60ef49" name="endExec" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9"
+                event="#fc4efe07-db8e-4b08-aea7-cfdbb0228fee"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="2f300f8b-e725-4190-a27f-35159810aef6" name="endExec" coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f"
+                event="#1b8bebc0-b514-4287-8448-69587207a459"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="c460484d-7856-462f-9a79-88f981efa66c" name="Send Call Message Call"
+                coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a" event="#c82f99d2-e408-41eb-87e6-590ed7b6a786"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="7b70cefe-3398-40d5-a472-b395be686b3a" name="Receive Call Message Call"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" event="#d5d13a35-6a18-407e-858f-f44a651bb417"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="352b0e44-3dcd-4ede-b329-e4259e985ced" name="handle RM Snapshot"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" relatedAbstractFunction="#97ad2760-ba65-48ed-ae88-c6dec50b5c86"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="2b2e28b1-3f73-47f3-bc53-18590289c80e" name="endExec" coveredInstanceRoles="#63385082-2570-4afb-a8d1-bf207ffee06a"
+                event="#5329e1c6-1a5b-4b9a-920a-a0f6db62b985"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="c9a3f26f-5803-4eeb-8a8d-e66b2ef6eb35" name="handle RM Snapshot"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" relatedAbstractFunction="#97ad2760-ba65-48ed-ae88-c6dec50b5c86"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="3d362d37-335b-45f7-af1c-10394aed6376" name="Send Call Message Call"
+                coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9" event="#3eb62bb7-e0fe-4048-baa6-1cebfbb4d0b9"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:MessageEnd"
+                id="964dd637-420f-4b89-b0dc-c3822df1592d" name="Receive Call Message Call"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" event="#f0fde188-4e58-42b9-829a-e086e999e4a6"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="ed38913d-c8bb-4665-9696-b7407388f539" name="endExec" coveredInstanceRoles="#40d4b58a-0332-405e-8a91-836b8e7cd9d9"
+                event="#318d19df-0d8e-419d-8a14-7f9dd6fdf3f6"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="df25f787-d1e3-4e85-bec4-cb1221d0aebc" name="handle model change"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:InteractionState"
+                id="cb0e5cce-b5cf-4e80-a44e-c2fc7823a811" name="handle model change"
+                coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedInteractionFragments xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEnd"
+                id="60acf175-7f7a-4af1-be78-bba70c15d41b" name="endExec" coveredInstanceRoles="#3625e66f-1a02-47c7-944e-cb3b5e9ec86f"
+                event="#a06195b7-8d83-4aec-a67e-d3f7cb1e5ca0"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="5c5f9e92-8245-45a1-b63e-434b5f1a7089" start="#102b3878-830a-485b-ad37-dcdeaac1f354"
+                finish="#11326d7f-f727-4fbd-8e14-baa43d02f1a3"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="d6aea861-95bc-4bf7-89eb-b76e111233df" start="#6dc36a38-7ec5-43d1-97ec-947d3ad4ff90"
+                finish="#bc6bd2ca-1e1c-405c-8df7-fca5ddf1b8e7" relatedAbstractFunction="#1fee9372-ee36-436d-9fb2-ade546092044"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="9ec01d9a-6b3a-4b94-862e-48022130adbb" start="#7deb0e22-c537-4f8e-8f50-ce1ffb018892"
+                finish="#7bed6193-297a-4bbb-853c-edf5d46ff11c" relatedAbstractFunction="#2e928cd7-50d4-48a9-a76b-5f51c3042a07"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="6ac6ebd4-08e2-43f3-8ecf-0dac79283255" start="#d1b55adc-14fd-4281-8784-c7257bdd0bb7"
+                finish="#b2d3dc91-ec20-4100-b18a-c44ea6d85741"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="c1d36fb4-2385-478d-abd7-59eb75960188" start="#314f3763-afb8-40e6-bbba-de59d4d687c6"
+                finish="#868d273a-f607-4e4d-9984-b86ee5885d75" relatedAbstractFunction="#264527bc-a3ba-4bcb-bcce-e73aa3139e7b"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="e58c4b70-cc15-4615-aa0c-0f00b3cae018" start="#ff46fe62-bff5-4f60-96a9-b543f8fa80bf"
+                finish="#895d7b9d-ac28-43d0-b27f-4e0782f385dd" relatedAbstractFunction="#434aa519-14c0-4f34-abe0-dbf3900f7ff3"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:CombinedFragment"
+                id="e098eac3-b20b-4b40-8e88-7aa34634287f" name="combined fragment"
+                start="#3a815a22-9d22-48a1-93a3-932cfd707e7e" finish="#b4faf6a0-82b2-472a-9e76-1869b23f1e31"
+                operator="PAR" referencedOperands="#8cf5909b-4848-4195-ab82-0e53dd859daa #3c6ccb1e-2fc3-4a51-a708-2e2f4e019e5f #287dfc24-f8ef-4fc2-b250-8d4b842cdc8e"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="878a8c2f-70bf-49c9-976f-a6641bcf8d3d" start="#992949b3-c993-4520-845e-480e196e82ab"
+                finish="#a8298786-4e0b-46ae-897d-aca61d4f6c8c"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="bbb8e3ee-fe4a-4ec6-b3cb-a469b6c9bb72" start="#a39c1277-42d9-46a1-ac09-325375d84807"
+                finish="#940b504d-9476-44b9-8bdf-51a2a47c831d" relatedAbstractFunction="#81a594ce-16fb-417a-9917-3955270b2e76"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="16484e6e-824c-4a47-96f9-cb9aa26d3c3e" start="#241f365b-2f63-4588-b0b9-75c412df6ad2"
+                finish="#7ca7fe62-b5f0-4944-9293-c8b11da65974"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="e7c2c51f-cee4-4d7b-b533-b89e74fe3a5c" start="#f3b25ce5-64f7-40b4-ac0e-bf66e2da9dcc"
+                finish="#4e8a8ffb-4d3e-44e0-9a72-20e0e6eb041d" relatedAbstractFunction="#abb44a58-881f-42e5-a719-da0e932691c4"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="488cb406-d5cf-4cbf-b9d5-33bac6613f31" start="#f55b66e6-539d-40d2-9ed6-482499eff2ed"
+                finish="#4ab6f44a-7908-4460-a7c2-c711b98dc2cc"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="7b501ee9-f571-4ecc-80e4-1fafcbbf8277" start="#6b31f5a2-e64c-4926-ab15-804b50ec4408"
+                finish="#5f1da9b2-c041-4cb9-b181-24788e778744" relatedAbstractFunction="#2af1aace-5607-45b8-bb39-d7027a2adc2f"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="2603ab33-e466-41e8-b655-0916baf07025" start="#ee971b5c-08cf-4d0f-b71f-01f7481cf5b9"
+                finish="#2b2e28b1-3f73-47f3-bc53-18590289c80e"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="a6b5d3a6-6ad1-4106-b62a-e083b09b9677" start="#b471b0a1-9df0-4525-a75e-4255eb8c19aa"
+                finish="#041dd6aa-e916-47c6-91af-516a477cbdd4" relatedAbstractFunction="#d53ee560-faef-45c1-b018-c4325cb73aea"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="4280842e-b2ef-492d-b9d6-d54ae34b3def" start="#7b70cefe-3398-40d5-a472-b395be686b3a"
+                finish="#ed38913d-c8bb-4665-9696-b7407388f539"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="6545ed32-7eae-4973-ac93-40da4cf869e5" start="#352b0e44-3dcd-4ede-b329-e4259e985ced"
+                finish="#c9a3f26f-5803-4eeb-8a8d-e66b2ef6eb35" relatedAbstractFunction="#97ad2760-ba65-48ed-ae88-c6dec50b5c86"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="6794f0ee-73bc-4be5-a36e-bd258180c018" start="#42cc0c33-cbe9-4d22-8470-a5964d448f65"
+                finish="#2f300f8b-e725-4190-a27f-35159810aef6"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="d857b292-dc61-4b6b-ab68-f779044e8975" start="#a333081e-b0da-4d94-af47-7ef10a61b17c"
+                finish="#4518aa16-d83a-4c82-92be-6417bbe130ef" relatedAbstractFunction="#687e2733-9f31-42f9-acb1-2d41f453e45f"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="10d1bbd1-0bec-4d92-8155-747a92478dd5" start="#616ccde0-dbe8-4f51-bc69-5daf329ac296"
+                finish="#eea8d27c-4c0c-4d7a-950c-862d0e60ef49"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="6eced783-9e57-4f7f-a694-0153db02b227" start="#964dd637-420f-4b89-b0dc-c3822df1592d"
+                finish="#60acf175-7f7a-4af1-be78-bba70c15d41b"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="de73d4c7-5825-411a-83ef-4cf2be51adcd" start="#df25f787-d1e3-4e85-bec4-cb1221d0aebc"
+                finish="#cb0e5cce-b5cf-4e80-a44e-c2fc7823a811" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:Execution"
+                id="1344c9a9-c415-41a6-a259-5178ef4c299a" start="#9a3758a6-a0df-4693-957d-7ce7d78774cd"
+                finish="#6a6a8d30-8a98-47f8-b135-58467e826893"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="c1f4b8e2-e694-41cf-bf73-8157aa6b5c6d" start="#a2757c4e-6988-4de9-9c68-714274f9fb4c"
+                finish="#4be6faaf-a22f-41f5-abe0-40fe1df1c296" relatedAbstractFunction="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"/>
+            <ownedTimeLapses xsi:type="org.polarsys.capella.core.data.interaction:StateFragment"
+                id="eef7872a-6755-4e6d-849f-44ac0fa421f1" start="#8a2da9db-905f-4740-a9c6-cf8a4eed90b7"
+                finish="#8d142b77-ba31-4cc0-80e5-428747c15f19" relatedAbstractFunction="#5bb44c50-a8e6-4162-bfce-467b29adb1df"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="62c861da-e2d5-47f9-8af4-f95e087a67ce" operation="#15cfd80b-d74c-452f-a5ac-f2ad126c70c5"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="15ce8859-cd73-4d1e-a5cf-9dbb88eabde6" operation="#15cfd80b-d74c-452f-a5ac-f2ad126c70c5"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="7484de54-70fb-4534-b396-42b0bdee691d"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="737b21e0-917e-44e0-ba58-09281b48d51c" operation="#b6187cd0-2e86-4050-ac2c-1f3fd6100ff0"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="062c45d8-70ba-4f7f-8505-2717881c444e" operation="#b6187cd0-2e86-4050-ac2c-1f3fd6100ff0"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="84a25ce8-4902-452e-bc55-c24b2d8497c6"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="a4c48977-2931-41fe-bafe-910bcdf7edbb" operation="#033ce4d8-96bd-4dfb-a41e-978b3a1f73f3"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="24ad3fc7-50ae-44ad-887c-e79bf814ba4f" operation="#033ce4d8-96bd-4dfb-a41e-978b3a1f73f3"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="098b96dd-b568-40e2-a2fd-280335654038"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="6d9c3be1-05dd-4281-a750-86eee3c807d5" operation="#06c3777e-1517-411f-9b26-ebd6b0112f00"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="b2c431eb-400f-4bc2-ab8b-eb015c61f8bd" operation="#06c3777e-1517-411f-9b26-ebd6b0112f00"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="aa628844-4d1d-49bd-a39e-c29913fc581e"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="a8815bb5-5941-4c16-b334-70aa16fe74a4" operation="#92c089dd-4053-4d88-830c-3a61d2fd0389"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="bbff28c3-622b-4ec7-b466-c6a7e1ba6739" operation="#92c089dd-4053-4d88-830c-3a61d2fd0389"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="7fa4ea2b-49c5-4f6e-b5bc-a5a9f6793a7b"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="d845479e-495b-4d86-b7e8-7211347f5c42" operation="#c0455f22-de37-4c6b-af24-c3204eb88a64"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="54c4f1f7-bc49-430c-97e9-25859f43ef75" operation="#c0455f22-de37-4c6b-af24-c3204eb88a64"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="5329e1c6-1a5b-4b9a-920a-a0f6db62b985"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="c82f99d2-e408-41eb-87e6-590ed7b6a786" operation="#fd2d7314-89b3-46e1-9296-a2d50bbab7dc"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="d5d13a35-6a18-407e-858f-f44a651bb417" operation="#fd2d7314-89b3-46e1-9296-a2d50bbab7dc"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="318d19df-0d8e-419d-8a14-7f9dd6fdf3f6"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="80245c71-073e-4f13-ba17-c6e3ab58dec8" operation="#6b82b357-4791-4381-b74c-f6cb9e00d714"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="6c846ba0-9829-4702-b97e-1fa8dbcaa252" operation="#6b82b357-4791-4381-b74c-f6cb9e00d714"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="1b8bebc0-b514-4287-8448-69587207a459"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="b4e994db-bc03-491f-ab51-c1882de1472d" operation="#d9ebb43b-dbdd-40dd-906e-b720fabe2158"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="1f9d12c4-4572-4167-8b9d-9648f2503019" operation="#d9ebb43b-dbdd-40dd-906e-b720fabe2158"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="fc4efe07-db8e-4b08-aea7-cfdbb0228fee"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="3eb62bb7-e0fe-4048-baa6-1cebfbb4d0b9" operation="#79441bac-b961-469b-9e35-ca0a6d9b1244"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="f0fde188-4e58-42b9-829a-e086e999e4a6" operation="#79441bac-b961-469b-9e35-ca0a6d9b1244"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="a06195b7-8d83-4aec-a67e-d3f7cb1e5ca0"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventSentOperation"
+                id="cecc3004-2415-4e8a-b3e3-92e10c017922" operation="#6a7261d6-9e6d-408e-b915-7618ff46ba73"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:EventReceiptOperation"
+                id="81423f5c-f82f-4df0-a4af-a7395532594f" operation="#6a7261d6-9e6d-408e-b915-7618ff46ba73"/>
+            <ownedEvents xsi:type="org.polarsys.capella.core.data.interaction:ExecutionEvent"
+                id="2ba3040d-f62a-4972-85aa-b7015745af7a"/>
+          </ownedScenarios>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="28cf9318-b1c8-48c7-b358-867abe23aff4" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+              id="06d52d58-28f2-4659-9062-0a489a703ad5" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="a1dc8bfd-2447-4d2b-9bb1-586c27eff2e3" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+              id="462dd377-ff55-46f3-b9fe-ae0af65b70aa" involved="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="96aab0a5-274b-4fab-a6f0-d24fcf8e43cd" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+              id="42d9d31f-966c-4d92-adc2-cde6a10e13e9" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
           <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
-              id="04e214d9-e46a-4e15-b967-1ec050068688" involved="#a57fd145-0c47-47e1-8e1d-46ac53f95e4c"/>
+              id="8969f544-a58a-449a-80f3-69743a35085a" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="14f98d09-a776-49a0-9fed-c015b944f9c2" involved="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
+        </ownedCapabilities>
+        <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
+            id="5bceb885-fc35-4530-84e9-399e3cba9145" name="discover requirements through MBSE process"
+            description="&lt;p>As a Systems Engineer I may discover new requirements while using the MBSE tool but I will need to manage those in the RM tool. To differentiate these new requirements from those that came from the RM tool originally, I may give them a special identifier, type or an attribute.&lt;/p>&#xA;&#xA;&lt;p>When I transfer requirements between the tools, I may need to share authority over them. If a change to a requirement originates from the MBSE tool, the RM tool should reflect that change. However, if a change to such MBSE-originating requirement comes from the RM tool and does not affect large model context (only textual edit) it is acceptable to make such change in the RM tool and it should get reflected in the MBSE tool.&lt;/p>&#xA;&#xA;&lt;p>If there are concurrent changes to a requirement in both tools, the change from the MBSE tool should take precedence and be reflected in the RM tool&amp;#39;s representation of the requirement. The competing change from the RM tool will be lost. However, the likelyhood of such conflict may be low if roles and responsibilities within a project are respected and 2 engineers will not attempt editing same requirement same time in both tools. In formal project this issue is also avoided via explicit assignment of development tasks.&lt;/p>&#xA;">
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="4763493e-98c1-4a1b-889e-df375a848b1a" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="594caf64-6aa7-43c9-a126-d1480f905640" involved="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="c382675b-4a4b-4a5d-bc7a-7908e0a42571" involved="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="dd92d99c-c968-499b-9bb0-2063947b0f27" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="e0f74cb2-9290-4c29-a292-267a3e8157cb" involved="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
+        </ownedCapabilities>
+        <ownedCapabilities xsi:type="org.polarsys.capella.core.data.ctx:Capability"
+            id="8d3e6091-b56e-4eb9-99de-93de1e934356" name="author documents with references to model elements"
+            description="&lt;p>As a Project Stakeholder, I may create documents in the RM tool and need to link them to certain model elements. This helps establish traceability, so I can be notified if a change to a model element affects any linked RM tool objects.&lt;/p>&#xA;&#xA;&lt;p>To create these links, I need to see the context of the model elements from the RM tool. I may also need diagrams from the MBSE tool to illustrate my documents.&lt;/p>&#xA;&#xA;&lt;p>Depending on project settings, I may be able to edit model element descriptions from the document context to improve overall content. However, this requires project-level approval as increases risk of conflicting changes due to mixed content authority -configuration needs to explcitly state which tool will win in case of conflicting change to model object descriptions.&lt;/p>&#xA;">
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="6c8772d3-b886-4305-bdb6-4a1b1326b846" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="b229bcd6-ef1c-4a83-9938-37672bd55530" involved="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="9e7d3034-c3e3-4835-8833-a376d3c478d5" involved="#0792c506-f216-4e21-b06b-316aedafba16"/>
+          <ownedCapabilityInvolvements xsi:type="org.polarsys.capella.core.data.ctx:CapabilityInvolvement"
+              id="712f2c8f-970e-43b6-97d3-22692b18fd5f" involved="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
         </ownedCapabilities>
       </ownedAbstractCapabilityPkg>
       <ownedInterfacePkg xsi:type="org.polarsys.capella.core.data.cs:InterfacePkg"
@@ -194,15 +777,31 @@
       <ownedSystemComponentPkg xsi:type="org.polarsys.capella.core.data.ctx:SystemComponentPkg"
           id="39c93f7e-e48c-4892-b9a3-61f2ac174791" name="Structure">
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="4974f634-df3e-4a4c-a5a6-431713950376"
-            name="RM Bridge" abstractType="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+            name="RM-Bridge" abstractType="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="0eca71b9-1f56-4101-8e17-d89ec89d5d42"
             name="RM Tool" abstractType="#54ebf659-7ecd-4565-b346-aa886da48225"/>
         <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="228b70f0-2e87-4b40-af38-4dd17fc02b4c"
-            name="Arch tool" abstractType="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
-        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="0a825d10-f60f-4429-81c3-64c6a06db4a0"
-            name="User" abstractType="#a57fd145-0c47-47e1-8e1d-46ac53f95e4c"/>
+            name="MBSE Tool" abstractType="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="c2c2e4fb-ea84-47f5-802c-806296733be4"
+            name="Systems Engineer" abstractType="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="0370eeb3-f90b-4614-b68b-60e1bc61a809"
+            name="Project Stakeholder" abstractType="#0792c506-f216-4e21-b06b-316aedafba16"/>
+        <ownedParts xsi:type="org.polarsys.capella.core.data.cs:Part" id="918f6a1d-9abe-4c6e-afce-44f1874fa90a"
+            name="MBSE CM" abstractType="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="190f2b51-8e95-4ea0-9d36-5909302ca75c" name="RM Bridge">
+            id="190f2b51-8e95-4ea0-9d36-5909302ca75c" name="RM-Bridge">
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="1654dc89-0271-4db4-81ee-878ea2271caf" targetElement="#97ad2760-ba65-48ed-ae88-c6dec50b5c86"
+              sourceElement="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="29d9961f-a218-443e-815a-a233eabdc7cd" targetElement="#cb8b6e13-e279-415f-a144-32c6ea67540c"
+              sourceElement="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="f3995b2f-c35f-4f74-8d1c-66d2152b47a4" targetElement="#9638c8fe-0c63-4f9b-87cd-693a1287630b"
+              sourceElement="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="b4c70fa8-d271-4be7-b270-ea0a0d795151" targetElement="#7cfb0348-feef-4f1a-bbf3-85afa5973167"
+              sourceElement="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
           <ownedStateMachines xsi:type="org.polarsys.capella.core.data.capellacommon:StateMachine"
               id="41595986-0e52-445f-bd7d-206b75b37274" name="System State Machine">
             <ownedRegions xsi:type="org.polarsys.capella.core.data.capellacommon:Region"
@@ -210,27 +809,66 @@
           </ownedStateMachines>
         </ownedSystemComponents>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="54ebf659-7ecd-4565-b346-aa886da48225" name="RM Tool" actor="true"/>
+            id="54ebf659-7ecd-4565-b346-aa886da48225" name="RM Tool" description="&lt;p>A requirements management tool may be used by a project team to formally manage all requirements across the project starting with customer / stakeholder requirements and going down to component requirements. We assume that an RM tool is also used for activites such as review, approval and release of requirement specifications (versioning / baselining).&lt;/p>&#xA;"
+            actor="true">
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="742d8dff-5f01-4c8b-a5df-440b2e589997" targetElement="#2e928cd7-50d4-48a9-a76b-5f51c3042a07"
+              sourceElement="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="fda0ca23-03f1-4f80-8fa7-e77f01162896" targetElement="#434aa519-14c0-4f34-abe0-dbf3900f7ff3"
+              sourceElement="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="f66e1267-9183-44b8-95a6-6c3eba4247f3" targetElement="#81a594ce-16fb-417a-9917-3955270b2e76"
+              sourceElement="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="c86a4b73-7a1a-42cd-b2e3-58a4fe3381e4" targetElement="#d53ee560-faef-45c1-b018-c4325cb73aea"
+              sourceElement="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="22275aed-86d0-4883-9a17-b8fd46db67f8" targetElement="#8fb4ee7c-d782-46c9-a684-4da54b2e871f"
+              sourceElement="#54ebf659-7ecd-4565-b346-aa886da48225"/>
+        </ownedSystemComponents>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="4cee2194-06ff-4a53-a99f-0d30a708b69d" name="Arch tool" actor="true"/>
+            id="4cee2194-06ff-4a53-a99f-0d30a708b69d" name="MBSE Tool" description="&lt;p>Model Based Systems Engineering (MBSE) tool may be used by a project team to analyse the operational needs, define and specify the system under consideration as well as perform design activities such as logical and phisical architecting. New requirements are usually discovered during the system analysis / definition activities, however in most cases MBSE tools are not made for formal requirements management.&lt;/p>&#xA;"
+            actor="true">
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="61d2038a-8d71-42e1-9c34-75a45d6c3712" targetElement="#5bb44c50-a8e6-4162-bfce-467b29adb1df"
+              sourceElement="#4cee2194-06ff-4a53-a99f-0d30a708b69d"/>
+        </ownedSystemComponents>
         <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
-            id="a57fd145-0c47-47e1-8e1d-46ac53f95e4c" name="User" actor="true" human="true"/>
+            id="1f0de6c4-af52-4977-9c92-3dfeff5fe446" name="Systems Engineer" description="&lt;p>Systems Engineer is a generic project team member who may have roles within Requirements Engineering, System Analysis and Design disciplines. Systems Engineer may use both RM tool and MBSE tool.&lt;/p>&#xA;"
+            actor="true" human="true">
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="3299dcdb-cbf9-4074-8842-fab244dbdab0" targetElement="#1fee9372-ee36-436d-9fb2-ade546092044"
+              sourceElement="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="77a22b83-2b3d-499b-917c-cf3750a04c91" targetElement="#264527bc-a3ba-4bcb-bcce-e73aa3139e7b"
+              sourceElement="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="d9bddbcf-750b-4484-90b6-6667bcfac02d" targetElement="#abb44a58-881f-42e5-a719-da0e932691c4"
+              sourceElement="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+          <ownedGeneralizations xsi:type="org.polarsys.capella.core.data.capellacore:Generalization"
+              id="6b0e8232-6d2b-44dd-ad92-5b30690ec725" super="#0792c506-f216-4e21-b06b-316aedafba16"
+              sub="#1f0de6c4-af52-4977-9c92-3dfeff5fe446"/>
+        </ownedSystemComponents>
+        <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
+            id="0792c506-f216-4e21-b06b-316aedafba16" name="Project Stakeholder" description="&lt;p>Project Stakeholder is a generic member of a project that has access to basic project documentation that is managed in an RM Tool. Project stakeholder may have rights to contribute to the documentation via review comments or textual changes but may not have means or need to contribute to the model contents directly / may not use the MBSE CM and MBSE Tool.&lt;/p>&#xA;"
+            actor="true" human="true"/>
+        <ownedSystemComponents xsi:type="org.polarsys.capella.core.data.ctx:SystemComponent"
+            id="5f51013a-6ff7-4f6c-a8df-e1c3e955b62c" name="MBSE CM" description="&lt;p>MBSE Configuration Management (CM) system is there to capture model changes / increments and baselines / releases. We assume that in a project engineering context no model changes happen outside of MBSE CM so it is the center piece of all modeling work. Depending on a project configuration it may be realized by commercial products like TeamForCapella, Teamcenter Modeling Workbench but also basic self-hosted or SaaS git repository management systems like Github and Gitlab.&lt;/p>&#xA;&#xA;&lt;p>MBSE CM is also a source of Model Change Event and Model Release Event. &amp;nbsp;Those events could be used for example to automatically start the transfer of relevant model element changes into an RM tool.&lt;/p>&#xA;"
+            actor="true">
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="d81b80ef-8898-4e3a-a8f3-9503f5f7f321" targetElement="#2af1aace-5607-45b8-bb39-d7027a2adc2f"
+              sourceElement="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="afd0a5c8-998c-46b4-b797-efe4b53d8267" targetElement="#687e2733-9f31-42f9-acb1-2d41f453e45f"
+              sourceElement="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
+          <ownedFunctionalAllocation xsi:type="org.polarsys.capella.core.data.fa:ComponentFunctionalAllocation"
+              id="ed297dc8-0bb9-46bc-8888-88a0bc9061cd" targetElement="#7bacb71e-7a1f-446d-9e0e-a6aa409dacba"
+              sourceElement="#5f51013a-6ff7-4f6c-a8df-e1c3e955b62c"/>
+        </ownedSystemComponents>
       </ownedSystemComponentPkg>
       <ownedMissionPkg xsi:type="org.polarsys.capella.core.data.ctx:MissionPkg" id="62e24571-2094-48e5-8afc-bc2e1d12cbf3"
-          name="Missions">
-        <ownedMissions xsi:type="org.polarsys.capella.core.data.ctx:Mission" id="3b9010a4-45bd-44c1-a4a9-5f640ec76143"
-            name="Mission 1">
-          <ownedMissionInvolvements xsi:type="org.polarsys.capella.core.data.ctx:MissionInvolvement"
-              id="cac626f0-df83-4890-96b3-95a0b5d80646" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
-        </ownedMissions>
-        <ownedMissions xsi:type="org.polarsys.capella.core.data.ctx:Mission" id="c7bc9cd3-b562-4f03-9058-4f9221b9f1a9"
-            name="Ensure requirements consistency across tools">
-          <ownedMissionInvolvements xsi:type="org.polarsys.capella.core.data.ctx:MissionInvolvement"
-              id="2271963e-b904-44d9-ac87-e9a4f2855f40" involved="#190f2b51-8e95-4ea0-9d36-5909302ca75c"/>
-          <ownedCapabilityExploitations xsi:type="org.polarsys.capella.core.data.ctx:CapabilityExploitation"
-              id="e4443858-7aaa-4618-ad8f-46e35325568b" capability="#7f251b5f-414b-42a3-975d-59a8ab78ec75"/>
-        </ownedMissions>
-      </ownedMissionPkg>
+          name="Missions"/>
       <ownedOperationalAnalysisRealizations xsi:type="org.polarsys.capella.core.data.ctx:OperationalAnalysisRealization"
           id="7c3fbb83-a1ad-4eba-baa6-0f14faca0431" targetElement="#f2813194-54e6-407c-9296-3db6cccd66a6"
           sourceElement="#98083cbe-d604-4a50-8fc4-116e60e1a043"/>
