@@ -122,6 +122,7 @@ class EnumAttributeDefinition(AttributeDefinition, total=False):
 
     values: list[str]
     multi_values: bool
+    type_id: str
 
 
 class InvalidSnapshotModule(Exception):

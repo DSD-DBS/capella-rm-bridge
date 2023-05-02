@@ -53,7 +53,7 @@ INVALID_FIELD_VALUES = [
         "type",
         ["Not an option"],
         "values",
-        "Invalid field found: values ['Not an option'] for 'type'",
+        "Invalid field found: values ['Not an option'] for 'eType'",
     ),
     (
         "capellaID",
@@ -82,6 +82,7 @@ INVALID_ATTR_DEF_ERROR_MSG = (
     "Invalid AttributeDefinitionEnumeration found: 'notDefined'. "
     "Missing its datatype definition in `data_types`."
 )
+TYPES_FOLDER_UUID = "a15e8b60-bf39-47ba-b7c7-74ceecb25c9c"
 
 
 class ActionsTest:
@@ -268,6 +269,7 @@ class TestCreateActions(ActionsTest):
         reqtype["attributes"]["notDefined"] = {  # type: ignore[call-overload]
             "long_name": "Not-Defined",
             "type": "Enum",
+            "type_id": "notDefined",
         }
 
         with caplog.at_level(logging.ERROR):
@@ -284,6 +286,7 @@ class TestCreateActions(ActionsTest):
         reqtype["attributes"]["notDefined"] = {  # type: ignore[call-overload]
             "long_name": "Not-Defined",
             "type": "Enum",
+            "type_id": "notDefined",
         }
 
         tchange = self.tracker_change(clean_model, tracker, gather_logs=True)
@@ -312,10 +315,10 @@ class TestCreateActions(ActionsTest):
         tracker = copy.deepcopy(self.tracker)
         tracker["data_types"]["new"] = tracker[  # type: ignore[index]
             "data_types"
-        ]["type"]
+        ]["eType"]
         tracker["requirement_types"]["system_requirement"][  # type: ignore
             "attributes"
-        ]["new"] = {"long_name": "New", "type": "Enum"}
+        ]["new"] = {"long_name": "New", "type": "Enum", "type_id": "eType"}
         req_item = tracker["items"][0]["children"][0]
         req_item["attributes"]["new"] = ["functional"]  # type: ignore[index]
 
@@ -419,6 +422,7 @@ class TestModActions(ActionsTest):
         reqtype["attributes"]["notDefined"] = {  # type: ignore[call-overload]
             "long_name": "Not-Defined",
             "type": "Enum",
+            "type_id": "notDefined",
         }
 
         with caplog.at_level(logging.ERROR):
@@ -453,6 +457,7 @@ class TestModActions(ActionsTest):
         reqtype["attributes"]["notDefined"] = {  # type: ignore[call-overload]
             "long_name": "Not-Defined",
             "type": "Enum",
+            "type_id": "notDefined",
         }
 
         tchange = self.tracker_change(
@@ -488,63 +493,12 @@ class TestModActions(ActionsTest):
         assert len(requirement_deletions) == 1
         assert requirement_deletions[0].uuid == req_uuid
 
-    def test_enum_value_long_name_collision_produces_no_Unfulffilled_Promises(
-        self, migration_model: capellambse.MelodyModel
-    ) -> None:
-        tracker_yaml = """\
-        id: project/space/example title
-        long_name: example title
-        data_types:
-          new:
-            long_name: Type
-            values:
-              - id: unset
-                long_name: Unset
-              - id: functional
-                long_name: Functional
-              - id: nonFunctional
-                long_name: Non-Functional
-          release:
-            long_name: Release
-            values:
-              - id: rel.1
-                long_name: Rel. 1
-          type:
-            long_name: Type
-            values:
-              - id: unset
-                long_name: Unset
-              - id: functional
-                long_name: Functional
-              - id: nonFunctional
-                long_name: Non-Functional
-        requirement_types:
-          system_requirement:
-            long_name: System Requirement
-            attributes:
-              new:
-                long_name: New
-                type: Enum
-              type:
-                long_name: Type
-                type: Enum
-        items: []"""
-
-        tracker = yaml.safe_load(tracker_yaml)
-
-        change_set = self.tracker_change(
-            migration_model, tracker, gather_logs=True
-        )
-
-        yml = decl.dump(change_set.actions)
-        decl.apply(migration_model, io.StringIO(yml))
-
     def test_identifier_changes_result_in_extensions(
         self, migration_model: capellambse.MelodyModel
     ) -> None:
         tracker = copy.deepcopy(self.tracker)
-        tracker["data_types"]["type1"] = tracker["data_types"]["type"]
-        del tracker["data_types"]["type"]
+        tracker["data_types"]["type1"] = tracker["data_types"]["eType"]
+        del tracker["data_types"]["eType"]
         sysr_attr_defs = tracker["requirement_types"]["system_requirement"][
             "attributes"
         ]
@@ -570,7 +524,7 @@ class TestModActions(ActionsTest):
         )
 
         edefs = migration_model.search("EnumerationDataTypeDefinition")
-        assert edefs.by_identifier("type"), "Data type definition missing"
+        assert edefs.by_identifier("eType"), "Data type definition missing"
         adefs = migration_model.search("AttributeDefinitionEnumeration")
         for id in ("system_requirement", "software_requirement"):
             assert f"type {id}" in adefs.by_identifier  # type: ignore [operator]
@@ -582,11 +536,51 @@ class TestModActions(ActionsTest):
         edefs = migration_model.search("EnumerationDataTypeDefinition")
         adefs = migration_model.search("AttributeDefinitionEnumeration")
 
-        assert not edefs.by_identifier("type")
+        assert not edefs.by_identifier("eType")
         assert edefs.by_identifier("type1")
         for id in ("system_requirement", "software_requirement"):
             assert f"type {id}" not in adefs.by_identifier  # type: ignore [operator]
             assert f"type1 {id}" in adefs.by_identifier  # type: ignore [operator]
+
+    def test_modified_data_type_promise_reference(
+        self, migration_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        nid = "oType"
+        tracker["data_types"][nid] = tracker["data_types"]["eType"]
+        sys_req = tracker["requirement_types"]["system_requirement"]
+        sys_req["attributes"]["type"]["type_id"] = nid
+
+        change_set = self.tracker_change(
+            migration_model, tracker, gather_logs=True
+        )
+        data_type_mod = change_set.actions[3]["modify"]["data_type"]
+
+        assert isinstance(data_type_mod, decl.Promise)
+        assert data_type_mod.identifier.endswith(nid)
+
+    def test_modified_data_type_reference(
+        self, migration_model: capellambse.MelodyModel
+    ) -> None:
+        tracker = copy.deepcopy(self.tracker)
+        nid = "oType"
+        tracker["data_types"][nid] = tracker["data_types"]["eType"]
+        sys_req = tracker["requirement_types"]["system_requirement"]
+        sys_req["attributes"]["type"]["type_id"] = nid
+        reqt_folder = migration_model.by_uuid(TYPES_FOLDER_UUID)
+        edt_def = reqt_folder.data_type_definitions.create(
+            "EnumerationDataTypeDefinition", identifier=nid, long_name=nid
+        )
+        for value in tracker["data_types"]["eType"]:
+            edt_def.values.create(long_name=value, identifier=value)
+
+        change_set = self.tracker_change(
+            migration_model, tracker, gather_logs=True
+        )
+        data_type_mod = change_set.actions[3]["modify"]["data_type"]
+
+        assert isinstance(data_type_mod, decl.UUIDReference)
+        assert data_type_mod.uuid == edt_def.uuid
 
     @pytest.mark.integtest
     def test_calculate_change_sets(
@@ -811,14 +805,14 @@ class TestCalculateChangeSet(ActionsTest):
     ) -> None:
         """Test that an invalid AttributeDefinition will not prohibit."""
         snapshot = copy.deepcopy(TEST_SNAPSHOT["modules"][0])
-        missing_enumdt = "release"
+        missing_enumdt = "eRelease"
         del snapshot["data_types"][missing_enumdt]  # type: ignore[attr-defined]
         tconfig = TEST_CONFIG["modules"][0]
         message = (
             "In RequirementType 'System Requirement': Invalid "
-            "AttributeDefinitionEnumeration found: 'release'. Missing its "
+            "AttributeDefinitionEnumeration found: 'eRelease'. Missing its "
             "datatype definition in `data_types`.\n"
-            "Invalid workitem 'REQ-002'. Invalid field found: 'release'. "
+            "Invalid workitem 'REQ-002'. Invalid field found: 'eRelease'. "
             "Missing its datatype definition in `data_types`."
         )
 

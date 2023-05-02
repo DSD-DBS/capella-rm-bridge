@@ -77,7 +77,7 @@ class TrackerChange:
     """A mapping for whitelisted fieldnames per RequirementType."""
     actions: list[dict[str, t.Any]]
     """List of action requests for the tracker sync."""
-    data_type_definitions: cabc.Mapping[str, act.DataType]
+    data_type_definitions: cabc.Mapping[str, cabc.Sequence[str]]
     """A lookup for DataTypeDefinitions from the tracker snapshot."""
     requirement_types: cabc.Mapping[RMIdentifier, act.RequirementType]
     """A lookup for RequirementTypes from the tracker snapshot."""
@@ -102,6 +102,9 @@ class TrackerChange:
             snapshot.
         config
             A configuration for the module (tracker).
+        gather_logs
+            If ``True`` error messages are stored in ``errors``, else
+            they are just logged.
 
         Raises
         ------
@@ -342,12 +345,12 @@ class TrackerChange:
         self,
     ) -> cabc.Iterator[dict[str, t.Any]]:
         r"""Yield actions for creating ``EnumDataTypeDefinition``\ s."""
-        for id, ddef in self.data_type_definitions.items():
-            yield self.data_type_create_action(id, ddef)
+        for id, values in self.data_type_definitions.items():
+            yield self.data_type_create_action(id, values)
 
     # pylint: disable=line-too-long
     def data_type_create_action(
-        self, data_type_id: str, data_type_definition: act.DataType
+        self, data_type_id: str, values: cabc.Iterable[str]
     ) -> dict[str, t.Any]:
         r"""Return an action for creating an ``EnumDataTypeDefinition``.
 
@@ -361,15 +364,15 @@ class TrackerChange:
         type = "EnumerationDataTypeDefinition"
         enum_values = [
             {
-                "identifier": value["id"],
-                "long_name": value["long_name"],
-                "promise_id": f"EnumValue {data_type_id} {value['id']}",
+                "identifier": value,
+                "long_name": value,
+                "promise_id": f"EnumValue {data_type_id} {value}",
             }
-            for value in data_type_definition["values"]
+            for value in values
         ]
         return {
             "identifier": data_type_id,
-            "long_name": data_type_definition["long_name"],
+            "long_name": data_type_id,
             "values": enum_values,
             "promise_id": f"{type} {data_type_id}",
             "_type": type,
@@ -441,19 +444,20 @@ class TrackerChange:
         cls: AttributeDefinitionClass = reqif.AttributeDefinition
         if item["type"] == "Enum":
             cls = reqif.AttributeDefinitionEnumeration
+            etdid = item["type_id"]  # type: ignore[typeddict-item]
             etdef = find.find_by_identifier(
                 self.model,
-                id,
+                etdid,
                 "EnumerationDataTypeDefinition",
                 below=self.reqt_folder,
             )
             if etdef is None:
-                promise_id = f"EnumerationDataTypeDefinition {id}"
-                if id not in self.data_type_definitions:
+                promise_id = f"EnumerationDataTypeDefinition {etdid}"
+                if etdid not in self.data_type_definitions:
                     self._faulty_attribute_definitions.add(promise_id)
                     raise act.InvalidAttributeDefinition(
-                        f"Invalid {cls.__name__} found: {id!r}. Missing its "
-                        "datatype definition in `data_types`."
+                        f"Invalid {cls.__name__} found: {etdid!r}. Missing its"
+                        " datatype definition in `data_types`."
                     )
 
                 ref: decl.Promise | decl.UUIDReference = decl.Promise(
@@ -495,7 +499,7 @@ class TrackerChange:
                 continue
 
             self._try_create_attribute_value(
-                (attr_id, value), (req_type_id, iid), attributes
+                (attr_id, value, check), (req_type_id, iid), attributes
             )
 
         identifier = RMIdentifier(str(item["id"]))
@@ -567,6 +571,7 @@ class TrackerChange:
         attribute: tuple[t.Any, t.Any],
         identifiers: tuple[RMIdentifier, t.Any],
     ) -> str | None:
+        """Check validity of attribute and return ``type_id`` if exists."""
         id, value = attribute
         req_type_id, iitem_id = identifiers
         if not req_type_id:
@@ -587,18 +592,18 @@ class TrackerChange:
                 f"attributes of requirement type '{req_type_id}'"
             )
             return "continue"
-        return None
+        assert reqtype_defs is not None
+        return reqtype_defs["attributes"][id].get("type_id")  # type: ignore[return-value]
 
     def _try_create_attribute_value(
         self,
-        attribute: tuple[t.Any, t.Any],
+        attribute: tuple[t.Any, t.Any, t.Any],
         identifiers: tuple[RMIdentifier, t.Any],
         actions: list[dict[str, t.Any]],
     ) -> None:
-        id, value = attribute
         req_type_id, iitem_id = identifiers
         try:
-            action = self.attribute_value_create_action(id, value, req_type_id)
+            action = self.attribute_value_create_action(attribute, req_type_id)
             actions.append(action)
         except act.InvalidFieldValue as error:
             self._handle_user_error(
@@ -607,8 +612,7 @@ class TrackerChange:
 
     def attribute_value_create_action(
         self,
-        id: str,
-        value: act.Primitive | RMIdentifier,
+        attribute: tuple[str, act.Primitive | RMIdentifier, str | None],
         req_type_id: RMIdentifier,
     ) -> dict[str, t.Any]:
         """Return an action for creating an ``AttributeValue``.
@@ -626,15 +630,19 @@ class TrackerChange:
         capellambse.extension.reqif.BooleanValueAttribute
         capellambse.extension.reqif.EnumerationValueAttribute
         """
-        builder = self.check_attribute_value_is_valid(id, value, req_type_id)
+        id, value, dtdef_id = attribute
+        builder = self.check_attribute_value_is_valid(
+            id, value, req_type_id, dtdef_id
+        )
         deftype = "AttributeDefinition"
         values: list[decl.UUIDReference | decl.Promise] = []
         if builder.deftype == "Enum":
             deftype += "Enumeration"
             assert isinstance(builder.value, list)
+            assert dtdef_id is not None
             edtdef = find.find_by_identifier(
                 self.model,
-                id,
+                dtdef_id,
                 "EnumerationDataTypeDefinition",
                 below=self.reqt_folder,
             )
@@ -655,7 +663,7 @@ class TrackerChange:
                 )
                 ev_ref: decl.Promise | decl.UUIDReference
                 if enumvalue is None or evid in self._evdeletions:
-                    ev_ref = decl.Promise(f"EnumValue {id} {evid}")
+                    ev_ref = decl.Promise(f"EnumValue {dtdef_id} {evid}")
                     assert ev_ref is not None
                 else:
                     ev_ref = decl.UUIDReference(enumvalue.uuid)
@@ -686,7 +694,11 @@ class TrackerChange:
         }
 
     def check_attribute_value_is_valid(
-        self, id: str, value: act.Primitive, req_type_id: RMIdentifier
+        self,
+        attrdef_id: str,
+        value: act.Primitive,
+        req_type_id: RMIdentifier,
+        dtdef_id: str | None = None,
     ) -> _AttributeValueBuilder:
         """Perform various integrity checks on the given attribute value.
 
@@ -705,37 +717,40 @@ class TrackerChange:
             `(Enumeration)AttributeValue`.
         """
         reqtype_attr_defs = self.requirement_types[req_type_id]["attributes"]
-        deftype = reqtype_attr_defs[id]["type"]
+        deftype = reqtype_attr_defs[attrdef_id]["type"]
         if default_type := _ATTR_VALUE_DEFAULT_MAP.get(deftype):
             matches_type = isinstance(value, default_type)
         else:
             matches_type = True
             LOGGER.warning(
-                "Unknown field type '%s' for %s: %r", deftype, id, value
+                "Unknown field type '%s' for %s: %r",
+                deftype,
+                attrdef_id,
+                value,
             )
 
         if not matches_type:
             assert default_type is not None
             raise act.InvalidFieldValue(
-                f"Invalid field found: {id!r}. Not matching expected types: "
-                f"{value!r} should be of type {default_type.__name__!r}"
+                f"Invalid field found: {attrdef_id!r}. Not matching expected "
+                f"types: {value!r} should be of type {default_type.__name__!r}"
             )
 
         if deftype == "Enum":
-            datatype = self.data_type_definitions.get(id)
-            if datatype is None:
+            assert dtdef_id is not None
+            options = self.data_type_definitions.get(dtdef_id)
+            if options is None:
                 raise act.InvalidFieldValue(
-                    f"Invalid field found: {id!r}. Missing its "
+                    f"Invalid field found: {dtdef_id!r}. Missing its "
                     "datatype definition in `data_types`."
                 )
 
             assert isinstance(value, cabc.Iterable)
             assert not isinstance(value, str)
-            options = (value["id"] for value in datatype["values"])
             key = "values"
             if not set(value) & set(options):
                 raise act.InvalidFieldValue(
-                    f"Invalid field found: {key} {value!r} for {id!r}"
+                    f"Invalid field found: {key} {value!r} for {dtdef_id!r}"
                 )
         else:
             key = "value"
@@ -761,8 +776,8 @@ class TrackerChange:
 
         dt_defs_creations = list[dict[str, t.Any]]()
         dt_defs_modifications = list[dict[str, t.Any]]()
-        for id, ddef in self.data_type_definitions.items():
-            action = self.data_type_mod_action(id, ddef)
+        for id, values in self.data_type_definitions.items():
+            action = self.data_type_mod_action(id, values)
             if action is None:
                 continue
 
@@ -788,7 +803,7 @@ class TrackerChange:
             self._evdeletions |= set(dtdef.values.by_identifier)
 
     def data_type_mod_action(
-        self, id: str, ddef: act.DataType
+        self, id: str, values: cabc.Iterable[str]
     ) -> dict[str, t.Any] | None:
         """Return an Action for creating or modifying a DataTypeDefinition.
 
@@ -813,27 +828,18 @@ class TrackerChange:
             )
             base: dict[str, t.Any] = {"parent": decl.UUIDReference(dtdef.uuid)}
             mods = dict[str, t.Any]()
-            if dtdef.long_name != ddef["long_name"]:
-                mods["long_name"] = ddef["long_name"]
+            if dtdef.long_name != id:
+                mods["long_name"] = id
 
             if mods:
                 base["modify"] = mods
 
-            creations = [
-                value
-                for value in ddef["values"]
-                if value["id"] not in dtdef.values.by_identifier
-            ]
-            action = self.data_type_create_action(
-                id, {"long_name": ddef["long_name"], "values": creations}
-            )
+            creations = set(values) - set(dtdef.values.by_identifier)
             if creations:
+                action = self.data_type_create_action(id, creations)
                 base["extend"] = {"values": action["values"]}
 
-            deletions = set(dtdef.values.by_identifier) - set(
-                value["id"] for value in ddef["values"]
-            )
-            if deletions:
+            if deletions := set(dtdef.values.by_identifier) - set(values):
                 evs = dtdef.values.by_identifier(*deletions)
                 self._evdeletions |= deletions
                 base["delete"] = {
@@ -844,7 +850,7 @@ class TrackerChange:
                 return None
             return base
         except KeyError:
-            return self.data_type_create_action(id, ddef)
+            return self.data_type_create_action(id, values)
 
     def requirement_type_delete_actions(self) -> list[decl.UUIDReference]:
         r"""Populate actions for deleting ``RequirementType``\ s."""
@@ -959,7 +965,7 @@ class TrackerChange:
                 below=self.reqt_folder,
             )
             if reqtype is None:
-                mods["type"] = decl.Promise(req_type_id)
+                mods["type"] = decl.Promise(f"RequirementType {req_type_id}")
             else:
                 mods["type"] = decl.UUIDReference(reqtype.uuid)
 
@@ -981,12 +987,14 @@ class TrackerChange:
             action: act.Primitive | dict[str, t.Any] | None
             if mods.get("type"):
                 self._try_create_attribute_value(
-                    (id, value), (req_type_id, iid), attributes_creations
+                    (id, value, check),
+                    (req_type_id, iid),
+                    attributes_creations,
                 )
             else:
                 try:
                     action = self.attribute_value_mod_action(
-                        req, id, value, req_type_id
+                        req, id, value, req_type_id, check
                     )
                     if action is None:
                         continue
@@ -994,7 +1002,9 @@ class TrackerChange:
                     attributes_modifications.append(action)
                 except KeyError:
                     self._try_create_attribute_value(
-                        (id, value), (req_type_id, iid), attributes_creations
+                        (id, value, check),
+                        (req_type_id, iid),
+                        attributes_creations,
                     )
                 except act.InvalidFieldValue as error:
                     self._handle_user_error(
@@ -1113,6 +1123,7 @@ class TrackerChange:
         id: str,
         valueid: str | list[str | decl.UUIDReference | decl.Promise],
         req_type_id: RMIdentifier,
+        dtdef_id: str | None = None,
     ) -> dict[str, t.Any] | None:
         """Return an action for modifying an ``AttributeValue``.
 
@@ -1144,7 +1155,9 @@ class TrackerChange:
             Either a create-action, the value to modify or ``None`` if
             nothing changed.
         """
-        builder = self.check_attribute_value_is_valid(id, valueid, req_type_id)
+        builder = self.check_attribute_value_is_valid(
+            id, valueid, req_type_id, dtdef_id
+        )
         deftype = "AttributeDefinition"
         if builder.deftype == "Enum":
             deftype += "Enumeration"
@@ -1156,17 +1169,31 @@ class TrackerChange:
         assert attrdef is not None
         if isinstance(attr, reqif.EnumerationValueAttribute):
             assert isinstance(valueid, list)
+            assert dtdef_id is not None
             actual = set(attr.values.by_identifier)
             delete = actual - set(valueid)
             create = set(valueid) - actual
             differ = bool(create) or bool(delete)
-            options = attrdef.data_type.values.by_identifier
-            valueid = [
-                decl.Promise(f"EnumValue {id} {v}")
-                if v not in options
-                else decl.UUIDReference(options(v, single=True).uuid)
-                for v in create | (actual - delete)
-            ]
+            data_type = find.find_by_identifier(
+                self.model,
+                dtdef_id,
+                "EnumerationDataTypeDefinition",
+                below=self.reqt_folder,
+            )
+            if data_type is None:
+                valueid = [
+                    decl.Promise(f"EnumValue {dtdef_id} {v}")
+                    for v in self.data_type_definitions[dtdef_id]
+                ]
+            else:
+                options = data_type.values.by_identifier
+                valueid = [
+                    decl.Promise(f"EnumValue {dtdef_id} {v}")
+                    if v not in options
+                    else decl.UUIDReference(options(v, single=True).uuid)
+                    for v in create | (actual - delete)
+                ]
+
             key = "values"
         else:
             differ = bool(attr.value != valueid)
@@ -1208,8 +1235,24 @@ class TrackerChange:
                 mods["long_name"] = data["long_name"]
             if data["type"] == "Enum":
                 dtype = attrdef.data_type
-                if dtype is None or dtype.identifier != identifier:
-                    mods["data_type"] = identifier
+                dtid = data["type_id"]  # type:ignore[typeddict-item]
+                edt_def = find.find_by_identifier(
+                    self.model,
+                    dtid,
+                    "EnumerationDataTypeDefinition",
+                    below=self.reqt_folder,
+                )
+
+                if dtype is None or dtype.identifier != dtid:
+                    edt_ref: decl.Promise | decl.UUIDReference
+                    if edt_def is None:
+                        edt_ref = decl.Promise(
+                            f"EnumerationDataTypeDefinition {dtid}"
+                        )
+                    else:
+                        edt_ref = decl.UUIDReference(edt_def.uuid)
+
+                    mods["data_type"] = edt_ref
                 if attrdef.multi_valued != data.get("multi_values", False):
                     mods["multi_valued"] = data[
                         "multi_values"  # type:ignore[typeddict-item]
