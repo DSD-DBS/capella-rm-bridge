@@ -10,13 +10,9 @@ modules:
   - id: project/space/example title
     long_name: example title
     data_types:
-      type:
-        long_name: Type
-        values:
-          - id: unset
-            long_name: Unset
-          - id: nonFunctional
-            long_name: Non-Functional
+      eType:
+        - unset
+        - nonFunctional
     requirement_types:
       system_requirement:
         long_name: System Requirement
@@ -27,6 +23,7 @@ modules:
           type:
             long_name: Type
             type: Enum
+            type_id: eType
           submittedAt:
             long_name: Submitted at
             type: Date
@@ -39,6 +36,7 @@ modules:
           type:
             long_name: Type
             type: Enum
+            type_id: eType
           submittedAt:
             long_name: Submitted at
             type: Date

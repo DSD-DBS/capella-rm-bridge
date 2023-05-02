@@ -10,27 +10,27 @@
       - long_name: Types
         identifier: "-2"
         data_type_definitions:
-          - identifier: type
-            long_name: Type
+          - identifier: eType
+            long_name: eType
             values:
               - identifier: unset
-                long_name: Unset
-                promise_id: EnumValue type unset
+                long_name: unset
+                promise_id: EnumValue eType unset
               - identifier: functional
-                long_name: Functional
-                promise_id: EnumValue type functional
-            promise_id: EnumerationDataTypeDefinition type
+                long_name: functional
+                promise_id: EnumValue eType functional
+            promise_id: EnumerationDataTypeDefinition eType
             _type: EnumerationDataTypeDefinition
-          - identifier: release
-            long_name: Release
+          - identifier: eRelease
+            long_name: eRelease
             values:
               - identifier: featureRel.1
-                long_name: Feature Rel. 1
-                promise_id: EnumValue release featureRel.1
+                long_name: featureRel.1
+                promise_id: EnumValue eRelease featureRel.1
               - identifier: featureRel.2
-                long_name: Feature Rel. 2
-                promise_id: EnumValue release featureRel.2
-            promise_id: EnumerationDataTypeDefinition release
+                long_name: featureRel.2
+                promise_id: EnumValue eRelease featureRel.2
+            promise_id: EnumerationDataTypeDefinition eRelease
             _type: EnumerationDataTypeDefinition
         requirement_types:
           - identifier: system_requirement
@@ -43,7 +43,7 @@
                 _type: AttributeDefinition
               - identifier: type system_requirement
                 long_name: Type
-                data_type: !promise EnumerationDataTypeDefinition type
+                data_type: !promise EnumerationDataTypeDefinition eType
                 multi_valued: false
                 promise_id: AttributeDefinitionEnumeration type system_requirement
                 _type: AttributeDefinitionEnumeration
@@ -53,7 +53,7 @@
                 _type: AttributeDefinition
               - identifier: release system_requirement
                 long_name: Release
-                data_type: !promise EnumerationDataTypeDefinition release
+                data_type: !promise EnumerationDataTypeDefinition eRelease
                 multi_valued: true
                 promise_id: AttributeDefinitionEnumeration release system_requirement
                 _type: AttributeDefinitionEnumeration
@@ -67,7 +67,7 @@
                 _type: AttributeDefinition
               - identifier: type software_requirement
                 long_name: Type
-                data_type: !promise EnumerationDataTypeDefinition type
+                data_type: !promise EnumerationDataTypeDefinition eType
                 multi_valued: false
                 promise_id: AttributeDefinitionEnumeration type software_requirement
                 _type: AttributeDefinitionEnumeration
@@ -111,12 +111,12 @@
                 _type: string
               - definition: !promise AttributeDefinitionEnumeration type system_requirement
                 values:
-                  - !promise EnumValue type functional
+                  - !promise EnumValue eType functional
                 _type: enum
               - definition: !promise AttributeDefinitionEnumeration release system_requirement
                 values:
-                  - !promise EnumValue release featureRel.1
-                  - !promise EnumValue release featureRel.2
+                  - !promise EnumValue eRelease featureRel.1
+                  - !promise EnumValue eRelease featureRel.2
                 _type: enum
               - definition: !promise AttributeDefinition submittedAt system_requirement
                 value: 2022-06-30 17:07:18.664000+02:00

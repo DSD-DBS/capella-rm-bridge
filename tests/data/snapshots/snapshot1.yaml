@@ -10,20 +10,12 @@ modules:
   - id: project/space/example title
     long_name: example title
     data_types:
-      type:
-        long_name: Type
-        values:
-          - id: unset
-            long_name: Unset
-          - id: functional
-            long_name: Functional
-          - id: nonFunctional
-            long_name: Non-Functional
-      release:
-        long_name: Release
-        values:
-          - id: rel.1
-            long_name: Rel. 1
+      eType:
+        - unset
+        - functional
+        - nonFunctional
+      eRelease:
+        - rel.1
     requirement_types:
       system_requirement:
         long_name: System Requirement
@@ -34,12 +26,14 @@ modules:
           type:
             long_name: Type
             type: Enum
+            type_id: eType
           submittedAt:
             long_name: Submitted at
             type: Date
           release:
             long_name: Release
             type: Enum
+            type_id: eRelease
             multi_values: true
           testAfterMigration:
             long_name: Test after migration
@@ -53,6 +47,7 @@ modules:
           type:
             long_name: Type
             type: Enum
+            type_id: eType
           submittedAt:
             long_name: Submitted at
             type: Date

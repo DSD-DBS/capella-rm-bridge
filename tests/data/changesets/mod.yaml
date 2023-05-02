@@ -5,14 +5,14 @@
   extend:
     values:
       - identifier: nonFunctional
-        long_name: Non-Functional
-        promise_id: EnumValue type nonFunctional
+        long_name: nonFunctional
+        promise_id: EnumValue eType nonFunctional
 - parent: !uuid 98aaca05-d47f-4916-a9f9-770dc60aa04f
   extend:
     values:
       - identifier: rel.1
-        long_name: Rel. 1
-        promise_id: EnumValue release rel.1
+        long_name: rel.1
+        promise_id: EnumValue eRelease rel.1
   delete:
     values:
       - !uuid e91aa844-584d-451d-a201-2bb7bf13dcb0
@@ -38,11 +38,11 @@
         _type: string
       - definition: !uuid 12d97ef4-8b6e-4d45-8b3d-a1b6fe5b8aed
         values:
-          - !promise EnumValue type nonFunctional
+          - !promise EnumValue eType nonFunctional
         _type: enum
       - definition: !uuid e46d4629-da10-4f7f-954e-146bd2697638
         values:
-          - !promise EnumValue release rel.1
+          - !promise EnumValue eRelease rel.1
         _type: enum
 - parent: !uuid 25ccf941-17ed-4226-847b-040575922283
   modify:
@@ -61,7 +61,7 @@
 - parent: !uuid 6708cf60-2f06-4ccf-9973-21a035415ccb
   modify:
     values:
-      - !promise EnumValue type nonFunctional
+      - !promise EnumValue eType nonFunctional
 - parent: !uuid 9a9b5a8f-a6ad-4610-9e88-3b5e9c943c19
   modify:
     long_name: Functional Requirements

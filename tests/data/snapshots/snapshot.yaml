@@ -10,20 +10,12 @@ modules:
   - id: project/space/example title
     long_name: example title
     data_types: # Enumeration Data Type Definitions
-      type:
-        long_name: Type
-        values:
-          - id: unset
-            long_name: Unset
-          - id: functional
-            long_name: Functional
-      release:
-        long_name: Release
-        values:
-          - id: featureRel.1
-            long_name: Feature Rel. 1
-          - id: featureRel.2
-            long_name: Feature Rel. 2
+      eType:
+        - unset
+        - functional
+      eRelease:
+        - featureRel.1
+        - featureRel.2
 
     requirement_types: # WorkItemTypes
       system_requirement:
@@ -35,12 +27,14 @@ modules:
           type:
             long_name: Type
             type: Enum
+            type_id: eType
           submittedAt:
             long_name: Submitted at
             type: Date # -> AttributeDefinition
           release:
             long_name: Release
             type: Enum
+            type_id: eRelease
             multi_values: true
       software_requirement:
         long_name: Software Requirement
@@ -51,6 +45,7 @@ modules:
           type:
             long_name: Type
             type: Enum
+            type_id: eType
           submittedAt:
             long_name: Submitted at
             type: Date
