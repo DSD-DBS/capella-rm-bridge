@@ -58,28 +58,12 @@
               "additionalProperties": false,
               "patternProperties": {
                 ".": {
-                  "description": "The values that are available for this EnumerationDataTypeDefinition. They are sometimes called \"options\"",
-                  "type": "object",
-                  "properties": {
-                    "long_name": {
-                      "description": "Value of the \"Long Name\" field in Capella. Here it is the long name of the EnumerationDataTypeDefinition.",
-                      "type": "string"
-                    },
-                    "values": {
-                      "description": "EnumValues in Capella.",
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "description": "Value of the \"Identifier\" field in Capella. Here it is the identifier of the EnumValue.",
-                            "type": "string"
-                          },
-                          "long_name": {
-                            "description": "Value of the \"Long Name\" field in Capella. Here it is the long name of the EnumValue.",
-                            "type": "string"
-                          }
-                        }
+                  "description": "The values that are available for this EnumerationAttribute. They are sometimes called \"options\"",
+                  "type": "array",
+                  "items": {
+                    "patternProperties": {
+                      ".": {
+                        "type": "string"
                       }
                     }
                   }
@@ -143,6 +127,10 @@
                                 "multi_values": {
                                   "description": "Whether the Enum Attribute can have multiple values (true) or must always have exactly one value (false).",
                                   "type": "boolean"
+                                },
+                                "type_id": {
+                                  "description": "The EnumerationDataTypeDefinition identifier for assication of the available options.",
+                                  "type": "string"
                                 }
                               },
                               "additionalProperties": false
